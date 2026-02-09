@@ -1,0 +1,93 @@
+/* Font Import */
+@import url('https://fonts.googleapis.com/css2?family=Figtree:wght@300;400;500;600;700;800;900&display=swap');
+
+:root {
+  /* Design Audit Palette */
+  --color-bg: #111111;
+  /* Deepest Charcoal/Black */
+  --color-text: #ffffff;
+  --color-accent: #A3FF00;
+  /* Exact Neon Green from Audit */
+  --color-accent-hover: #8FE000;
+  --color-light-bg: #F3F3F3;
+  /* Light section background */
+  --color-dark-text: #1a1a1a;
+  /* Text for light sections */
+
+  /* Typography */
+  --font-family: 'Figtree', sans-serif;
+
+  /* Spacing */
+  --spacing-container: 1400px;
+  --spacing-sm: 0.5rem;
+  --spacing-md: 1rem;
+  --spacing-lg: 2rem;
+  --spacing-xl: 4rem;
+  --spacing-huge: 8rem;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: var(--font-family);
+  background-color: var(--color-bg);
+  color: var(--color-text);
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+  transition: all 0.3s ease;
+}
+
+ul {
+  list-style: none;
+}
+
+button {
+  border: none;
+  background: none;
+  font-family: inherit;
+  cursor: pointer;
+}
+
+/* Utilities */
+.text-accent {
+  color: var(--color-accent);
+}
+
+.bg-accent {
+  background-color: var(--color-accent);
+}
+
+.text-uppercase {
+  text-transform: uppercase;
+}
+
+.font-bold {
+  fontWeight: 700;
+}
+
+/* Loading Animation */
+@keyframes pulse {
+
+  0%,
+  100% {
+    opacity: 0.4;
+  }
+
+  50% {
+    opacity: 0.8;
+  }
+}

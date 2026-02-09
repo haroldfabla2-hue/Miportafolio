@@ -1,0 +1,614 @@
+generator client {
+  provider = "prisma-client-js"
+  previewFeatures = ["postgresqlExtensions"]
+}
+
+datasource db {
+  provider   = "postgresql"
+  url        = env("DATABASE_URL")
+  extensions = [vector]
+}
+
+// ==========================================
+// 1. AUTHENTICATION & SECURITY (RBAC + AUDIT)
+// ==========================================
+
+enum UserRole {
+  SUPER_ADMIN // You (God Mode)
+  ADMIN       // Trusted Managers
+  WORKER      // Employees/Freelancers
+  CLIENT      // Your Clients
+}
+
+model User {
+  id        String   @id @default(uuid())
+  email     String   @unique
+  password  String?  // Nullable for Google OAuth
+  name      String
+  role      UserRole @default(CLIENT)
+  avatar    String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  
+  // Security
+  auditLogs AuditLog[]
+
+  // Profile Details
+  hourlyRate      Float? 
+  reputationScore Float   @default(100.0)
+  phone           String?
+  jobTitle        String?
+  profileDetails  Json?   // { emergencyContact, billingAddress, teamSize, industry, website, etc. }
+  
+  // Google OAuth Integration (per-user tokens)
+  googleAccessToken   String?   // Access token for Gmail/Drive API
+  googleRefreshToken  String?   // Refresh token to renew access
+  googleTokenExpiry   DateTime? // When the access token expires
+  googleScopes        String[]  // Scopes the user authorized
+  googleConnected     Boolean   @default(false) // Quick check if Google is connected
+  onboardingCompleted Boolean   @default(false) // Has the user finished the wizard?
+  
+  // Drive Folder Assignment (Admin assigns folder to user)
+  assignedDriveFolderId   String?  // Google Drive folder ID assigned by admin
+  assignedDriveFolderName String?  // Human-readable folder name
+  
+  // Relations
+  projectsManaged Project[] @relation("ProjectManager")
+  projectsMember  Project[] @relation("ProjectTeam")
+  tasksAssigned   Task[]
+  timeLogs        TimeLog[]
+  comments        Comment[]
+  
+  // Messaging
+  channels        ChannelMember[]
+  messages        ChatMessage[]
+  
+  // Notifications
+  notifications   Notification[]
+  
+  // Leads assigned to this user
+  leadsAssigned   Lead[]
+  
+  // Tickets
+  ticketsCreated  Ticket[] @relation("TicketCreator")
+  ticketsAssigned Ticket[] @relation("TicketAssignee")
+  
+  // Two-Factor Authentication
+  twoFactorSecret  String?  // Base32 secret for TOTP
+  twoFactorEnabled Boolean  @default(false)
+  
+  // Refresh Tokens
+  refreshTokens   RefreshToken[]
+  
+  // Invitations sent by this user
+  invitationsSent Invitation[]
+  
+  // AI Context
+  preferences     Json?
+  
+  // Worker Sub-Role (for granular permissions)
+  workerRoleId  String?
+  workerRole    WorkerRole? @relation(fields: [workerRoleId], references: [id])
+  
+  @@map("users")
+}
+
+// ==========================================
+// WORKER ROLES & PERMISSIONS SYSTEM
+// ==========================================
+
+model WorkerRole {
+  id          String   @id @default(uuid())
+  name        String   @unique  // "Developer", "Project Manager", "Accountant"
+  description String?
+  color       String   @default("#6366f1")  // For UI badges
+  isDefault   Boolean  @default(false)  // Default role for new workers
+  isSystem    Boolean  @default(false)  // System roles are not editable
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  
+  permissions RolePermission[]
+  users       User[]
+  
+  @@map("worker_roles")
+}
+
+model Permission {
+  id          String   @id @default(uuid())
+  code        String   @unique  // "finance:view", "projects:edit"
+  name        String             // "View Finances"
+  description String?
+  category    String             // "Finance", "Projects", etc.
+  
+  roles       RolePermission[]
+  
+  @@map("permissions")
+}
+
+model RolePermission {
+  roleId       String
+  permissionId String
+  
+  role         WorkerRole @relation(fields: [roleId], references: [id], onDelete: Cascade)
+  permission   Permission @relation(fields: [permissionId], references: [id], onDelete: Cascade)
+  
+  @@id([roleId, permissionId])
+  @@map("role_permissions")
+}
+
+model AuditLog {
+  id        String   @id @default(uuid())
+  action    String   // "LOGIN", "DELETE_PROJECT", "VIEW_FINANCE"
+  ipAddress String?
+  userAgent String?
+  details   Json?
+  
+  userId    String
+  user      User     @relation(fields: [userId], references: [id])
+  
+  timestamp DateTime @default(now())
+
+  @@map("audit_logs")
+}
+
+model RefreshToken {
+  id        String   @id @default(uuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  token     String   @unique  // Hashed refresh token
+  expiresAt DateTime
+  revokedAt DateTime? // For Grace Period
+  replacedByToken String? // For Rotation History
+  createdAt DateTime @default(now())
+  ipAddress String?
+  userAgent String?
+  
+  @@map("refresh_tokens")
+}
+
+enum InvitationStatus {
+  PENDING
+  ACCEPTED
+  EXPIRED
+  REVOKED
+}
+
+model Invitation {
+  id              String           @id @default(uuid())
+  email           String
+  role            UserRole         @default(CLIENT)
+  token           String           @unique
+  status          InvitationStatus @default(PENDING)
+  expiresAt       DateTime?
+  createdAt       DateTime         @default(now())
+  acceptedAt      DateTime?
+  
+  // Drive folders to share on accept
+  driveFolderIds  String[]
+  
+  // Who sent the invitation
+  invitedById     String?
+  invitedBy       User?            @relation(fields: [invitedById], references: [id])
+  
+  @@map("invitations")
+}
+
+// ==========================================
+// 2. CHAT & COLLABORATION (Slack-like)
+// ==========================================
+
+model Channel {
+  id          String   @id @default(uuid())
+  name        String
+  description String?
+  isPrivate   Boolean  @default(false)
+  
+  projectId   String?  // Linked to a project?
+  project     Project? @relation(fields: [projectId], references: [id])
+  
+  members     ChannelMember[]
+  messages    ChatMessage[]
+  
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@map("chat_channels")
+}
+
+model ChannelMember {
+  id        String   @id @default(uuid())
+  role      String   @default("MEMBER") // ADMIN, MEMBER
+  
+  channelId String
+  channel   Channel  @relation(fields: [channelId], references: [id])
+  
+  userId    String
+  user      User     @relation(fields: [userId], references: [id])
+
+  joinedAt  DateTime @default(now())
+
+  @@map("chat_channel_members")
+}
+
+model ChatMessage {
+  id        String   @id @default(uuid())
+  content   String   @db.Text
+  
+  channelId String
+  channel   Channel  @relation(fields: [channelId], references: [id])
+  
+  senderId  String
+  sender    User     @relation(fields: [senderId], references: [id])
+  
+  // Attachments & Logic
+  attachments Json?    // Array of file URLs
+  isSystem    Boolean  @default(false) // "User X joined the channel"
+  
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@map("chat_messages")
+}
+
+// ==========================================
+// 3. INTEGRATIONS (Gmail, Calendar)
+// ==========================================
+
+model Integration {
+  id          String   @id @default(uuid())
+  provider    String   // "GOOGLE", "SLACK", "STRIPE"
+  accountId   String   // The external ID (e.g., email address)
+  
+  // Security: Encrypted Tokens
+  accessToken String   @db.Text
+  refreshToken String? @db.Text
+  expiresAt   DateTime?
+  
+  scopes      String[] // ["gmail.readonly", "calendar"]
+  
+  connectedBy String?  // If it belongs to a user (e.g. your Gmail)
+  
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@map("integrations")
+}
+
+// ==========================================
+// 4. CRM CORE (Clients & Projects)
+// ==========================================
+
+model Client {
+  id        String   @id @default(uuid())
+  name      String
+  company   String
+  email     String   @unique
+  status    String   @default("LEAD")
+  
+  projects    Project[]
+  invoices    Invoice[]
+  
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@map("clients")
+}
+
+model Project {
+  id          String        @id @default(uuid())
+  name        String
+  description String?
+  status      String        @default("PLANNING")
+  
+  // Relations
+  clientId    String
+  client      Client        @relation(fields: [clientId], references: [id])
+  managerId   String?
+  manager     User?         @relation("ProjectManager", fields: [managerId], references: [id])
+  
+  team        User[]        @relation("ProjectTeam")
+  
+  tasks       Task[]
+  channels    Channel[]
+  invoices    Invoice[]
+  timeLogs    TimeLog[]
+  assets      Asset[]
+
+  // RAG: Project Context
+  embedding   Unsupported("vector(1536)")? 
+
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+
+  @@map("projects")
+}
+
+// ==========================================
+// 5. CMS & ASSET GENERATION (AI Powered)
+// ==========================================
+
+model CmsContent {
+  id          String   @id @default(uuid())
+  slug        String   @unique
+  type        String   // "PORTFOLIO", "BLOG", "REPORT"
+  title       String
+  content     String   @db.Text
+  
+  // SEO & Metadata
+  metaTitle   String?
+  metaDesc    String?
+  tags        String[]
+  metadata    Json?    // Stores specific data like { year, url, role, services }
+  coverImage  String?  // Main image of the project
+  
+  // Publishing
+  status      String   @default("DRAFT") // DRAFT, PUBLISHED, ARCHIVED
+  publishedAt DateTime?
+  
+  // AI RAG
+  embedding   Unsupported("vector(1536)")?
+
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@map("cms_content")
+}
+
+// ==========================================
+// 6. OPS (Tasks, Finance) - Condensed
+// ==========================================
+
+model Task {
+  id          String   @id @default(uuid())
+  title       String
+  description String?  @db.Text
+  status      String   @default("TODO")
+  priority    String   @default("MEDIUM") // LOW, MEDIUM, HIGH, URGENT
+  projectId   String
+  project     Project  @relation(fields: [projectId], references: [id])
+  assigneeId  String?
+  assignee    User?    @relation(fields: [assigneeId], references: [id])
+  dueDate     DateTime?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@map("tasks")
+}
+
+model Invoice {
+  id          String   @id @default(uuid())
+  number      String   @unique
+  status      String   @default("DRAFT")
+  total       Float
+  clientId    String
+  client      Client   @relation(fields: [clientId], references: [id])
+  projectId   String?
+  project     Project? @relation(fields: [projectId], references: [id])
+  items       Json
+  createdAt   DateTime @default(now())
+
+  @@map("invoices")
+}
+
+model Supplier {
+  id           String   @id @default(uuid())
+  name         String
+  email        String?
+  taxId        String?
+  paymentTerms String?
+  currency     String   @default("USD")
+  bills        Bill[]
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  @@map("suppliers")
+}
+
+model Bill {
+  id         String   @id @default(uuid())
+  number     String   @unique
+  supplierId String
+  supplier   Supplier @relation(fields: [supplierId], references: [id])
+  status     String   @default("PENDING")
+  amount     Float
+  dueDate    DateTime
+  items      Json?
+  notes      String?
+  createdAt  DateTime @default(now())
+
+  @@map("bills")
+}
+
+model Asset {
+  id           String   @id @default(uuid())
+  name         String
+  url          String
+  driveId      String?
+  thumbnailUrl String?
+  type         String   // image, video, document, other
+  
+  status       String   @default("DRAFT")
+  uploadedBy   String?
+
+  projectId    String?
+  project      Project? @relation(fields: [projectId], references: [id])
+  
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  @@map("assets")
+}
+
+model TimeLog {
+  id              String   @id @default(uuid())
+  durationMinutes Int
+  projectId       String
+  project         Project  @relation(fields: [projectId], references: [id])
+  userId          String
+  user            User     @relation(fields: [userId], references: [id])
+  date            DateTime
+
+  @@map("time_logs")
+}
+
+model Comment {
+  id        String   @id @default(uuid())
+  content   String
+  userId    String
+  user      User     @relation(fields: [userId], references: [id])
+  entityId  String
+  entityType String
+  createdAt DateTime @default(now())
+
+  @@map("comments")
+}
+
+// ==========================================
+// 7. IRIS CRM - SALES & LEADS
+// ==========================================
+
+enum LeadStatus {
+  NEW
+  CONTACTED
+  QUALIFIED
+  PROPOSAL
+  NEGOTIATION
+  WON
+  LOST
+}
+
+model Lead {
+  id          String     @id @default(uuid())
+  name        String
+  email       String
+  company     String?
+  phone       String?
+  source      String?    // "WEBSITE", "REFERRAL", "COLD_CALL"
+  status      LeadStatus @default(NEW)
+  value       Float?     // Estimated deal value
+  notes       String?    @db.Text
+  
+  assignedToId String?
+  assignedTo   User?      @relation(fields: [assignedToId], references: [id])
+  
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+
+  @@map("leads")
+}
+
+// ==========================================
+// 8. IRIS CRM - NOTIFICATIONS
+// ==========================================
+
+model Notification {
+  id        String   @id @default(uuid())
+  title     String
+  message   String
+  type      String   @default("INFO") // INFO, WARNING, SUCCESS, ERROR
+  read      Boolean  @default(false)
+  
+  userId    String
+  user      User     @relation(fields: [userId], references: [id])
+  
+  entityId  String?  // Link to related entity
+  entityType String? // "PROJECT", "TASK", "INVOICE"
+  
+  createdAt DateTime @default(now())
+
+  @@map("notifications")
+}
+
+// ==========================================
+// 9. IRIS CRM - SUPPORT TICKETS
+// ==========================================
+
+enum TicketStatus {
+  OPEN
+  IN_PROGRESS
+  WAITING_RESPONSE
+  RESOLVED
+  CLOSED
+}
+
+enum TicketPriority {
+  LOW
+  MEDIUM
+  HIGH
+  URGENT
+}
+
+model Ticket {
+  id          String         @id @default(uuid())
+  subject     String
+  description String         @db.Text
+  status      TicketStatus   @default(OPEN)
+  priority    TicketPriority @default(MEDIUM)
+  
+  reporterId  String
+  reporter    User           @relation("TicketCreator", fields: [reporterId], references: [id])
+  
+  assignedToId String?
+  assignedTo   User?         @relation("TicketAssignee", fields: [assignedToId], references: [id])
+  
+  // Metadata
+  category    String?        // "BUG", "FEATURE", "SUPPORT"
+  attachments Json?
+  
+  createdAt   DateTime       @default(now())
+  updatedAt   DateTime       @updatedAt
+  resolvedAt  DateTime?
+
+  @@map("tickets")
+}
+
+// ==========================================
+// 10. IRIS CRM - SYSTEM SETTINGS
+// ==========================================
+
+model SystemSetting {
+  id        String   @id @default(uuid())
+  key       String   @unique
+  value     String   @db.Text
+  category  String   @default("general") // "general", "api_keys", "integrations"
+  
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("system_settings")
+}
+
+// ==========================================
+// 12. IRIS CRM - AUTOMATION RULES (Oracle)
+// ==========================================
+
+enum AutomationTrigger {
+  TASK_CREATED
+  TASK_COMPLETED
+  PROJECT_STATUS_CHANGED
+  INVOICE_OVERDUE
+  LEAD_STATUS_CHANGED
+  TIME_BASED
+}
+
+model AutomationRule {
+  id          String            @id @default(uuid())
+  name        String
+  description String?
+  enabled     Boolean           @default(true)
+  
+  trigger     AutomationTrigger
+  conditions  Json?             // Complex conditions
+  actions     Json              // Actions to execute
+  
+  createdBy   String
+  
+  lastRunAt   DateTime?
+  runCount    Int               @default(0)
+  
+  createdAt   DateTime          @default(now())
+  updatedAt   DateTime          @updatedAt
+
+  @@map("automation_rules")
+}
+
