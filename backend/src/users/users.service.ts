@@ -168,7 +168,14 @@ export class UsersService {
             this.prisma.user.count({ where: { role: 'CLIENT' } }),
         ]);
 
-        return { total, admins, workers, clients };
+        return {
+            total,
+            byRole: {
+                admins,
+                workers,
+                clients
+            }
+        };
     }
 
     async inviteUser(inviterId: string, data: { name: string; email: string; role?: string }) {

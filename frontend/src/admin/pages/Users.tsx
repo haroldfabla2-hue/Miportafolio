@@ -392,15 +392,15 @@ const UsersPage: React.FC = () => {
                 </div>
                 <div className="admin-card" style={{ textAlign: 'center' }}>
                     <p style={{ fontSize: '0.8rem', color: '#666', marginBottom: '0.25rem' }}>Admins</p>
-                    <p style={{ fontSize: '1.5rem', fontWeight: 700, color: 'var(--color-accent)' }}>{displayStats.byRole.admins}</p>
+                    <p style={{ fontSize: '1.5rem', fontWeight: 700, color: 'var(--color-accent)' }}>{displayStats.byRole?.admins || 0}</p>
                 </div>
                 <div className="admin-card" style={{ textAlign: 'center' }}>
                     <p style={{ fontSize: '0.8rem', color: '#666', marginBottom: '0.25rem' }}>Workers</p>
-                    <p style={{ fontSize: '1.5rem', fontWeight: 700, color: '#3b82f6' }}>{displayStats.byRole.workers}</p>
+                    <p style={{ fontSize: '1.5rem', fontWeight: 700, color: '#3b82f6' }}>{displayStats.byRole?.workers || 0}</p>
                 </div>
                 <div className="admin-card" style={{ textAlign: 'center' }}>
                     <p style={{ fontSize: '0.8rem', color: '#666', marginBottom: '0.25rem' }}>Clients</p>
-                    <p style={{ fontSize: '1.5rem', fontWeight: 700, color: '#888' }}>{displayStats.byRole.clients}</p>
+                    <p style={{ fontSize: '1.5rem', fontWeight: 700, color: '#888' }}>{displayStats.byRole?.clients || 0}</p>
                 </div>
             </div>
 
