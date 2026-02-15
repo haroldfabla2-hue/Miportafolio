@@ -21,7 +21,9 @@ import { PermissionsModule } from './permissions/permissions.module';
 import { WorkerRolesModule } from './worker-roles/worker-roles.module';
 import { AuditLogsModule } from './audit-logs/audit-logs.module';
 import { HealthModule } from './health/health.module';
+import { OracleModule } from './oracle/oracle.module';
 import { RequestLoggerMiddleware } from './middleware/request-logger.middleware';
+import { EventsModule } from './events/events.module';
 
 import { ThrottlerModule, ThrottlerGuard } from '@nestjs/throttler';
 
@@ -52,6 +54,8 @@ import { ThrottlerModule, ThrottlerGuard } from '@nestjs/throttler';
         WorkerRolesModule,
         AuditLogsModule,
         HealthModule,
+        OracleModule,
+        EventsModule,
     ],
     controllers: [],
     providers: [

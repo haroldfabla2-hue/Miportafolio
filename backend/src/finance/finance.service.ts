@@ -266,7 +266,7 @@ export class FinanceService {
                 number: data.number,
                 supplierId: data.supplierId,
                 status: data.status || 'PENDING',
-                amount: data.amount,
+                total: data.amount, // Mapped from input amount
                 dueDate: new Date(data.dueDate),
                 items: data.items,
                 notes: data.notes,
@@ -278,7 +278,7 @@ export class FinanceService {
     async updateBill(id: string, data: any) {
         const updateData: any = {};
         if (data.status) updateData.status = data.status;
-        if (data.amount !== undefined) updateData.amount = data.amount;
+        if (data.amount !== undefined) updateData.total = data.amount;
         if (data.dueDate) updateData.dueDate = new Date(data.dueDate);
         if (data.items) updateData.items = data.items;
         if (data.notes !== undefined) updateData.notes = data.notes;
@@ -313,11 +313,11 @@ export class FinanceService {
                 collected: paidInvoices.reduce((sum, i) => sum + i.total, 0),
             },
             payables: {
-                totalBilled: bills.reduce((sum, b) => sum + b.amount, 0),
-                pending: pendingBills.reduce((sum, b) => sum + b.amount, 0),
+                totalBilled: bills.reduce((sum, b) => sum + b.total, 0),
+                pending: pendingBills.reduce((sum, b) => sum + b.total, 0),
             },
             netPosition: paidInvoices.reduce((sum, i) => sum + i.total, 0) -
-                bills.filter(b => b.status === 'PAID').reduce((sum, b) => sum + b.amount, 0),
+                bills.filter(b => b.status === 'PAID').reduce((sum, b) => sum + b.total, 0),
         };
     }
 }

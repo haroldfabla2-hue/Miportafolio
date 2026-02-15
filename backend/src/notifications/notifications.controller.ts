@@ -22,7 +22,12 @@ export class NotificationsController {
 
     @Put('read-all')
     markAllAsRead(@Req() req: any) {
-        return this.notificationsService.markAllAsRead(req.user);
+        return this.notificationsService.markAllAsRead(req.user.id);
+    }
+
+    @Delete()
+    deleteAll(@Req() req: any) {
+        return this.notificationsService.deleteAll(req.user.id);
     }
 
     // Internal use or admin only ideally, but exposing for now to test

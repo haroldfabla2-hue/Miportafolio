@@ -38,6 +38,34 @@ export class ToolsService {
             description: 'Create a project. Args: name (string), description? (string), clientId? (string)',
             execute: async (args: any, user: any) => this.projectsService.create({ ...args, managerId: user.id })
         },
+        'search_projects': {
+            description: 'Search projects by name. Args: query (string)',
+            execute: async (args: any, user: any) => {
+                const projects = await this.projectsService.findAll(user);
+                return projects.filter(p => p.name.toLowerCase().includes(args.query.toLowerCase()));
+            }
+        },
+        'get_project_details': {
+            description: 'Get full details of a specific project. Args: projectId (string)',
+            execute: async (args: any, user: any) => this.projectsService.findOne(args.projectId)
+        },
+        'list_clients': {
+            description: 'List or search clients. Args: query? (string)',
+            execute: async (args: any, user: any) => {
+                const clients = await this.clientsService.findAll(user);
+                if (args.query) {
+                    return clients.filter(c =>
+                        c.name.toLowerCase().includes(args.query.toLowerCase()) ||
+                        c.company?.toLowerCase().includes(args.query.toLowerCase())
+                    );
+                }
+                return clients.slice(0, 10);
+            }
+        },
+        'get_client_history': {
+            description: 'Get history and details for a client. Args: clientId (string)',
+            execute: async (args: any, user: any) => this.clientsService.findOne(args.clientId)
+        },
         'create_client': {
             description: 'Create a client. Args: name (string), company? (string), email? (string)',
             execute: async (args: any, user: any) => this.clientsService.create({ ...args, ownerId: user.id })
