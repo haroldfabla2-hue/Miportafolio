@@ -65,9 +65,17 @@ export class UsersService {
                 reputationScore: true,
                 createdAt: true,
                 googleConnected: true,
+                googleRefreshToken: true,
+                googleAccessToken: true,
+                googleScopes: true,
+                googleTokenExpiry: true,
                 assignedDriveFolderId: true,
                 assignedDriveFolderName: true,
                 twoFactorEnabled: true,
+                onboardingCompleted: true,
+                phone: true,
+                jobTitle: true,
+                profileDetails: true,
             },
         });
         if (!user) throw new NotFoundException('User not found');
@@ -100,6 +108,10 @@ export class UsersService {
                 createdAt: true,
                 assignedDriveFolderId: true,
                 assignedDriveFolderName: true,
+                onboardingCompleted: true,
+                phone: true,
+                jobTitle: true,
+                profileDetails: true,
             },
         });
     }
@@ -133,6 +145,10 @@ export class UsersService {
                 googleConnected: true,
                 assignedDriveFolderId: true,
                 assignedDriveFolderName: true,
+                onboardingCompleted: true,
+                phone: true,
+                jobTitle: true,
+                profileDetails: true,
             },
         });
     }

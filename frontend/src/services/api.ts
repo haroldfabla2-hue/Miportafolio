@@ -114,11 +114,6 @@ apiInstance.interceptors.response.use(
     }
 );
 
-// Generic fetch wrapper for legacy support (optional, can be removed if specific endpoints are updated)
-async function fetchAPI<T>(endpoint: string): Promise<T> {
-    const response = await apiInstance.get(endpoint);
-    return response.data;
-}
 
 // CMS Content types matching the backend schema
 export interface CmsContent {

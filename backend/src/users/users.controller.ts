@@ -37,6 +37,11 @@ export class UsersController {
         return this.usersService.update(id, data);
     }
 
+    @Post('onboarding/complete')
+    completeOnboarding(@Req() req: any, @Body() data: { phone?: string; jobTitle?: string; profileDetails?: any }) {
+        return this.usersService.completeOnboarding(req.user.id, data);
+    }
+
     @Delete(':id')
     remove(@Param('id') id: string) {
         return this.usersService.remove(id);

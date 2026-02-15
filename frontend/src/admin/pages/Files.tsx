@@ -120,9 +120,9 @@ const Breadcrumb: React.FC<{ path: { id: string; name: string }[]; onNavigate: (
 
 // Main Files Page
 const FilesPage: React.FC = () => {
-    const [files, setFiles] = useState<FileItem[]>([]);
-    const [loading, setLoading] = useState(false);
-    const [currentFolder, setCurrentFolder] = useState('root');
+    const [files, setFiles] = useState<FileItem[]>([]); void setFiles;
+    const [loading, setLoading] = useState(false); void loading; void setLoading;
+    const [currentFolder, setCurrentFolder] = useState('root'); void currentFolder;
     const [path, setPath] = useState([{ id: 'root', name: 'My Drive' }]);
     const [viewMode, setViewMode] = useState<'list' | 'grid'>('list');
 

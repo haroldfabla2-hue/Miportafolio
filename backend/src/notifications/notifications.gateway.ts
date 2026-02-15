@@ -8,7 +8,7 @@ import {
     OnGatewayConnection,
     OnGatewayDisconnect,
 } from '@nestjs/websockets';
-import { Logger } from '@nestjs/common';
+import { Logger, Inject, forwardRef } from '@nestjs/common';
 import { Server, Socket } from 'socket.io';
 import { JwtService } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
@@ -33,6 +33,7 @@ export class NotificationsGateway
     constructor(
         private jwtService: JwtService,
         private configService: ConfigService,
+        @Inject(forwardRef(() => NotificationsService))
         private notificationsService: NotificationsService,
     ) { }
 

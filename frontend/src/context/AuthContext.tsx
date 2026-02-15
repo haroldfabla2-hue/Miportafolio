@@ -40,7 +40,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     const [permissions, setPermissions] = useState<string[]>([]);
     const [token, setToken] = useState<string | null>(localStorage.getItem('iris_token'));
     // Store refresh token in state, initialize from storage
-    const [refreshToken, setRefreshToken] = useState<string | null>(localStorage.getItem('iris_refresh_token'));
+    const [refreshToken, setRefreshToken] = useState<string | null>(localStorage.getItem('iris_refresh_token')); void refreshToken;
     const [isLoading, setIsLoading] = useState(true);
 
     // Initial session check

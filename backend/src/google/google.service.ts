@@ -1,4 +1,4 @@
-import { Injectable, UnauthorizedException } from '@nestjs/common';
+import { Injectable, Inject, forwardRef, UnauthorizedException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { google } from 'googleapis';
 import { UsersService } from '../users/users.service';
@@ -8,19 +8,23 @@ import { OAuth2Client } from 'google-auth-library';
 export class GoogleService {
     constructor(
         private readonly configService: ConfigService,
+        @Inject(forwardRef(() => UsersService))
         private readonly usersService: UsersService,
     ) { }
 
-    private getOAuth2Client(): OAuth2Client {
+    private getOAuth2Client(redirectUri?: string): OAuth2Client {
+        const resolvedRedirectUri = redirectUri || this.configService.get('GOOGLE_CALLBACK_URL') || 'http://localhost:5173/admin/settings';
+        console.log('[GoogleService] Creating OAuth2Client with redirectUri:', resolvedRedirectUri);
+
         return new google.auth.OAuth2(
             this.configService.get('GOOGLE_CLIENT_ID'),
             this.configService.get('GOOGLE_CLIENT_SECRET'),
-            this.configService.get('GOOGLE_CALLBACK_URL') || 'http://localhost:5173/admin/settings' // Frontend redirect
+            resolvedRedirectUri
         );
     }
 
-    public async getAuthUrl(): Promise<string> {
-        const client = this.getOAuth2Client();
+    public async getAuthUrl(redirectUri?: string): Promise<string> {
+        const client = this.getOAuth2Client(redirectUri);
         return client.generateAuthUrl({
             access_type: 'offline',
             scope: [
@@ -34,8 +38,8 @@ export class GoogleService {
         });
     }
 
-    public async handleAuthCallback(userId: string, code: string): Promise<void> {
-        const client = this.getOAuth2Client();
+    public async handleAuthCallback(userId: string, code: string, redirectUri?: string): Promise<void> {
+        const client = this.getOAuth2Client(redirectUri);
         const { tokens } = await client.getToken(code);
 
         await this.usersService.update(userId, {

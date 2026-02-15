@@ -43,8 +43,7 @@ export class ProjectsService {
         return projects.map((p) => {
             const spent = p.timeLogs.reduce((acc, log) => {
                 const hours = log.durationMinutes / 60;
-                // @ts-ignore - hourlyRate might be missing on user type depending on schema sync
-                const rate = log.user.hourlyRate || 0;
+                const rate = (log.user as any).hourlyRate || 0;
                 return acc + hours * rate;
             }, 0);
 
@@ -69,8 +68,7 @@ export class ProjectsService {
 
         const spent = project.timeLogs.reduce((acc, log) => {
             const hours = log.durationMinutes / 60;
-            // @ts-ignore
-            const rate = log.user.hourlyRate || 0;
+            const rate = (log.user as any).hourlyRate || 0;
             return acc + hours * rate;
         }, 0);
 

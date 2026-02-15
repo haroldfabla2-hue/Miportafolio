@@ -17,7 +17,9 @@ const OnboardingPage: React.FC = () => {
     // Data Collection State
     const [formData, setFormData] = useState({
         phone: '',
-        jobTitle: '',
+        jobTitle: 'Full Stack Developer', // Pre-fill
+        githubUrl: 'https://github.com/haroldfabla2-hue', // Pre-fill
+        linkedinUrl: 'https://www.linkedin.com/in/alberto-farah-blair-a7b1a45a/', // Pre-fill
         // Client specific
         companyName: '',
         industry: '',
@@ -40,10 +42,11 @@ const OnboardingPage: React.FC = () => {
 
         // Check for Google OAuth callback
         const params = new URLSearchParams(window.location.search);
-        const googleCallback = params.get('google');
+        // Simplified check: just look for 'code'. 
+        // We can check 'scope' or other params to be sure it's Google, but 'code' is the primary signal.
         const code = params.get('code');
 
-        if (googleCallback === 'callback' && code) {
+        if (code) {
             handleGoogleCallback(code);
             window.history.replaceState({}, '', window.location.pathname);
         } else {
@@ -67,10 +70,13 @@ const OnboardingPage: React.FC = () => {
     const handleGoogleCallback = async (code: string) => {
         setLoading(true);
         try {
+            // Must match the URI used in handleConnectGoogle EXACTLY
+            // Removed query param to simplify matching
+            const redirectUri = window.location.origin + window.location.pathname;
             const response = await authFetch('/api/google/auth/callback', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ code }),
+                body: JSON.stringify({ code, redirectUri }),
             });
             if (response.ok) {
                 await fetchGoogleStatus();
@@ -86,7 +92,11 @@ const OnboardingPage: React.FC = () => {
     const handleConnectGoogle = async () => {
         setLoading(true);
         try {
-            const response = await authFetch('/api/google/auth/url');
+            // Use current path as redirect URI (without query params)
+            const redirectUri = window.location.origin + window.location.pathname;
+
+            // We pass the clean URI to backend
+            const response = await authFetch(`/api/google/auth/url?redirectUri=${encodeURIComponent(redirectUri)}`);
             if (response.ok) {
                 const { url } = await response.json();
                 window.location.href = url;
@@ -104,17 +114,22 @@ const OnboardingPage: React.FC = () => {
             const payload: any = {
                 phone: formData.phone,
                 jobTitle: formData.jobTitle,
-                profileDetails: {}
+                profileDetails: {
+                    githubUrl: formData.githubUrl,
+                    linkedinUrl: formData.linkedinUrl
+                }
             };
 
             if (isClient) {
                 payload.profileDetails = {
+                    ...payload.profileDetails,
                     companyName: formData.companyName,
                     industry: formData.industry,
                     billingAddress: formData.billingAddress
                 };
             } else {
                 payload.profileDetails = {
+                    ...payload.profileDetails,
                     address: formData.address,
                     emergencyContact: {
                         name: formData.emergencyContactName,
@@ -229,7 +244,16 @@ const OnboardingPage: React.FC = () => {
                 </button>
             )}
             {!googleStatus.connected && (
-                <button onClick={nextStep} className="w-full text-white/30 text-xs hover:text-white transition-colors">
+                <div className="mt-4 p-3 bg-red-500/10 border border-red-500/20 rounded-lg">
+                    <p className="text-xs text-red-200 mb-1 font-bold">⚠️ Google Console Configuration:</p>
+                    <p className="text-xs text-red-200/70 mb-2">Add this EXACT URL to "Authorized redirect URIs":</p>
+                    <code className="block bg-black/50 p-2 rounded text-[10px] text-white break-all select-all font-mono">
+                        {window.location.origin + window.location.pathname}
+                    </code>
+                </div>
+            )}
+            {!googleStatus.connected && (
+                <button onClick={nextStep} className="w-full text-white/30 text-xs hover:text-white transition-colors mt-4">
                     Skip for now (Limited Functionality)
                 </button>
             )}
@@ -244,7 +268,16 @@ const OnboardingPage: React.FC = () => {
                     <input
                         type="text"
                         readOnly
-                        value={user?.name || ''}
+                        value={user?.name || 'Alberto Farah Blair'}
+                        className="w-full h-11 px-4 bg-black/50 border border-white/10 rounded-lg text-white opacity-70 cursor-not-allowed"
+                    />
+                </div>
+                <div className="space-y-2">
+                    <label className="text-sm font-medium text-white/70">Email</label>
+                    <input
+                        type="text"
+                        readOnly
+                        value={user?.email || 'alberto.farah.b@gmail.com'}
                         className="w-full h-11 px-4 bg-black/50 border border-white/10 rounded-lg text-white opacity-70 cursor-not-allowed"
                     />
                 </div>
@@ -271,6 +304,30 @@ const OnboardingPage: React.FC = () => {
                             value={formData.jobTitle}
                             onChange={e => setFormData({ ...formData, jobTitle: e.target.value })}
                             className="w-full h-11 pl-10 pr-4 bg-black/50 border border-white/10 rounded-lg text-white focus:outline-none focus:border-[#A3FF00]"
+                        />
+                    </div>
+                </div>
+
+                {/* Social Links */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div className="space-y-2">
+                        <label className="text-sm font-medium text-white/70">GitHub URL</label>
+                        <input
+                            type="text"
+                            placeholder="https://github.com/..."
+                            value={formData.githubUrl}
+                            onChange={e => setFormData({ ...formData, githubUrl: e.target.value })}
+                            className="w-full h-11 px-4 bg-black/50 border border-white/10 rounded-lg text-white focus:outline-none focus:border-[#A3FF00] text-sm"
+                        />
+                    </div>
+                    <div className="space-y-2">
+                        <label className="text-sm font-medium text-white/70">LinkedIn URL</label>
+                        <input
+                            type="text"
+                            placeholder="https://linkedin.com/in/..."
+                            value={formData.linkedinUrl}
+                            onChange={e => setFormData({ ...formData, linkedinUrl: e.target.value })}
+                            className="w-full h-11 px-4 bg-black/50 border border-white/10 rounded-lg text-white focus:outline-none focus:border-[#A3FF00] text-sm"
                         />
                     </div>
                 </div>

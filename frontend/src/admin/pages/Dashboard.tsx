@@ -164,6 +164,7 @@ const Dashboard: React.FC = () => {
                 api.get('/finance').catch(() => ({ data: { totalRevenue: 0 } })),
                 api.get('/finance/chart').catch(() => ({ data: [] })),
             ]);
+            void usersRes;
 
             const projectsData = projectsRes.data || [];
             const tasks = tasksRes.data || [];

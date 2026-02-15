@@ -34,6 +34,11 @@ services:
       - FRONTEND_URL=${FRONTEND_URL}
       - REDIS_HOST=redis
       - REDIS_PORT=6379
+      - GEMINI_API_KEY=${GEMINI_API_KEY}
+      - GEMINI_MODEL=${GEMINI_MODEL:-gemini-2.0-flash}
+      - ZHIPU_API_KEY=${ZHIPU_API_KEY}
+      - DEEPSEEK_API_KEY=${DEEPSEEK_API_KEY}
+      - LOG_FORMAT=json
     depends_on:
       postgres:
         condition: service_healthy

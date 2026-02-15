@@ -5,6 +5,7 @@ import { ConfigService } from '@nestjs/config';
 import { AllExceptionsFilter } from './all-exceptions.filter';
 import { RedisIoAdapter } from './adapters/redis-io.adapter';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
+import helmet from 'helmet';
 
 async function bootstrap() {
     const app = await NestFactory.create(AppModule);
@@ -40,6 +41,9 @@ async function bootstrap() {
     // Global Exception Filter
     app.useGlobalFilters(new AllExceptionsFilter(app.get(HttpAdapterHost)));
 
+    // Enable Helmet for security headers
+    app.use(helmet());
+
     // Enable CORS with production-ready configuration
     const frontendUrl = configService.get('FRONTEND_URL') || 'http://localhost:5173';
     app.enableCors({
@@ -54,10 +58,17 @@ async function bootstrap() {
     // Global Prefix
     app.setGlobalPrefix('api');
 
-    // WebSocket Adapter (Redis)
-    const redisIoAdapter = new RedisIoAdapter(app);
-    await redisIoAdapter.connectToRedis();
-    app.useWebSocketAdapter(redisIoAdapter);
+    // WebSocket Adapter (Redis) - Graceful fallback if Redis unavailable
+    try {
+        const redisIoAdapter = new RedisIoAdapter(app);
+        await redisIoAdapter.connectToRedis();
+        app.useWebSocketAdapter(redisIoAdapter);
+        console.log('✅ Redis WebSocket adapter connected successfully');
+    } catch (error) {
+        console.warn(`⚠️  Redis connection failed: ${error.message}`);
+        console.warn('   WebSockets will use default in-memory adapter (single-instance only).');
+        console.warn('   Install and start Redis for multi-instance WebSocket support.');
+    }
 
     // Swagger Configuration
     const swaggerConfig = new DocumentBuilder()

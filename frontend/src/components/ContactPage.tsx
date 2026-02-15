@@ -1,22 +1,37 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
+import axios from 'axios';
+
+const API_BASE = import.meta.env.VITE_API_URL || '';
 
 const ContactPage: React.FC = () => {
     const [formData, setFormData] = useState({
         name: '',
         email: '',
+        company: '',
         message: ''
     });
+    const [submitting, setSubmitting] = useState(false);
+    const [submitted, setSubmitted] = useState(false);
+    const [error, setError] = useState('');
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
         setFormData({ ...formData, [e.target.name]: e.target.value });
     };
 
-    const handleSubmit = (e: React.FormEvent) => {
+    const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-        // Here you would typically handle form submission
-        alert("Thanks for reaching out! I'll get back to you soon.");
-        setFormData({ name: '', email: '', message: '' });
+        setSubmitting(true);
+        setError('');
+        try {
+            await axios.post(`${API_BASE}/api/leads/contact`, formData);
+            setSubmitted(true);
+            setFormData({ name: '', email: '', company: '', message: '' });
+        } catch (err: any) {
+            setError(err.response?.data?.message || 'Something went wrong. Please try again.');
+        } finally {
+            setSubmitting(false);
+        }
     };
 
     return (
@@ -96,92 +111,158 @@ const ContactPage: React.FC = () => {
                         animate={{ opacity: 1, x: 0 }}
                         transition={{ duration: 0.8, delay: 0.6 }}
                     >
-                        <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '2rem' }}>
-                            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
-                                <label htmlFor="name" style={{ fontSize: '0.9rem', color: '#666', fontWeight: 700, textTransform: 'uppercase' }}>Name</label>
-                                <input
-                                    type="text"
-                                    id="name"
-                                    name="name"
-                                    value={formData.name}
-                                    onChange={handleChange}
-                                    required
-                                    style={{
-                                        backgroundColor: 'transparent',
-                                        border: 'none',
-                                        borderBottom: '1px solid #333',
-                                        padding: '1rem 0',
-                                        color: '#fff',
-                                        fontSize: '1.2rem',
-                                        outline: 'none'
-                                    }}
-                                    placeholder="What's your name?"
-                                />
-                            </div>
-
-                            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
-                                <label htmlFor="email" style={{ fontSize: '0.9rem', color: '#666', fontWeight: 700, textTransform: 'uppercase' }}>Email</label>
-                                <input
-                                    type="email"
-                                    id="email"
-                                    name="email"
-                                    value={formData.email}
-                                    onChange={handleChange}
-                                    required
-                                    style={{
-                                        backgroundColor: 'transparent',
-                                        border: 'none',
-                                        borderBottom: '1px solid #333',
-                                        padding: '1rem 0',
-                                        color: '#fff',
-                                        fontSize: '1.2rem',
-                                        outline: 'none'
-                                    }}
-                                    placeholder="Your email address"
-                                />
-                            </div>
-
-                            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
-                                <label htmlFor="message" style={{ fontSize: '0.9rem', color: '#666', fontWeight: 700, textTransform: 'uppercase' }}>Message</label>
-                                <textarea
-                                    id="message"
-                                    name="message"
-                                    value={formData.message}
-                                    onChange={handleChange}
-                                    required
-                                    rows={4}
-                                    style={{
-                                        backgroundColor: 'transparent',
-                                        border: 'none',
-                                        borderBottom: '1px solid #333',
-                                        padding: '1rem 0',
-                                        color: '#fff',
-                                        fontSize: '1.2rem',
-                                        outline: 'none',
-                                        resize: 'vertical'
-                                    }}
-                                    placeholder="Tell me about your project..."
-                                />
-                            </div>
-
-                            <button
-                                type="submit"
+                        {submitted ? (
+                            <motion.div
+                                initial={{ opacity: 0, scale: 0.9 }}
+                                animate={{ opacity: 1, scale: 1 }}
                                 style={{
-                                    marginTop: '2rem',
-                                    padding: '1.2rem 3rem',
-                                    backgroundColor: '#fff',
-                                    color: '#000',
-                                    border: 'none',
-                                    borderRadius: '50px',
-                                    fontSize: '1rem',
-                                    fontWeight: 800,
-                                    cursor: 'pointer',
-                                    width: 'fit-content'
+                                    textAlign: 'center',
+                                    padding: '4rem 2rem',
+                                    backgroundColor: 'rgba(39, 201, 63, 0.05)',
+                                    borderRadius: '16px',
+                                    border: '1px solid rgba(39, 201, 63, 0.2)'
                                 }}
                             >
-                                Send Message
-                            </button>
-                        </form>
+                                <p style={{ fontSize: '3rem', marginBottom: '1rem' }}>✓</p>
+                                <h3 style={{ fontSize: '1.5rem', fontWeight: 700, marginBottom: '0.5rem' }}>Message Sent!</h3>
+                                <p style={{ color: '#888' }}>I'll get back to you as soon as possible.</p>
+                                <button
+                                    onClick={() => setSubmitted(false)}
+                                    style={{
+                                        marginTop: '1.5rem',
+                                        padding: '0.8rem 2rem',
+                                        backgroundColor: 'transparent',
+                                        border: '1px solid #333',
+                                        borderRadius: '30px',
+                                        color: '#fff',
+                                        cursor: 'pointer',
+                                        fontSize: '0.9rem'
+                                    }}
+                                >
+                                    Send Another Message
+                                </button>
+                            </motion.div>
+                        ) : (
+                            <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '2rem' }}>
+                                <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+                                    <label htmlFor="name" style={{ fontSize: '0.9rem', color: '#666', fontWeight: 700, textTransform: 'uppercase' }}>Name</label>
+                                    <input
+                                        type="text"
+                                        id="name"
+                                        name="name"
+                                        value={formData.name}
+                                        onChange={handleChange}
+                                        required
+                                        style={{
+                                            backgroundColor: 'transparent',
+                                            border: 'none',
+                                            borderBottom: '1px solid #333',
+                                            padding: '1rem 0',
+                                            color: '#fff',
+                                            fontSize: '1.2rem',
+                                            outline: 'none'
+                                        }}
+                                        placeholder="What's your name?"
+                                    />
+                                </div>
+
+                                <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+                                    <label htmlFor="email" style={{ fontSize: '0.9rem', color: '#666', fontWeight: 700, textTransform: 'uppercase' }}>Email</label>
+                                    <input
+                                        type="email"
+                                        id="email"
+                                        name="email"
+                                        value={formData.email}
+                                        onChange={handleChange}
+                                        required
+                                        style={{
+                                            backgroundColor: 'transparent',
+                                            border: 'none',
+                                            borderBottom: '1px solid #333',
+                                            padding: '1rem 0',
+                                            color: '#fff',
+                                            fontSize: '1.2rem',
+                                            outline: 'none'
+                                        }}
+                                        placeholder="Your email address"
+                                    />
+                                </div>
+
+                                <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+                                    <label htmlFor="company" style={{ fontSize: '0.9rem', color: '#666', fontWeight: 700, textTransform: 'uppercase' }}>Company <span style={{ color: '#444', fontWeight: 400 }}>(Optional)</span></label>
+                                    <input
+                                        type="text"
+                                        id="company"
+                                        name="company"
+                                        value={formData.company}
+                                        onChange={handleChange}
+                                        style={{
+                                            backgroundColor: 'transparent',
+                                            border: 'none',
+                                            borderBottom: '1px solid #333',
+                                            padding: '1rem 0',
+                                            color: '#fff',
+                                            fontSize: '1.2rem',
+                                            outline: 'none'
+                                        }}
+                                        placeholder="Your company name"
+                                    />
+                                </div>
+
+                                <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+                                    <label htmlFor="message" style={{ fontSize: '0.9rem', color: '#666', fontWeight: 700, textTransform: 'uppercase' }}>Message</label>
+                                    <textarea
+                                        id="message"
+                                        name="message"
+                                        value={formData.message}
+                                        onChange={handleChange}
+                                        required
+                                        rows={4}
+                                        style={{
+                                            backgroundColor: 'transparent',
+                                            border: 'none',
+                                            borderBottom: '1px solid #333',
+                                            padding: '1rem 0',
+                                            color: '#fff',
+                                            fontSize: '1.2rem',
+                                            outline: 'none',
+                                            resize: 'vertical'
+                                        }}
+                                        placeholder="Tell me about your project..."
+                                    />
+                                </div>
+
+                                {error && (
+                                    <motion.p
+                                        initial={{ opacity: 0 }}
+                                        animate={{ opacity: 1 }}
+                                        style={{ color: '#ff5f56', fontSize: '0.9rem' }}
+                                    >
+                                        {error}
+                                    </motion.p>
+                                )}
+
+                                <button
+                                    type="submit"
+                                    disabled={submitting}
+                                    style={{
+                                        marginTop: '2rem',
+                                        padding: '1.2rem 3rem',
+                                        backgroundColor: submitting ? '#555' : '#fff',
+                                        color: '#000',
+                                        border: 'none',
+                                        borderRadius: '50px',
+                                        fontSize: '1rem',
+                                        fontWeight: 800,
+                                        cursor: submitting ? 'wait' : 'pointer',
+                                        width: 'fit-content',
+                                        transition: 'all 0.3s'
+                                    }}
+                                >
+                                    {submitting ? 'Sending...' : 'Send Message'}
+                                </button>
+                            </form>
+                        )}
                     </motion.div>
                 </div>
             </section>

@@ -26,7 +26,11 @@ Al inicio de cada sesión, o cuando se te indique cargar el contexto del proyect
     *   Replicación visual exacta.
     *   Animaciones sincronizadas con scroll.
     *   Futura integración de Agente IA "omnipotente".
-*   **Directiva de Estilo:** Premium, moderno, usar animaciones ricas.
+*   **Repositorio:** [Miportafolio](https://github.com/haroldfabla2-hue/Miportafolio)
+*   **Hitos Recientes:**
+    *   Backend Hardening: Endpoints de CRM completados (`/crm/stats`, `/crm/projects`).
+    *   Iris Agent 2.0: Implementado con `ToolsService` y `GeminiService` (Agentic AI).
+    *   Infraestructura: Repositorio GitHub creado y código sincronizado.
 
 ---
 

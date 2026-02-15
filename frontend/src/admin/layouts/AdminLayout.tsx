@@ -157,6 +157,11 @@ const AdminLayout: React.FC = () => {
         return <Navigate to="/admin/onboarding" replace />;
     }
 
+    // If user HAS completed onboarding but tries to access it again, redirect to dashboard.
+    if (user.onboardingCompleted && location.pathname === '/admin/onboarding') {
+        return <Navigate to="/admin" replace />;
+    }
+
     const isActive = (path: string) => {
         if (path === '/admin') {
             return location.pathname === '/admin';

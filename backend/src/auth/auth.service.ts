@@ -87,6 +87,10 @@ export class AuthService {
                     role: user.role,
                     avatar: user.avatar,
                     twoFactorEnabled: user.twoFactorEnabled,
+                    onboardingCompleted: user.onboardingCompleted,
+                    phone: user.phone,
+                    jobTitle: user.jobTitle,
+                    assignedDriveFolderName: user.assignedDriveFolderName,
                     permissions: permissions
                 },
             };
@@ -134,6 +138,10 @@ export class AuthService {
                     role: user.role,
                     avatar: user.avatar,
                     twoFactorEnabled: user.twoFactorEnabled,
+                    onboardingCompleted: user.onboardingCompleted,
+                    phone: user.phone,
+                    jobTitle: user.jobTitle,
+                    assignedDriveFolderName: user.assignedDriveFolderName,
                     permissions: permissions
                 },
             };

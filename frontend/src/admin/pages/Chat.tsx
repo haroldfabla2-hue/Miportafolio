@@ -171,7 +171,7 @@ const ChatPage: React.FC = () => {
     const [messages, setMessages] = useState<Message[]>([]);
     const [activeChannel, setActiveChannel] = useState<string | null>(null);
     const [newMessage, setNewMessage] = useState('');
-    const [loading, setLoading] = useState(true);
+    const [loading, setLoading] = useState(true); void loading;
     const [typingUsers, setTypingUsers] = useState<string[]>([]);
     const [onlineUsers, setOnlineUsers] = useState<string[]>([]);
     const [isConnected, setIsConnected] = useState(false);

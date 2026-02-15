@@ -46,6 +46,7 @@ const ContentEditor: React.FC = () => {
     const [error, setError] = useState<string | null>(null);
     const [tagInput, setTagInput] = useState('');
     const [serviceInput, setServiceInput] = useState('');
+    const [previewOpen, setPreviewOpen] = useState(false);
 
     // Load content if editing
     useEffect(() => {
@@ -197,6 +198,13 @@ const ContentEditor: React.FC = () => {
                     </h1>
                 </div>
                 <div style={{ display: 'flex', gap: '0.75rem' }}>
+                    <button
+                        className="admin-btn admin-btn-ghost"
+                        onClick={() => setPreviewOpen(true)}
+                        disabled={!formData.title}
+                    >
+                        👁️ Preview
+                    </button>
                     <button
                         className="admin-btn admin-btn-secondary"
                         onClick={() => handleSave(false)}
@@ -580,8 +588,82 @@ const ContentEditor: React.FC = () => {
                     )}
                 </div>
             </div>
+
+            {/* Preview Modal */}
+            {previewOpen && (
+                <div style={{
+                    position: 'fixed', top: 0, left: 0, right: 0, bottom: 0,
+                    background: 'rgba(0,0,0,0.85)', zIndex: 9999,
+                    overflow: 'auto', padding: '2rem'
+                }} onClick={() => setPreviewOpen(false)}>
+                    <div style={{
+                        maxWidth: '800px', margin: '0 auto',
+                        background: '#111', borderRadius: '16px',
+                        border: '1px solid #222', overflow: 'hidden'
+                    }} onClick={(e) => e.stopPropagation()}>
+                        {/* Preview Header */}
+                        <div style={{
+                            display: 'flex', justifyContent: 'space-between', alignItems: 'center',
+                            padding: '1rem 1.5rem', borderBottom: '1px solid #222'
+                        }}>
+                            <span style={{ color: '#888', fontSize: '0.85rem' }}>📄 Content Preview</span>
+                            <button
+                                onClick={() => setPreviewOpen(false)}
+                                style={{ background: 'none', border: 'none', color: '#888', cursor: 'pointer', fontSize: '1.25rem' }}
+                            >✕</button>
+                        </div>
+
+                        {/* SEO Preview Card */}
+                        <div style={{ padding: '1.5rem', borderBottom: '1px solid #222' }}>
+                            <div style={{ fontSize: '0.7rem', color: '#888', marginBottom: '0.5rem', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Google Search Preview</div>
+                            <div style={{ background: '#1a1a1a', borderRadius: '8px', padding: '1rem' }}>
+                                <div style={{ color: '#8ab4f8', fontSize: '1.1rem', marginBottom: '0.25rem', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                                    {formData.metaTitle || formData.title || 'Page Title'}
+                                </div>
+                                <div style={{ color: '#bdc1c6', fontSize: '0.75rem', marginBottom: '0.25rem' }}>
+                                    haroldfabla.com/{formData.type === 'BLOG' ? 'blog' : formData.type === 'PORTFOLIO' ? 'projects' : 'page'}/{formData.slug || 'slug'}
+                                </div>
+                                <div style={{ color: '#969ba1', fontSize: '0.8rem', lineHeight: 1.4 }}>
+                                    {formData.metaDesc || formData.content?.substring(0, 160) || 'No description provided.'}
+                                </div>
+                            </div>
+                        </div>
+
+                        {/* Content Preview */}
+                        <div style={{ padding: '2rem 1.5rem' }}>
+                            {formData.coverImage && (
+                                <img
+                                    src={formData.coverImage}
+                                    alt={formData.title}
+                                    style={{ width: '100%', height: '300px', objectFit: 'cover', borderRadius: '12px', marginBottom: '1.5rem' }}
+                                    onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }}
+                                />
+                            )}
+                            <h1 style={{ fontSize: '2rem', fontWeight: 700, marginBottom: '1rem', color: '#fff' }}>
+                                {formData.title || 'Untitled'}
+                            </h1>
+                            {formData.tags.length > 0 && (
+                                <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem', marginBottom: '1.5rem' }}>
+                                    {formData.tags.map(tag => (
+                                        <span key={tag} style={{
+                                            padding: '0.2rem 0.6rem', background: 'rgba(163,255,0,0.1)',
+                                            border: '1px solid rgba(163,255,0,0.3)', borderRadius: '12px',
+                                            fontSize: '0.7rem', color: '#a3ff00'
+                                        }}>{tag}</span>
+                                    ))}
+                                </div>
+                            )}
+                            <div style={{ color: '#ccc', lineHeight: 1.8, fontSize: '1rem', whiteSpace: 'pre-wrap' }}>
+                                {formData.content || 'No content yet...'}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            )}
         </div>
     );
 };
 
 export default ContentEditor;
+
+

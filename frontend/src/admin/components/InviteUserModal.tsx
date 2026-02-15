@@ -37,11 +37,7 @@ const InviteUserModal: React.FC<InviteUserModalProps> = ({ isOpen, onClose, onSu
         }
     };
 
-    const copyLink = () => {
-        if (sentLink) {
-            navigator.clipboard.writeText(sentLink);
-        }
-    };
+
 
     if (!isOpen) return null;
 

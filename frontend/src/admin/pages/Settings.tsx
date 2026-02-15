@@ -103,7 +103,8 @@ const SettingsPage: React.FC = () => {
     const handleConnectGoogle = async () => {
         setLoadingGoogle(true);
         try {
-            const response = await authFetch('/api/google/auth/url');
+            const redirectUri = `${window.location.origin}${window.location.pathname}?google=callback`;
+            const response = await authFetch(`/api/google/auth/url?redirectUri=${encodeURIComponent(redirectUri)}`);
             if (response.ok) {
                 const { url } = await response.json();
                 window.location.href = url;
@@ -117,10 +118,12 @@ const SettingsPage: React.FC = () => {
     const handleGoogleCallback = async (code: string) => {
         setLoadingGoogle(true);
         try {
+            // Must match the URI used in handleConnectGoogle EXACTLY
+            const redirectUri = `${window.location.origin}${window.location.pathname}?google=callback`;
             const response = await authFetch('/api/google/auth/callback', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ code }),
+                body: JSON.stringify({ code, redirectUri }),
             });
             if (response.ok) {
                 await fetchGoogleStatus();

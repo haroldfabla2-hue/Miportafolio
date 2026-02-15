@@ -43,10 +43,10 @@ const TaskCard: React.FC<{ task: Task; onDragStart: (task: Task) => void; onClic
             onDragStart={(e) => {
                 // Set custom drag image or effect if needed
                 onDragStart(task);
-                e.currentTarget.style.opacity = '0.5';
+                (e.currentTarget as HTMLElement).style.opacity = '0.5';
             }}
             onDragEnd={(e) => {
-                e.currentTarget.style.opacity = '1';
+                (e.currentTarget as HTMLElement).style.opacity = '1';
             }}
             onClick={onClick}
             style={{

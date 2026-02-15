@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Req, UseGuards } from '@nestjs/common';
+import { Controller, Get, Post, Body, Req, UseGuards, Inject, forwardRef } from '@nestjs/common';
 import { GoogleService } from './google.service';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 import { UsersService } from '../users/users.service';
@@ -8,6 +8,7 @@ import { UsersService } from '../users/users.service';
 export class GoogleController {
     constructor(
         private readonly googleService: GoogleService,
+        @Inject(forwardRef(() => UsersService))
         private readonly usersService: UsersService
     ) { }
 
@@ -29,16 +30,17 @@ export class GoogleController {
     }
 
     @Get('url')
-    async getAuthUrl() {
-        // Generate URL for offline access with incremental scopes
-        const client = this.googleService['getOAuth2Client'](); // Accessing private for now or need public method
-        // Better expose a method in service
-        return { url: await this.googleService.getAuthUrl() };
+    async getAuthUrl(@Req() req) {
+        // Allow dynamic redirect URI from query param
+        const redirectUri = req.query.redirectUri as string;
+        console.log('[GoogleController] Requesting Auth URL with redirectUri:', redirectUri);
+        return { url: await this.googleService.getAuthUrl(redirectUri) };
     }
 
     @Post('callback')
-    async handleCallback(@Req() req, @Body() body: { code: string }) {
-        await this.googleService.handleAuthCallback(req.user.id, body.code);
+    async handleCallback(@Req() req, @Body() body: { code: string, redirectUri?: string }) {
+        console.log('[GoogleController] Handling Callback with body:', { ...body, code: 'REDACTED' });
+        await this.googleService.handleAuthCallback(req.user.id, body.code, body.redirectUri);
         return { success: true };
     }
 
