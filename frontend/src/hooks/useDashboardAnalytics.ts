@@ -37,9 +37,9 @@ export const useDashboardAnalytics = (
 
         // Team Performance
         const teamStats = users
-            .filter(u => u.role === UserRole.WORKER)
+            .filter((u) => u && u.role && (u.role === UserRole.WORKER || String(u.role) === 'WORKER'))
             .map(u => {
-                const userTasks = activeT.filter(t => t.assignee === u.id);
+                const userTasks = activeT.filter(t => t.assigneeId === u.id);
                 const completed = userTasks.filter(t => t.status === TaskStatus.DONE).length;
                 const inProgress = userTasks.filter(t => t.status === TaskStatus.IN_PROGRESS).length;
                 const efficiency = userTasks.length > 0 ? Math.round((completed / userTasks.length) * 100) : 0;
@@ -88,7 +88,7 @@ export const useDashboardAnalytics = (
         // 1. Revenue Mix (by Project Type)
         const revenueMap = new Map<string, number>();
         activeP.forEach(p => {
-            const type = p.type || 'OTHER';
+            const type = (p as any).type || 'OTHER';
             revenueMap.set(type, (revenueMap.get(type) || 0) + p.budget);
         });
         const revenueMix = Array.from(revenueMap.entries())

@@ -331,7 +331,7 @@ export const OracleView: React.FC = () => {
                                             <YAxis stroke="#94a3b8" fontSize={12} tickLine={false} axisLine={false} tickFormatter={(val) => `$${val / 1000}k`} />
                                             <Tooltip
                                                 contentStyle={{ borderRadius: '12px', border: 'none', boxShadow: '0 10px 25px -5px rgba(0,0,0,0.1)', padding: '12px' }}
-                                                formatter={(val: number) => [`$${val.toLocaleString()}`, '']}
+                                                formatter={(val: number | undefined) => [`$${(val ?? 0).toLocaleString()}`, '']}
                                             />
                                             {/* Baseline (Dashed) */}
                                             <Area type="monotone" dataKey="baseline.cashReserve" name="Baseline Cash" stroke="#cbd5e1" strokeWidth={2} strokeDasharray="5 5" fill="none" />

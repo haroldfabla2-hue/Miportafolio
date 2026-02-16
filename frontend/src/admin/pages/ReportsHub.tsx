@@ -5,7 +5,7 @@ import {
     Cell, PieChart, Pie, Legend, BarChart, Bar, LineChart, Line
 } from 'recharts';
 import { api, reportsApi } from '../../services/api';
-import { Sparkles, Brain, Download, Trash2, ChevronRight, FileText, Plus } from 'lucide-react';
+import { Sparkles, Brain, Download, Trash2, ChevronRight, FileText, Plus, X } from 'lucide-react';
 // import './ReportsHub.css'; // Inline styles used
 import EmptyState from '../components/EmptyState';
 
