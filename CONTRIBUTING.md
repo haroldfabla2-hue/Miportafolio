@@ -1,6 +1,17 @@
-# Contributing to MiWeb
+# Contributing To MiWeb
 
-Thank you for considering contributing to this project! Here's how to get started.
+Thank you for your interest in contributing to MiWeb! 
+
+## Code Standards
+- Use TypeScript for all new code.
+- Follow the established directory structure.
+- Write clean, documented code.
+
+## Pull Requests
+1. Fork the repo.
+2. Create your feature branch.
+3. Commit your changes.
+4. Push and open a PR.
 
 ## Development Setup
 

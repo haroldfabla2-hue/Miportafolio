@@ -1,4 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { api } from '../../services/api';
+import { useAuth } from '../../context/AuthContext';
 
 // Types
 interface FileItem {
@@ -6,37 +8,28 @@ interface FileItem {
     name: string;
     type: 'folder' | 'file';
     mimeType?: string;
-    size?: number;
-    modifiedAt: string;
-    thumbnail?: string;
+    size?: string;
+    modified: string; // ISO string
+    thumbnailLink?: string;
     webViewLink?: string;
+    iconLink?: string;
 }
 
 // File icons by type
-const getFileIcon = (mimeType?: string) => {
-    if (!mimeType) return '📁';
-    if (mimeType.includes('folder')) return '📁';
+const getFileIcon = (file: FileItem) => {
+    if (file.thumbnailLink) return <img src={file.thumbnailLink} alt={file.name} style={{ width: 24, height: 24, objectFit: 'cover', borderRadius: 4 }} />;
+    if (file.iconLink) return <img src={file.iconLink} alt="" style={{ width: 24, height: 24 }} />;
+
+    // Fallback
+    const mimeType = file.mimeType || '';
+    if (file.type === 'folder') return '📁';
     if (mimeType.includes('image')) return '🖼️';
     if (mimeType.includes('pdf')) return '📕';
-    if (mimeType.includes('document') || mimeType.includes('word')) return '📄';
-    if (mimeType.includes('spreadsheet') || mimeType.includes('excel')) return '📊';
-    if (mimeType.includes('presentation') || mimeType.includes('powerpoint')) return '📽️';
-    if (mimeType.includes('video')) return '🎬';
-    if (mimeType.includes('audio')) return '🎵';
-    if (mimeType.includes('zip') || mimeType.includes('archive')) return '📦';
-    return '📎';
-};
-
-// Format file size
-const formatSize = (bytes?: number) => {
-    if (!bytes) return '-';
-    if (bytes < 1024) return bytes + ' B';
-    if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(1) + ' KB';
-    return (bytes / (1024 * 1024)).toFixed(1) + ' MB';
+    return '📄';
 };
 
 // File Row Component
-const FileRow: React.FC<{ file: FileItem; onNavigate: (id: string) => void }> = ({ file, onNavigate }) => (
+const FileRow: React.FC<{ file: FileItem; onNavigate: (id: string) => void; onDelete: (id: string) => void }> = ({ file, onNavigate, onDelete }) => (
     <div
         onClick={() => file.type === 'folder' && onNavigate(file.id)}
         style={{
@@ -52,7 +45,9 @@ const FileRow: React.FC<{ file: FileItem; onNavigate: (id: string) => void }> = 
         onMouseLeave={(e) => e.currentTarget.style.background = 'transparent'}
     >
         {/* Icon */}
-        <span style={{ fontSize: '1.5rem' }}>{getFileIcon(file.mimeType)}</span>
+        <div style={{ width: 32, display: 'flex', justifyContent: 'center' }}>
+            {getFileIcon(file)}
+        </div>
 
         {/* Name */}
         <div style={{ flex: 1 }}>
@@ -61,40 +56,45 @@ const FileRow: React.FC<{ file: FileItem; onNavigate: (id: string) => void }> = 
 
         {/* Size */}
         <span style={{ color: '#666', fontSize: '0.8rem', width: '80px', textAlign: 'right' }}>
-            {file.type === 'file' ? formatSize(file.size) : '-'}
+            {file.size || '-'}
         </span>
 
         {/* Modified */}
         <span style={{ color: '#666', fontSize: '0.8rem', width: '120px', textAlign: 'right' }}>
-            {new Date(file.modifiedAt).toLocaleDateString()}
+            {new Date(file.modified).toLocaleDateString()}
         </span>
 
         {/* Actions */}
-        {file.type === 'file' && file.webViewLink && (
-            <a
-                href={file.webViewLink}
-                target="_blank"
-                rel="noopener noreferrer"
-                onClick={(e) => e.stopPropagation()}
-                style={{
-                    padding: '0.5rem',
-                    color: '#666',
-                    transition: 'color 0.2s'
-                }}
+        <div style={{ display: 'flex', gap: '8px' }} onClick={e => e.stopPropagation()}>
+            {file.webViewLink && (
+                <a
+                    href={file.webViewLink}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    style={{ padding: '0.5rem', color: '#666', transition: 'color 0.2s' }}
+                    title="Open in Drive"
+                >
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                        <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6" />
+                        <polyline points="15 3 21 3 21 9" />
+                        <line x1="10" y1="14" x2="21" y2="3" />
+                    </svg>
+                </a>
+            )}
+            <button
+                onClick={() => onDelete(file.id)}
+                style={{ background: 'none', border: 'none', color: '#ff4d4f', cursor: 'pointer', padding: '0.5rem' }}
+                title="Delete"
             >
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                    <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6" />
-                    <polyline points="15 3 21 3 21 9" />
-                    <line x1="10" y1="14" x2="21" y2="3" />
-                </svg>
-            </a>
-        )}
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
+            </button>
+        </div>
     </div>
 );
 
 // Breadcrumb
 const Breadcrumb: React.FC<{ path: { id: string; name: string }[]; onNavigate: (id: string) => void }> = ({ path, onNavigate }) => (
-    <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '1rem' }}>
+    <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '1rem', flexWrap: 'wrap' }}>
         {path.map((item, index) => (
             <React.Fragment key={item.id}>
                 {index > 0 && <span style={{ color: '#555' }}>/</span>}
@@ -120,38 +120,108 @@ const Breadcrumb: React.FC<{ path: { id: string; name: string }[]; onNavigate: (
 
 // Main Files Page
 const FilesPage: React.FC = () => {
-    const [files, setFiles] = useState<FileItem[]>([]); void setFiles;
-    const [loading, setLoading] = useState(false); void loading; void setLoading;
-    const [currentFolder, setCurrentFolder] = useState('root'); void currentFolder;
+    const { user } = useAuth();
+    const [files, setFiles] = useState<FileItem[]>([]);
+    const [loading, setLoading] = useState(false);
+    const [currentFolder, setCurrentFolder] = useState('root');
     const [path, setPath] = useState([{ id: 'root', name: 'My Drive' }]);
     const [viewMode, setViewMode] = useState<'list' | 'grid'>('list');
+    const [isUploading, setIsUploading] = useState(false);
 
-    const navigateToFolder = (folderId: string) => {
-        // In a real app, fetch files from API
-        setCurrentFolder(folderId);
-        // Update breadcrumb path
-        const existingIndex = path.findIndex(p => p.id === folderId);
-        if (existingIndex >= 0) {
-            setPath(path.slice(0, existingIndex + 1));
+    useEffect(() => {
+        if (user?.googleConnected) {
+            fetchFiles(currentFolder);
+        }
+    }, [currentFolder, user?.googleConnected]);
+
+    const fetchFiles = async (folderId: string) => {
+        setLoading(true);
+        try {
+            // Only pass folderId if it's not root, or let backend handle logical default
+            const params: any = {};
+            if (folderId !== 'root') params.folderId = folderId;
+
+            const res = await api.get('/google/drive/files', { params });
+            setFiles(res.data);
+        } catch (error) {
+            console.error('Failed to fetch files', error);
+            // Optionally handle 401/403 for not connected
+        } finally {
+            setLoading(false);
         }
     };
 
-    // Demo data
-    const demoFiles: FileItem[] = [
-        { id: 'f1', name: 'Clients', type: 'folder', mimeType: 'application/vnd.google-apps.folder', modifiedAt: '2024-01-15' },
-        { id: 'f2', name: 'Projects', type: 'folder', mimeType: 'application/vnd.google-apps.folder', modifiedAt: '2024-01-17' },
-        { id: 'f3', name: 'Assets', type: 'folder', mimeType: 'application/vnd.google-apps.folder', modifiedAt: '2024-01-10' },
-        { id: 'f4', name: 'Contracts', type: 'folder', mimeType: 'application/vnd.google-apps.folder', modifiedAt: '2024-01-08' },
-        { id: 'd1', name: 'Project Proposal - Nuestras Casas.pdf', type: 'file', mimeType: 'application/pdf', size: 2500000, modifiedAt: '2024-01-16', webViewLink: '#' },
-        { id: 'd2', name: 'Brand Guidelines - Bijou Me.docx', type: 'file', mimeType: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document', size: 1200000, modifiedAt: '2024-01-14', webViewLink: '#' },
-        { id: 'd3', name: 'Invoice Template.xlsx', type: 'file', mimeType: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', size: 45000, modifiedAt: '2024-01-12', webViewLink: '#' },
-        { id: 'd4', name: 'Homepage Mockup.png', type: 'file', mimeType: 'image/png', size: 3200000, modifiedAt: '2024-01-17', webViewLink: '#' },
-        { id: 'd5', name: 'Meeting Recording.mp4', type: 'file', mimeType: 'video/mp4', size: 125000000, modifiedAt: '2024-01-11', webViewLink: '#' },
-    ];
+    const handleNavigate = (folderId: string) => {
+        setCurrentFolder(folderId);
+        // Find if folder is already in path (going back)
+        const pathIndex = path.findIndex(p => p.id === folderId);
+        if (pathIndex !== -1) {
+            setPath(path.slice(0, pathIndex + 1));
+        } else {
+            // Find folder name from current files to add to path
+            const folder = files.find(f => f.id === folderId);
+            if (folder) {
+                setPath([...path, { id: folder.id, name: folder.name }]);
+            }
+        }
+    };
 
-    const displayFiles = files.length > 0 ? files : demoFiles;
-    const folders = displayFiles.filter(f => f.type === 'folder');
-    const regularFiles = displayFiles.filter(f => f.type === 'file');
+    const handleDelete = async (fileId: string) => {
+        if (!window.confirm('Are you sure you want to delete this file?')) return;
+        try {
+            await api.delete(`/google/drive/files/${fileId}`);
+            setFiles(prev => prev.filter(f => f.id !== fileId));
+        } catch (error) {
+            console.error('Delete failed', error);
+            alert('Failed to delete file');
+        }
+    };
+
+    const handleUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+        if (!e.target.files?.length) return;
+        const file = e.target.files[0];
+        const formData = new FormData();
+        formData.append('file', file);
+        if (currentFolder !== 'root') {
+            formData.append('folderId', currentFolder);
+        }
+
+        setIsUploading(true);
+        try {
+            await api.post('/google/drive/upload', formData, {
+                headers: { 'Content-Type': 'multipart/form-data' }
+            });
+            fetchFiles(currentFolder); // Refresh
+        } catch (error) {
+            console.error('Upload failed', error);
+            alert('Upload failed');
+        } finally {
+            setIsUploading(false);
+        }
+    };
+
+    // --- STATES ---
+
+    // 1. Not Connected
+    if (!user?.googleConnected) {
+        return (
+            <div style={{
+                height: '80vh',
+                display: 'flex',
+                flexDirection: 'column',
+                alignItems: 'center',
+                justifyContent: 'center',
+                color: '#888'
+            }}>
+                <div style={{ fontSize: '4rem', marginBottom: '1rem' }}>☁️</div>
+                <h2>Connect Google Drive</h2>
+                <p style={{ marginBottom: '2rem' }}>Access your files directly from the CRM.</p>
+                <a href="/admin/settings" className="admin-btn admin-btn-primary">
+                    Go to Settings to Connect
+                </a>
+            </div>
+        );
+    }
 
     return (
         <div>
@@ -171,56 +241,60 @@ const FilesPage: React.FC = () => {
                             <line x1="3" y1="6" x2="3.01" y2="6" /><line x1="3" y1="12" x2="3.01" y2="12" /><line x1="3" y1="18" x2="3.01" y2="18" />
                         </svg>
                     </button>
-                    <button
-                        onClick={() => setViewMode('grid')}
-                        className={`admin-btn ${viewMode === 'grid' ? 'admin-btn-primary' : 'admin-btn-secondary'}`}
-                        style={{ padding: '0.5rem' }}
-                    >
-                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                            <rect x="3" y="3" width="7" height="7" /><rect x="14" y="3" width="7" height="7" />
-                            <rect x="3" y="14" width="7" height="7" /><rect x="14" y="14" width="7" height="7" />
-                        </svg>
-                    </button>
-                    <button className="admin-btn admin-btn-primary">
-                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
-                            <polyline points="17 8 12 3 7 8" />
-                            <line x1="12" y1="3" x2="12" y2="15" />
-                        </svg>
-                        Upload
-                    </button>
+
+                    <label className="admin-btn admin-btn-primary" style={{ cursor: 'pointer' }}>
+                        {isUploading ? 'Uploading...' : 'Upload'}
+                        <input type="file" onChange={handleUpload} style={{ display: 'none' }} disabled={isUploading} />
+                    </label>
                 </div>
             </div>
 
             {/* Breadcrumb */}
-            <Breadcrumb path={path} onNavigate={navigateToFolder} />
+            <Breadcrumb path={path} onNavigate={handleNavigate} />
 
             {/* Files List */}
-            <div className="admin-card" style={{ padding: 0, overflow: 'hidden' }}>
-                {/* Header */}
-                <div style={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    padding: '0.75rem 1rem',
-                    gap: '1rem',
-                    borderBottom: '1px solid var(--admin-border-color)',
-                    background: 'var(--admin-hover-bg)'
-                }}>
-                    <span style={{ width: '1.5rem' }}></span>
-                    <span style={{ flex: 1, fontSize: '0.75rem', fontWeight: 600, color: '#666', textTransform: 'uppercase' }}>Name</span>
-                    <span style={{ width: '80px', fontSize: '0.75rem', fontWeight: 600, color: '#666', textTransform: 'uppercase', textAlign: 'right' }}>Size</span>
-                    <span style={{ width: '120px', fontSize: '0.75rem', fontWeight: 600, color: '#666', textTransform: 'uppercase', textAlign: 'right' }}>Modified</span>
-                    <span style={{ width: '40px' }}></span>
-                </div>
-
-                {/* Folders first, then files */}
-                {[...folders, ...regularFiles].map(file => (
-                    <FileRow key={file.id} file={file} onNavigate={(id) => {
-                        setPath([...path, { id, name: file.name }]);
-                        navigateToFolder(id);
-                    }} />
-                ))}
+            <div className="admin-card" style={{ padding: 0, overflow: 'hidden', minHeight: '400px' }}>
+                {loading ? (
+                    <div style={{ padding: '2rem', textAlign: 'center', color: '#666', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', height: '100%' }}>
+                        <div className="spinner" style={{ marginBottom: '1rem', width: '2rem', height: '2rem', border: '3px solid rgba(255,255,255,0.1)', borderTop: '3px solid var(--color-primary)', borderRadius: '50%', animation: 'spin 1s linear infinite' }}></div>
+                        Loading files...
+                    </div>
+                ) : files.length === 0 ? (
+                    <div style={{ padding: '4rem', textAlign: 'center', color: '#666' }}>
+                        <div style={{ fontSize: '2rem', marginBottom: '1rem' }}>📂</div>
+                        <p>This folder is empty</p>
+                    </div>
+                ) : (
+                    <>
+                        {/* Header */}
+                        <div style={{
+                            display: 'flex',
+                            alignItems: 'center',
+                            padding: '0.75rem 1rem',
+                            gap: '1rem',
+                            borderBottom: '1px solid var(--admin-border-color)',
+                            background: 'var(--admin-hover-bg)'
+                        }}>
+                            <span style={{ width: '32px' }}></span>
+                            <span style={{ flex: 1, fontSize: '0.75rem', fontWeight: 600, color: '#666', textTransform: 'uppercase' }}>Name</span>
+                            <span style={{ width: '80px', fontSize: '0.75rem', fontWeight: 600, color: '#666', textTransform: 'uppercase', textAlign: 'right' }}>Size</span>
+                            <span style={{ width: '120px', fontSize: '0.75rem', fontWeight: 600, color: '#666', textTransform: 'uppercase', textAlign: 'right' }}>Modified</span>
+                            <span style={{ width: '60px' }}></span>
+                        </div>
+                        {files.map(file => (
+                            <FileRow
+                                key={file.id}
+                                file={file}
+                                onNavigate={handleNavigate}
+                                onDelete={handleDelete}
+                            />
+                        ))}
+                    </>
+                )}
             </div>
+            <style>{`
+                @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+            `}</style>
         </div>
     );
 };

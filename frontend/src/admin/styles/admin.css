@@ -17,6 +17,12 @@
     --admin-border-color: #2a2a2a;
     --admin-hover-bg: #252525;
 
+    /* Glassmorphism Tokens */
+    --glass-bg: rgba(16, 16, 16, 0.75);
+    --glass-border: rgba(255, 255, 255, 0.08);
+    --glass-blur: blur(20px);
+    --neon-glow: 0 0 15px rgba(163, 255, 0, 0.3);
+
     /* Status colors */
     --status-success: #22c55e;
     --status-warning: #f59e0b;
@@ -35,8 +41,9 @@
 
 .admin-sidebar {
     width: var(--admin-sidebar-width);
-    background-color: var(--admin-sidebar-bg);
-    border-right: 1px solid var(--admin-border-color);
+    background-color: var(--glass-bg);
+    backdrop-filter: var(--glass-blur);
+    border-right: 1px solid var(--glass-border);
     display: flex;
     flex-direction: column;
     position: fixed;
@@ -44,7 +51,7 @@
     left: 0;
     height: 100vh;
     z-index: 100;
-    transition: width 0.3s ease;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .admin-sidebar.collapsed {
@@ -119,9 +126,22 @@
 }
 
 .admin-nav-item.active {
-    background-color: var(--color-accent);
-    color: #000;
+    background: linear-gradient(90deg, rgba(163, 255, 0, 0.15) 0%, transparent 100%);
+    color: var(--color-accent);
     font-weight: 600;
+    position: relative;
+}
+
+.admin-nav-item.active::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 15%;
+    height: 70%;
+    width: 3px;
+    background-color: var(--color-accent);
+    box-shadow: var(--neon-glow);
+    border-radius: 0 4px 4px 0;
 }
 
 .admin-nav-item svg {
@@ -143,11 +163,10 @@
 .admin-nav-section {
     font-size: 0.7rem;
     text-transform: uppercase;
-    color: #555;
-    letter-spacing: 0.1em;
-    padding: 0 1rem;
-    margin-bottom: 0.5rem;
-    font-weight: 600;
+    color: #444;
+    letter-spacing: 0.15em;
+    padding: 1.5rem 1rem 0.5rem;
+    font-weight: 700;
 }
 
 .admin-sidebar.collapsed .admin-nav-section {
@@ -172,8 +191,9 @@
 
 .admin-header {
     height: var(--admin-header-height);
-    background-color: var(--admin-sidebar-bg);
-    border-bottom: 1px solid var(--admin-border-color);
+    background-color: var(--glass-bg);
+    backdrop-filter: var(--glass-blur);
+    border-bottom: 1px solid var(--glass-border);
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -314,15 +334,18 @@
    Admin Cards & Widgets
    ======================================== */
 .admin-card {
-    background-color: var(--admin-card-bg);
-    border: 1px solid var(--admin-border-color);
-    border-radius: 16px;
+    background-color: var(--glass-bg);
+    backdrop-filter: var(--glass-blur);
+    border: 1px solid var(--glass-border);
+    border-radius: 20px;
     padding: 1.5rem;
-    transition: all 0.2s;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .admin-card:hover {
-    border-color: #333;
+    border-color: rgba(163, 255, 0, 0.3);
+    transform: translateY(-4px);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
 }
 
 .admin-card-header {
@@ -707,5 +730,33 @@
     from {
         opacity: 0;
         transform: translateX(-50%) translateY(4px);
+    }
+}
+
+/* Dot Pulse Animation for Iris Thinking State */
+.dot-pulse {
+    position: relative;
+    width: 6px;
+    height: 6px;
+    border-radius: 5px;
+    background-color: var(--color-accent);
+    color: var(--color-accent);
+    box-shadow: 12px 0 0 0 var(--color-accent), 24px 0 0 0 var(--color-accent);
+    animation: dotPulse 1.5s infinite linear;
+    margin-left: 8px;
+    display: inline-block;
+}
+
+@keyframes dotPulse {
+    0% {
+        opacity: 0.2;
+    }
+
+    50% {
+        opacity: 1;
+    }
+
+    100% {
+        opacity: 0.2;
     }
 }

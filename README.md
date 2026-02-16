@@ -1,95 +1,36 @@
-# 🚀 Miportafolio — CRM + Portfolio + AI Agent
+# MiWeb - Agency OS
 
-A premium, full-stack portfolio platform with integrated CRM, AI agent (Iris), and CMS — designed to manage clients, showcase projects, and automate workflows.
+MiWeb is a premium agency management system designed for creative studios and digital agencies. It features advanced financial simulations (Oracle), AI-driven insights (Iris), and a comprehensive CRM.
 
-## ✨ Features
+## 🚀 Features
 
-| Feature | Description |
-|---------|-------------|
-| **Portfolio Site** | Premium dark-themed website with Framer Motion animations, parallax scrolling, and dynamic project previews via live iframes |
-| **CRM System** | Leads management, project tracking, task boards, and analytics dashboard |
-| **CMS** | Blog + Portfolio content management with public API, SEO fields, and tagging |
-| **Iris AI Agent** | Built-in AI assistant with tool execution (web search, datetime, content generation) and multi-provider cascade (Kimi → GLM → Gemini) |
-| **Auth** | JWT authentication with refresh tokens, Google OAuth, and role-based access |
-| **Contact → CRM** | Public contact form automatically creates CRM leads with source tracking |
+- **Oracle Engine 2.0**: High-precision financial forecasting and resource simulation.
+- **Iris AI**: Strategic CFO/COO advisor for data-driven decisions.
+- **Finance Hub**: Real-time invoice management, payables/receivables tracking.
+- **Projects & CRM**: Kanban pipeline, client management, and document organization.
+- **Premium UI**: Glassmorphic, dark-mode design with fluid animations.
 
 ## 🛠️ Tech Stack
 
-**Frontend:** React 18, TypeScript, Vite, Framer Motion, Lenis Smooth Scroll  
-**Backend:** NestJS, Prisma ORM, PostgreSQL + pgvector, Redis  
-**AI:** Gemini, Zhipu GLM, Kimi K2.5, DeepSeek  
-**Infra:** Docker, Nginx, GitHub Actions
+- **Frontend**: React, TypeScript, Vite, Tailwind CSS, Framer Motion, Recharts.
+- **Backend**: NestJS, Node.js, Prisma (PostgreSQL).
+- **AI**: Minimax 2.5 architecture, Iris Engine.
+- **Infrastructure**: Docker, Docker Compose.
 
-## 🚀 Quick Start
+## 📦 Installation
 
-### Prerequisites
-- Node.js 20+
-- PostgreSQL 16+
-- Redis
+1. Clone the repository.
+2. Setup environment variables in `backend/.env` and `frontend/.env`.
+3. Install dependencies: `npm install` in both folders.
+4. Run migrations: `npx prisma migrate dev`.
+5. Start development servers: `npm run dev`.
 
-### Setup
-
-```bash
-# 1. Clone
-git clone https://github.com/haroldfabla2-hue/Miportafolio.git
-cd Miportafolio
-
-# 2. Environment
-cp .env.example .env
-# Edit .env with your database credentials and API keys
-
-# 3. Backend
-cd backend
-npm install
-npx prisma generate
-npx prisma db push
-npm run start:dev
-
-# 4. Frontend (new terminal)
-cd frontend
-npm install
-npm run dev
-```
-
-### Docker (Production)
+## 🐳 Docker Deployment
 
 ```bash
-# Build and deploy
-docker-compose -f docker-compose.prod.yml up -d --build
+docker-compose up --build
 ```
-
-## 📁 Project Structure
-
-```
-├── backend/              # NestJS API server
-│   ├── src/
-│   │   ├── auth/         # JWT + Google OAuth
-│   │   ├── cms/          # Content Management System
-│   │   ├── crm/          # CRM stats & project endpoints
-│   │   ├── iris/         # AI Agent (tools, providers)
-│   │   ├── leads/        # Lead management + public contact
-│   │   └── prisma/       # Database schema & client
-│   └── Dockerfile.prod
-├── frontend/             # React SPA
-│   ├── src/
-│   │   ├── components/   # Public website pages
-│   │   ├── admin/        # Dashboard, CRM, CMS admin
-│   │   ├── hooks/        # Custom React hooks
-│   │   └── services/     # API client layer
-│   └── Dockerfile
-├── docker-compose.prod.yml
-├── nginx.conf            # Production Nginx config
-└── .env.example
-```
-
-## 🔐 Environment Variables
-
-See [`.env.example`](.env.example) for all configuration options including:
-- Database connection
-- JWT secrets
-- AI provider API keys (Gemini, Zhipu, DeepSeek)
-- Google OAuth credentials
 
 ## 📄 License
 
-MIT
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.

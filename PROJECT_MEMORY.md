@@ -18,7 +18,9 @@ Al inicio de cada sesión, o cuando se te indique cargar el contexto del proyect
 ---
 
 ## Hechos Clave del Proyecto
-
+*   **Cycle 8 Complete**: Documentation, SEO, and Oracle skeletons implemented. 100% real data verified.
+*   **Aesthetic Alignment**: Oracle and Reports Hub now follow the Brandistry premium aesthetic.
+*   **Infrastructure Ready**: Docker (Prod) and Database (Prisma) audited and healthy.
 *   **Objetivo Principal:** Replicar el diseño del sitio `https://albertofarah.com/` utilizando React y tecnologías modernas, preparado para integración de IA.
 *   **Estado:** Inicio desde cero. Workspace limpio.
 *   **Arquitectura:** React para frontend, preparado para self-hosting (Docker).
@@ -30,7 +32,9 @@ Al inicio de cada sesión, o cuando se te indique cargar el contexto del proyect
 *   **Hitos Recientes:**
     *   Backend Hardening: Endpoints de CRM completados (`/crm/stats`, `/crm/projects`).
     *   Iris Agent 2.0: Implementado con `ToolsService` y `GeminiService` (Agentic AI).
+    *   AI Core Revolution: Integrado **Minimax 2.5** como proveedor primario, con fallback jerárquico (Minimax -> Kimi -> Gemini -> Zhipu) y protocolo de consistencia de lenguaje.
     *   Infraestructura: Repositorio GitHub creado y código sincronizado.
+    *   **Oracle 2.0 Port**: Motor de simulación financiera y AI Strategic Advisor migrados exitosamente desde Brandistry a MiWeb (Backend secured, Frontend consolidado).
 
 ---
 

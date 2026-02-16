@@ -36,8 +36,9 @@ const AdminAssetsPage = lazy(() => import('./admin/pages/Assets'));
 const AdminSettingsPage = lazy(() => import('./admin/pages/Settings'));
 const AdminIrisPage = lazy(() => import('./admin/pages/Iris'));
 const AdminOraclePage = lazy(() => import('./admin/pages/Oracle'));
-const AdminPipelinePage = lazy(() => import('./admin/pages/Pipeline'));
+const AdminPipelinePage = lazy(() => import('./admin/pages/PipelineView'));
 const AdminUsersPage = lazy(() => import('./admin/pages/Users'));
+const AdminCalendarPage = lazy(() => import('./admin/pages/CalendarView'));
 const AdminFinancePage = lazy(() => import('./admin/pages/Finance'));
 const AdminTicketsPage = lazy(() => import('./admin/pages/Tickets'));
 const BillManager = lazy(() => import('./admin/pages/BillManager'));
@@ -46,8 +47,12 @@ const RoleManagement = lazy(() => import('./admin/pages/RoleManagement'));
 const ContentManager = lazy(() => import('./admin/pages/ContentManager'));
 const ContentEditor = lazy(() => import('./admin/pages/ContentEditor'));
 const ReportsHub = lazy(() => import('./admin/pages/ReportsHub'));
+const ActivityLogsPage = lazy(() => import('./admin/pages/ActivityLogs'));
+const SystemHealthPage = lazy(() => import('./admin/pages/SystemHealth'));
 
+import { AuthProvider } from './context/AuthContext';
 import { SocketProvider } from './context/SocketContext';
+import { StoreProvider } from './context/StoreContext';
 
 // Loading fallback for lazy-loaded admin pages
 const AdminLoader = () => (
@@ -76,41 +81,46 @@ function App() {
   if (isAdminRoute || isInviteRoute) {
     return (
       <Suspense fallback={<AdminLoader />}>
-        <Routes>
-          <Route path="/admin/login" element={<LoginPage />} />
-          <Route path="/invite/:token" element={<JoinPage />} />
-          <Route path="/admin" element={
-            <SocketProvider>
-              <AdminLayout />
-            </SocketProvider>
-          }>
-            <Route index element={<Dashboard />} />
-            <Route path="onboarding" element={<OnboardingPage />} />
-            <Route path="projects" element={<AdminProjectsPage />} />
-            <Route path="projects/:id" element={<ProjectDetail />} />
-            <Route path="clients" element={<AdminClientsPage />} />
-            <Route path="tasks" element={<AdminTasksPage />} />
-            <Route path="users" element={<AdminUsersPage />} />
-            <Route path="messages" element={<ChatPage />} />
-            <Route path="email" element={<AdminEmailPage />} />
-            <Route path="files" element={<AdminFilesPage />} />
-            <Route path="assets" element={<AdminAssetsPage />} />
-            <Route path="finance" element={<AdminFinancePage />} />
-            <Route path="finance/bills" element={<BillManager />} />
-            <Route path="finance/invoice-designer" element={<InvoiceDesigner />} />
-            <Route path="pipeline" element={<AdminPipelinePage />} />
-            <Route path="iris" element={<AdminIrisPage />} />
-            <Route path="oracle" element={<AdminOraclePage />} />
-            <Route path="reports" element={<ReportsHub />} />
-            <Route path="tickets" element={<AdminTicketsPage />} />
-            <Route path="notifications" element={<NotificationsPage />} />
-            <Route path="settings" element={<AdminSettingsPage />} />
-            <Route path="settings/roles" element={<RoleManagement />} />
-            <Route path="cms" element={<ContentManager />} />
-            <Route path="cms/new/:type" element={<ContentEditor />} />
-            <Route path="cms/edit/:id" element={<ContentEditor />} />
-          </Route>
-        </Routes>
+        <AuthProvider>
+          <SocketProvider>
+            <StoreProvider>
+              <Routes>
+                <Route path="/admin/login" element={<LoginPage />} />
+                <Route path="/invite/:token" element={<JoinPage />} />
+                <Route path="/admin" element={<AdminLayout />}>
+                  <Route index element={<Dashboard />} />
+                  <Route path="onboarding" element={<OnboardingPage />} />
+                  <Route path="projects" element={<AdminProjectsPage />} />
+                  <Route path="projects/:id" element={<ProjectDetail />} />
+                  <Route path="clients" element={<AdminClientsPage />} />
+                  <Route path="tasks" element={<AdminTasksPage />} />
+                  <Route path="users" element={<AdminUsersPage />} />
+                  <Route path="messages" element={<ChatPage />} />
+                  <Route path="email" element={<AdminEmailPage />} />
+                  <Route path="files" element={<AdminFilesPage />} />
+                  <Route path="assets" element={<AdminAssetsPage />} />
+                  <Route path="finance" element={<AdminFinancePage />} />
+                  <Route path="finance/bills" element={<BillManager />} />
+                  <Route path="finance/invoice-designer" element={<InvoiceDesigner />} />
+                  <Route path="pipeline" element={<AdminPipelinePage />} />
+                  <Route path="iris" element={<AdminIrisPage />} />
+                  <Route path="oracle" element={<AdminOraclePage />} />
+                  <Route path="reports" element={<ReportsHub />} />
+                  <Route path="tickets" element={<AdminTicketsPage />} />
+                  <Route path="notifications" element={<NotificationsPage />} />
+                  <Route path="settings" element={<AdminSettingsPage />} />
+                  <Route path="settings/roles" element={<RoleManagement />} />
+                  <Route path="activity-logs" element={<ActivityLogsPage />} />
+                  <Route path="calendar" element={<AdminCalendarPage />} />
+                  <Route path="system-health" element={<SystemHealthPage />} />
+                  <Route path="cms" element={<ContentManager />} />
+                  <Route path="cms/new/:type" element={<ContentEditor />} />
+                  <Route path="cms/edit/:id" element={<ContentEditor />} />
+                </Route>
+              </Routes>
+            </StoreProvider>
+          </SocketProvider>
+        </AuthProvider>
       </Suspense>
     );
   }

@@ -3,10 +3,12 @@ import { Link, useLocation, Outlet, Navigate, useNavigate } from 'react-router-d
 import { useAuth } from '../../context/AuthContext';
 import { useSocket } from '../../context/SocketContext';
 import { api } from '../../services/api';
+import { useStore } from '../../context/StoreContext';
 import '../styles/admin.css';
 import IrisFloat from '../components/IrisFloat';
 import { TourProvider } from '../../context/TourContext';
 import NotificationToast from '../components/NotificationToast';
+import NotificationBell from '../components/NotificationBell';
 
 // Icons (inline SVG components for no external deps)
 const icons = {
@@ -32,6 +34,7 @@ const icons = {
     logout: <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" /><polyline points="16 17 21 12 16 7" /><line x1="21" y1="12" x2="9" y2="12" /></svg>,
     chevronDown: <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><polyline points="6 9 12 15 18 9" /></svg>,
     reports: <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><line x1="18" y1="20" x2="18" y2="10" /><line x1="12" y1="20" x2="12" y2="4" /><line x1="6" y1="20" x2="6" y2="14" /></svg>,
+    calendar: <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2" /><line x1="16" y1="2" x2="16" y2="6" /><line x1="8" y1="2" x2="8" y2="6" /><line x1="3" y1="10" x2="21" y2="10" /></svg>,
 };
 
 // Navigation items configuration with required permissions
@@ -59,9 +62,14 @@ const navItems = [
     { id: 'iris', label: 'Iris AI', icon: 'iris', path: '/admin/iris', permission: 'iris:access' },
     { id: 'oracle', label: 'Oracle', icon: 'oracle', path: '/admin/oracle', permission: 'oracle:access' },
     { id: 'reports', label: 'Reports', icon: 'reports', path: '/admin/reports', permission: 'dashboard:view' }, // Reusing dashboard permission for now
+    { id: 'calendar', label: 'Calendar', icon: 'calendar', path: '/admin/calendar', permission: 'dashboard:view' },
     { type: 'divider' },
     { id: 'tickets', label: 'Tickets', icon: 'tickets', path: '/admin/tickets', permission: 'tickets:view' },
     { id: 'settings', label: 'Settings', icon: 'settings', path: '/admin/settings', permission: 'settings:view' },
+    { type: 'divider' },
+    { type: 'section', label: 'System' },
+    { id: 'activity-logs', label: 'Activity Logs', icon: 'reports', path: '/admin/activity-logs', permission: 'settings:view' },
+    { id: 'system-health', label: 'System Health', icon: 'settings', path: '/admin/system-health', permission: 'settings:view' },
 ];
 
 const AdminLayout: React.FC = () => {
@@ -77,6 +85,13 @@ const AdminLayout: React.FC = () => {
     const [notifications, setNotifications] = useState<any[]>([]);
     const [showNotifications, setShowNotifications] = useState(false);
     const [activeNotification, setActiveNotification] = useState<any>(null); // State for toast
+
+    const { refresh } = useStore();
+
+    useEffect(() => {
+        // Global data refresh on Admin mount
+        refresh();
+    }, []);
 
     useEffect(() => {
         if (isAuthenticated) {
@@ -116,10 +131,10 @@ const AdminLayout: React.FC = () => {
     };
 
     const markAsRead = async (id: string, e?: React.MouseEvent) => {
-        if (e && e.stopPropagation) e.stopPropagation();
+        if (e) e.stopPropagation();
         try {
             await api.put(`/notifications/${id}/read`);
-            setNotifications(prev => prev.filter(n => n.id !== id));
+            setNotifications(notifications.map(n => n.id === id ? { ...n, read: true } : n));
         } catch (error) {
             console.error('Failed to mark notification as read', error);
         }
@@ -175,8 +190,13 @@ const AdminLayout: React.FC = () => {
                 {/* Sidebar */}
                 <aside className={`admin-sidebar ${sidebarCollapsed ? 'collapsed' : ''}`}>
                     <div className="admin-sidebar-header">
-                        <div className="admin-sidebar-logo">I</div>
-                        <span className="admin-sidebar-title">Iris CRM</span>
+                        <div className="admin-sidebar-logo" style={{ boxShadow: 'var(--neon-glow)' }}>I</div>
+                        <span className="admin-sidebar-title" style={{
+                            background: 'linear-gradient(90deg, #fff 0%, #888 100%)',
+                            WebkitBackgroundClip: 'text',
+                            WebkitTextFillColor: 'transparent',
+                            fontWeight: 800
+                        }}>Iris CRM</span>
                     </div>
 
                     <nav className="admin-nav">
@@ -230,65 +250,13 @@ const AdminLayout: React.FC = () => {
                         </div>
 
                         <div className="admin-header-right">
-                            <div style={{ position: 'relative' }}>
-                                <button
-                                    className="admin-notification-btn"
-                                    onClick={() => setShowNotifications(!showNotifications)}
-                                >
-                                    {icons.bell}
-                                    {notifications.length > 0 && <span className="admin-notification-badge">{notifications.length}</span>}
-                                </button>
+                            <NotificationBell
+                                notifications={notifications}
+                                onMarkAsRead={(id) => markAsRead(id)}
+                                onViewAll={() => navigate('/admin/notifications')}
+                            />
 
-                                {showNotifications && (
-                                    <div style={{
-                                        position: 'absolute', top: '100%', right: 0, marginTop: '10px',
-                                        width: '320px', background: 'var(--admin-card-bg)', border: '1px solid var(--admin-border-color)',
-                                        borderRadius: '12px', padding: '1rem', zIndex: 1000, boxShadow: '0 4px 12px rgba(0,0,0,0.3)',
-                                        maxHeight: '400px', overflowY: 'auto'
-                                    }}>
-                                        <h4 style={{ color: '#fff', marginBottom: '0.75rem', fontSize: '0.9rem', borderBottom: '1px solid var(--admin-border-color)', paddingBottom: '0.5rem' }}>Notifications</h4>
-                                        {notifications.length === 0 ? (
-                                            <p style={{ color: '#666', fontSize: '0.8rem', textAlign: 'center', padding: '1rem 0' }}>No new notifications</p>
-                                        ) : (
-                                            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
-                                                {notifications.map(n => (
-                                                    <div
-                                                        key={n.id}
-                                                        onClick={() => handleNotificationClick(n)}
-                                                        style={{
-                                                            padding: '0.75rem', background: 'var(--admin-bg)', borderRadius: '8px',
-                                                            fontSize: '0.85rem', color: '#ddd', display: 'flex', gap: '0.75rem', alignItems: 'flex-start',
-                                                            cursor: 'pointer'
-                                                        }}
-                                                    >
-                                                        <div style={{ flex: 1 }}>
-                                                            <div style={{ fontWeight: 600, marginBottom: '0.25rem', color: '#fff' }}>{n.title}</div>
-                                                            <div style={{ fontSize: '0.8rem', color: '#aaa', lineHeight: 1.4 }}>{n.message}</div>
-                                                            <div style={{ fontSize: '0.7rem', color: '#666', marginTop: '4px' }}>{new Date(n.createdAt).toLocaleString()}</div>
-                                                        </div>
-                                                        <button
-                                                            onClick={(e) => markAsRead(n.id, e)}
-                                                            style={{
-                                                                background: 'none', border: 'none',
-                                                                color: 'var(--color-accent)', cursor: 'pointer', padding: '4px'
-                                                            }}
-                                                            title="Mark as read"
-                                                        >
-                                                            ✓
-                                                        </button>
-                                                    </div>
-                                                ))}
-                                            </div>
-                                        )}
-                                    </div>
-                                )}
-                            </div>
-
-                            <div
-                                className="admin-user-menu"
-                                onClick={() => setShowUserMenu(!showUserMenu)}
-                                style={{ position: 'relative' }}
-                            >
+                            <div className="admin-user" onClick={() => navigate('/admin/settings')}>
                                 <div className="admin-user-info">
                                     <div className="admin-user-name">{user.name}</div>
                                     <div className="admin-user-role">{user.role}</div>

@@ -1,5 +1,6 @@
 import React from 'react';
 import { motion } from 'framer-motion';
+import SEO from './SEO';
 import { usePortfolio } from '../hooks/usePortfolio';
 import ProjectCard from './ProjectCard';
 
@@ -84,6 +85,7 @@ const ProjectsPage: React.FC = () => {
 
     return (
         <div style={{ paddingTop: '150px', minHeight: '100vh', paddingBottom: '100px' }}>
+            <SEO title="Our Works" description="Explore our portfolio of curated digital experiences and brand identities." />
             {/* Hero Section */}
             <section style={{
                 padding: '0 var(--spacing-lg)',

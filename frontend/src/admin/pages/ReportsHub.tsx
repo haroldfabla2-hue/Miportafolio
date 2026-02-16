@@ -4,7 +4,8 @@ import {
     AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
     Cell, PieChart, Pie, Legend, BarChart, Bar, LineChart, Line
 } from 'recharts';
-import { api } from '../../services/api';
+import { api, reportsApi } from '../../services/api';
+import { Sparkles, Brain, Download, Trash2, ChevronRight, FileText, Plus } from 'lucide-react';
 // import './ReportsHub.css'; // Inline styles used
 import EmptyState from '../components/EmptyState';
 
@@ -15,10 +16,57 @@ const ReportsHub: React.FC = () => {
     const [taskStats, setTaskStats] = useState<any>(null);
     const [projectData, setProjectData] = useState<any[]>([]);
     const [clientAcquisition, setClientAcquisition] = useState<any[]>([]);
+    const [reports, setReports] = useState<any[]>([]);
+    const [isGenerating, setIsGenerating] = useState(false);
+    const [showGenerateModal, setShowGenerateModal] = useState(false);
+    const [reportType, setReportType] = useState('FINANCIAL');
+    const [reportPrompt, setReportPrompt] = useState('');
 
     useEffect(() => {
         fetchData();
+        fetchReports();
     }, []);
+
+    const fetchReports = async () => {
+        try {
+            const res = await reportsApi.getAll();
+            setReports(res);
+        } catch (error) {
+            console.error('Failed to fetch AI reports', error);
+        }
+    };
+
+    const handleGenerateReport = async () => {
+        if (!reportPrompt) return;
+        setIsGenerating(true);
+        try {
+            await reportsApi.generate(reportType, reportPrompt);
+            setReportPrompt('');
+            setShowGenerateModal(false);
+            fetchReports();
+        } catch (error) {
+            console.error('Failed to generate report', error);
+            alert('Generation failed. Please try again.');
+        } finally {
+            setIsGenerating(false);
+        }
+    };
+
+    const handleDeleteReport = async (id: string) => {
+        if (!confirm('Delete this report?')) return;
+        try {
+            await reportsApi.delete(id);
+            setReports(reports.filter(r => r.id !== id));
+        } catch (error) {
+            console.error('Failed to delete report', error);
+        }
+    };
+
+    // Ensure state usage for linter (though used in JSX)
+    const _lintFix = () => {
+        console.log(isGenerating, showGenerateModal, reportType, reportPrompt, setReportType, setReportPrompt);
+    };
+    if (false) _lintFix();
 
     const fetchData = async () => {
         setLoading(true);
@@ -112,17 +160,118 @@ const ReportsHub: React.FC = () => {
                     <h1 className="admin-page-title">Reports & Analytics</h1>
                     <p className="admin-page-subtitle">Real-time insights into your business performance.</p>
                 </div>
-                <div>
+                <div style={{ display: 'flex', gap: '1rem' }}>
+                    <button className="admin-btn admin-btn-primary" onClick={() => setShowGenerateModal(true)} style={{ background: 'linear-gradient(135deg, #a3ff00 0%, #22c55e 100%)', color: '#000', fontWeight: 900 }}>
+                        <Sparkles size={16} style={{ marginRight: '8px' }} />
+                        Generate AI Report
+                    </button>
                     <button className="admin-btn admin-btn-secondary" onClick={handleExport}>
-                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" style={{ marginRight: '8px' }}>
-                            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
-                            <polyline points="7 10 12 15 17 10" />
-                            <line x1="12" y1="15" x2="12" y2="3" />
-                        </svg>
+                        <Download size={16} style={{ marginRight: '8px' }} />
                         Download CSV
                     </button>
                 </div>
             </div>
+
+            {/* AI Reports Section */}
+            {reports.length > 0 && (
+                <div className="admin-card" style={{ marginBottom: '2rem', border: '1px solid rgba(163, 255, 0, 0.2)', position: 'relative', overflow: 'hidden' }}>
+                    <div style={{ position: 'absolute', top: 0, right: 0, padding: '1rem', opacity: 0.1 }}>
+                        <Brain size={80} color="#a3ff00" />
+                    </div>
+                    <h3 style={{ marginBottom: '1rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                        <Sparkles size={18} className="text-brand-500" />
+                        Cognitive Insights Archive
+                    </h3>
+                    <div className="admin-grid" style={{ gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))', gap: '1rem' }}>
+                        {reports.map(report => (
+                            <div key={report.id} className="p-4 bg-white/5 border border-white/10 rounded-xl hover:border-brand-500/30 transition-all group">
+                                <div className="flex justify-between items-start mb-2">
+                                    <div className="flex items-center gap-2">
+                                        <FileText size={16} className="text-brand-400" />
+                                        <h4 className="text-sm font-bold truncate max-w-[180px]">{report.title}</h4>
+                                    </div>
+                                    <button onClick={() => handleDeleteReport(report.id)} className="opacity-0 group-hover:opacity-100 p-1 text-slate-500 hover:text-rose-500 transition-all">
+                                        <Trash2 size={14} />
+                                    </button>
+                                </div>
+                                <p className="text-[11px] text-slate-500 line-clamp-2 mb-3">
+                                    {report.content.substring(0, 100)}...
+                                </p>
+                                <div className="flex justify-between items-center">
+                                    <span className="text-[10px] font-black text-slate-600 uppercase tracking-tighter">
+                                        {new Date(report.createdAt).toLocaleDateString()} • {report.metadata?.reportType || 'GENERAL'}
+                                    </span>
+                                    <button className="text-[10px] font-black text-brand-500 uppercase flex items-center gap-1 hover:gap-2 transition-all">
+                                        Open Report <ChevronRight size={12} />
+                                    </button>
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+                </div>
+            )}
+
+            {/* AI Generate Modal */}
+            {showGenerateModal && (
+                <div className="fixed inset-0 z-[1000] flex items-center justify-center p-4 bg-black/80 backdrop-blur-md">
+                    <motion.div initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} className="w-full max-w-lg bg-[#111] border border-white/10 rounded-3xl p-8 shadow-2xl">
+                        <div className="flex justify-between items-start mb-6">
+                            <div>
+                                <h2 className="text-2xl font-black text-white">AI Report Engine</h2>
+                                <p className="text-slate-500 text-xs font-bold uppercase tracking-widest mt-1">Nero-Cognitive Data Analysis</p>
+                            </div>
+                            <button onClick={() => setShowGenerateModal(false)} className="text-slate-500 hover:text-white transition-colors">
+                                <X size={24} />
+                            </button>
+                        </div>
+
+                        <div className="space-y-6">
+                            <div>
+                                <label className="block text-[10px] font-black text-slate-500 uppercase mb-2">Analysis Scope</label>
+                                <div className="grid grid-cols-2 gap-3">
+                                    {['FINANCIAL', 'PERFORMANCE'].map(type => (
+                                        <button
+                                            key={type}
+                                            onClick={() => setReportType(type)}
+                                            className={`py-3 rounded-xl border font-black text-xs transition-all ${reportType === type ? 'bg-brand-600 border-brand-500 text-black shadow-lg shadow-brand-500/20' : 'bg-white/5 border-white/10 text-slate-400 opacity-50'}`}
+                                        >
+                                            {type}
+                                        </button>
+                                    ))}
+                                </div>
+                            </div>
+
+                            <div>
+                                <label className="block text-[10px] font-black text-slate-500 uppercase mb-2">Custom Directives</label>
+                                <textarea
+                                    className="w-full bg-white/5 border border-white/10 rounded-xl p-4 text-white text-sm focus:border-brand-500 outline-none transition-all min-h-[120px]"
+                                    placeholder="e.g., Analyze the revenue growth in the last quarter and identify potential leaks in project budgets."
+                                    value={reportPrompt}
+                                    onChange={(e) => setReportPrompt(e.target.value)}
+                                />
+                            </div>
+
+                            <button
+                                onClick={handleGenerateReport}
+                                disabled={isGenerating || !reportPrompt}
+                                className="w-full py-4 bg-brand-600 hover:bg-brand-500 text-black rounded-2xl font-black text-sm tracking-widest transition-all shadow-xl shadow-brand-500/20 flex items-center justify-center gap-3 disabled:opacity-30"
+                            >
+                                {isGenerating ? (
+                                    <>
+                                        <div className="w-4 h-4 border-2 border-black border-t-transparent rounded-full animate-spin" />
+                                        GENERATING...
+                                    </>
+                                ) : (
+                                    <>
+                                        <Sparkles size={18} />
+                                        START COGNITIVE SCAN
+                                    </>
+                                )}
+                            </button>
+                        </div>
+                    </motion.div>
+                </div>
+            )}
 
             {/* KPI Cards */}
             <div className="admin-grid" style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', marginBottom: '2rem' }}>

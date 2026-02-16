@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
+import SEO from './SEO';
 import { contentApi, type CmsContent } from '../services/api';
 
 const BlogPage: React.FC = () => {
@@ -31,6 +32,7 @@ const BlogPage: React.FC = () => {
             minHeight: '80vh',
             paddingTop: '120px'
         }}>
+            <SEO title="Blog" description="Read our latest thoughts on design, development, and building meaningful digital experiences." />
             <motion.h1
                 initial={{ opacity: 0, y: 30 }}
                 animate={{ opacity: 1, y: 0 }}

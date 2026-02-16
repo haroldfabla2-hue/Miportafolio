@@ -6,6 +6,7 @@ interface Message {
     role: 'user' | 'assistant';
     content: string;
     imageUrl?: string;
+    action?: string;
 }
 
 interface IrisFloatProps {
@@ -50,6 +51,7 @@ const IrisFloat: React.FC<IrisFloatProps> = ({ isOpen, onToggle }) => {
                     role: 'assistant',
                     content: data.response,
                     imageUrl: data.generatedImage,
+                    action: data.action,
                 }]);
             } else {
                 setMessages(prev => [...prev, {
@@ -114,23 +116,24 @@ const IrisFloat: React.FC<IrisFloatProps> = ({ isOpen, onToggle }) => {
             right: '24px',
             width: '380px',
             height: '500px',
-            background: '#0d0d0d',
-            borderRadius: '16px',
-            border: '1px solid #2a2a2a',
+            background: 'var(--glass-bg)',
+            backdropFilter: 'var(--glass-blur)',
+            borderRadius: '24px',
+            border: '1px solid var(--glass-border)',
             display: 'flex',
             flexDirection: 'column',
             overflow: 'hidden',
-            boxShadow: '0 8px 32px rgba(0, 0, 0, 0.4)',
+            boxShadow: '0 8px 32px rgba(0, 0, 0, 0.6)',
             zIndex: 9999,
         }}>
             {/* Header */}
             <div style={{
                 padding: '1rem',
-                borderBottom: '1px solid #2a2a2a',
+                borderBottom: '1px solid var(--glass-border)',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'space-between',
-                background: '#111',
+                background: 'rgba(255, 255, 255, 0.03)',
             }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
                     <div style={{
@@ -184,14 +187,36 @@ const IrisFloat: React.FC<IrisFloatProps> = ({ isOpen, onToggle }) => {
                         >
                             <div style={{
                                 maxWidth: '75%',
-                                padding: '0.75rem',
-                                background: msg.role === 'user' ? 'var(--color-accent, #a3ff47)' : '#1a1a1a',
+                                padding: '0.875rem 1rem',
+                                background: msg.role === 'user' ? 'var(--color-accent, #a3ff47)' : 'rgba(255, 255, 255, 0.05)',
                                 color: msg.role === 'user' ? '#000' : '#fff',
-                                borderRadius: msg.role === 'user' ? '12px 12px 2px 12px' : '12px 12px 12px 2px',
+                                borderRadius: msg.role === 'user' ? '20px 20px 2px 20px' : '20px 20px 20px 2px',
                                 fontSize: '0.85rem',
                                 lineHeight: 1.5,
                                 whiteSpace: 'pre-wrap',
+                                border: msg.role === 'user' ? 'none' : '1px solid rgba(255, 255, 255, 0.05)',
+                                boxShadow: msg.role === 'user' ? 'var(--neon-glow)' : 'none',
+                                position: 'relative',
                             }}>
+                                {msg.action && msg.action !== 'CHAT' && (
+                                    <div style={{
+                                        position: 'absolute',
+                                        top: '-10px',
+                                        left: msg.role === 'user' ? 'auto' : '10px',
+                                        right: msg.role === 'user' ? '10px' : 'auto',
+                                        background: 'var(--color-accent, #a3ff47)',
+                                        color: '#000',
+                                        fontSize: '0.65rem',
+                                        fontWeight: 800,
+                                        padding: '2px 8px',
+                                        borderRadius: '10px',
+                                        textTransform: 'uppercase',
+                                        boxShadow: '0 2px 10px rgba(163, 255, 71, 0.4)',
+                                        zIndex: 1,
+                                    }}>
+                                        {msg.action.replace('_', ' ')}
+                                    </div>
+                                )}
                                 {msg.content}
                                 {msg.imageUrl && (
                                     <img
@@ -211,13 +236,18 @@ const IrisFloat: React.FC<IrisFloatProps> = ({ isOpen, onToggle }) => {
                 {isTyping && (
                     <div style={{ display: 'flex', gap: '0.5rem', marginBottom: '1rem' }}>
                         <div style={{
-                            padding: '0.75rem',
-                            background: '#1a1a1a',
-                            borderRadius: '12px 12px 12px 2px',
+                            padding: '0.875rem 1rem',
+                            background: 'rgba(255, 255, 255, 0.05)',
+                            borderRadius: '20px 20px 20px 2px',
                             color: '#888',
                             fontSize: '0.85rem',
+                            display: 'flex',
+                            alignItems: 'center',
+                            gap: '4px',
+                            border: '1px solid rgba(255, 255, 255, 0.05)',
                         }}>
-                            Pensando...
+                            Iris está pensando
+                            <span className="dot-pulse"></span>
                         </div>
                     </div>
                 )}

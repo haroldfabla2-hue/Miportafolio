@@ -1,5 +1,6 @@
 import React from 'react';
 import { motion } from 'framer-motion';
+import SEO from './SEO';
 import Process from './Process';
 
 const services = [
@@ -23,6 +24,7 @@ const services = [
 const ServicesPage: React.FC = () => {
     return (
         <div style={{ paddingTop: '150px', minHeight: '100vh', paddingBottom: '100px' }}>
+            <SEO title="Expertise" description="Comprehensive digital services including web design, development, and branding strategy." />
             {/* Hero Section */}
             <section style={{
                 padding: '0 var(--spacing-lg)',

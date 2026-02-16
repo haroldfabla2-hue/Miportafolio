@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { authFetch } from '../../services/api';
+import { api, financeApi } from '../../services/api';
+import { motion, AnimatePresence } from 'framer-motion';
+import { DollarSign, FileText, Download, Filter, Plus, TrendingUp, AlertCircle, CheckCircle2, Clock, MoreVertical, Search, ExternalLink } from 'lucide-react';
 import EmptyState from '../components/EmptyState';
 
 // Types aligning with Prisma Schema and Backend Response
@@ -42,45 +44,53 @@ const InvoiceRow: React.FC<{ invoice: Invoice }> = ({ invoice }) => {
     const status = statusColors[invoice.status] || statusColors['DRAFT'];
 
     return (
-        <tr>
-            <td style={{ fontWeight: 600, color: 'var(--color-accent)' }}>{invoice.number}</td>
-            <td>
-                <div>
-                    <div style={{ fontWeight: 500, color: '#fff' }}>{invoice.client?.name || 'Unknown Client'}</div>
-                    <div style={{ fontSize: '0.8rem', color: '#666' }}>{invoice.client?.email}</div>
+        <motion.tr
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="group hover:bg-white/[0.02] transition-all border-b border-white/5"
+        >
+            <td className="py-4 px-6">
+                <span className="text-[10px] font-black text-brand-500 uppercase tracking-widest">{invoice.number}</span>
+            </td>
+            <td className="py-4 px-6">
+                <div className="flex items-center gap-3">
+                    <div className="w-8 h-8 rounded-full bg-slate-800 flex items-center justify-center text-[10px] font-black text-slate-500 border border-white/5">
+                        {invoice.client?.name.charAt(0)}
+                    </div>
+                    <div>
+                        <div className="text-xs font-black text-white uppercase">{invoice.client?.name || 'Unknown Client'}</div>
+                        <div className="text-[10px] font-bold text-slate-500">{invoice.client?.email}</div>
+                    </div>
                 </div>
             </td>
-            <td style={{ color: '#888' }}>{invoice.project?.name || '-'}</td>
-            <td>
-                <span style={{
-                    padding: '0.25rem 0.75rem',
-                    borderRadius: '20px',
-                    fontSize: '0.7rem',
-                    fontWeight: 600,
-                    textTransform: 'uppercase',
-                    backgroundColor: status.bg,
-                    color: status.text
-                }}>
+            <td className="py-4 px-6">
+                <span className="text-xs font-bold text-slate-400">{invoice.project?.name || '-'}</span>
+            </td>
+            <td className="py-4 px-6">
+                <span style={{ backgroundColor: status.bg, color: status.text }} className="px-2.5 py-1 rounded-full text-[9px] font-black uppercase border border-white/5">
                     {invoice.status}
                 </span>
             </td>
-            <td style={{ fontWeight: 600, color: '#fff' }}>${invoice.total.toLocaleString()}</td>
-            <td style={{ color: '#666', fontSize: '0.85rem' }}>
-                {getDueDate(invoice.createdAt)}
+            <td className="py-4 px-6">
+                <span className="text-sm font-black text-white">${invoice.total.toLocaleString()}</span>
             </td>
-            <td>
-                <div style={{ display: 'flex', gap: '0.5rem' }}>
-                    <button className="admin-btn admin-btn-ghost" style={{ padding: '0.35rem' }} title="Download PDF">
-                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
-                            <polyline points="7 10 12 15 17 10" />
-                            <line x1="12" y1="15" x2="12" y2="3" />
-                        </svg>
-                    </button>
-                    {/* Placeholder for Edit/View actions */}
+            <td className="py-4 px-6">
+                <div className="flex items-center gap-2 text-slate-500 text-[10px] font-bold uppercase">
+                    <Clock size={12} />
+                    {getDueDate(invoice.createdAt)}
                 </div>
             </td>
-        </tr>
+            <td className="py-4 px-6">
+                <div className="flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                    <button className="p-2 bg-white/5 hover:bg-white/10 rounded-lg text-slate-400 hover:text-brand-500 transition-all">
+                        <Download size={14} />
+                    </button>
+                    <button className="p-2 bg-white/5 hover:bg-white/10 rounded-lg text-slate-400 hover:text-white transition-all">
+                        <ExternalLink size={14} />
+                    </button>
+                </div>
+            </td>
+        </motion.tr>
     );
 };
 
@@ -96,20 +106,15 @@ const FinancePage: React.FC = () => {
     }, []);
 
     const fetchData = async () => {
+        setLoading(true);
         try {
             const [invoicesRes, statsRes] = await Promise.all([
-                authFetch('/api/finance/invoices'),
-                authFetch('/api/finance'),
+                api.get('/finance/invoices'),
+                financeApi.getStats(),
             ]);
 
-            if (invoicesRes.ok) {
-                const data = await invoicesRes.json();
-                setInvoices(data);
-            }
-            if (statsRes.ok) {
-                const data = await statsRes.json();
-                setStats(data);
-            }
+            setInvoices(invoicesRes.data);
+            setStats(statsRes);
         } catch (error) {
             console.error('Failed to fetch finance data:', error);
         } finally {
@@ -144,80 +149,123 @@ const FinancePage: React.FC = () => {
                 </button>
             </div>
 
-            {/* Stats */}
-            <div className="admin-grid admin-grid-4" style={{ marginBottom: '2rem' }}>
-                <div className="admin-card">
-                    <p style={{ fontSize: '0.8rem', color: '#666', marginBottom: '0.25rem' }}>Total Revenue</p>
-                    <p style={{ fontSize: '1.75rem', fontWeight: 700, color: 'var(--color-accent)' }}>${displayStats.totalRevenue.toLocaleString()}</p>
+            {/* Premium Stats Grid */}
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+                <div className="bg-white/5 border border-white/10 rounded-2xl p-6 relative overflow-hidden group hover:border-brand-500/30 transition-all">
+                    <div className="absolute top-0 right-0 p-4 opacity-5 group-hover:opacity-10 transition-opacity">
+                        <TrendingUp size={48} />
+                    </div>
+                    <p className="text-[10px] font-black text-slate-500 uppercase tracking-widest mb-1">Total Revenue</p>
+                    <p className="text-3xl font-black text-white">${displayStats.totalRevenue.toLocaleString()}</p>
+                    <div className="mt-4 flex items-center gap-2">
+                        <span className="w-1.5 h-1.5 rounded-full bg-brand-500 animate-pulse"></span>
+                        <span className="text-[10px] font-bold text-brand-500 uppercase">Live Metrics</span>
+                    </div>
                 </div>
-                <div className="admin-card">
-                    <p style={{ fontSize: '0.8rem', color: '#666', marginBottom: '0.25rem' }}>Pending</p>
-                    <p style={{ fontSize: '1.75rem', fontWeight: 700, color: '#f59e0b' }}>${displayStats.pendingRevenue.toLocaleString()}</p>
+
+                <div className="bg-white/5 border border-white/10 rounded-2xl p-6 relative overflow-hidden group hover:border-amber-500/30 transition-all">
+                    <div className="absolute top-0 right-0 p-4 opacity-5 group-hover:opacity-10 transition-opacity">
+                        <Clock size={48} />
+                    </div>
+                    <p className="text-[10px] font-black text-slate-500 uppercase tracking-widest mb-1">Pending Balance</p>
+                    <p className="text-3xl font-black text-amber-500">${displayStats.pendingRevenue.toLocaleString()}</p>
+                    <p className="mt-4 text-[10px] font-bold text-slate-500 uppercase">{displayStats.invoiceCount.pending} Invoices awaiting payment</p>
                 </div>
-                <div className="admin-card">
-                    <p style={{ fontSize: '0.8rem', color: '#666', marginBottom: '0.25rem' }}>Overdue</p>
-                    <p style={{ fontSize: '1.75rem', fontWeight: 700, color: '#ef4444' }}>${displayStats.overdueAmount.toLocaleString()}</p>
+
+                <div className="bg-white/5 border border-white/10 rounded-2xl p-6 relative overflow-hidden group hover:border-rose-500/30 transition-all">
+                    <div className="absolute top-0 right-0 p-4 opacity-5 group-hover:opacity-10 transition-opacity">
+                        <AlertCircle size={48} />
+                    </div>
+                    <p className="text-[10px] font-black text-slate-500 uppercase tracking-widest mb-1">Overdue Amount</p>
+                    <p className="text-3xl font-black text-rose-500">${displayStats.overdueAmount.toLocaleString()}</p>
+                    <p className="mt-4 text-[10px] font-bold text-rose-500 uppercase tracking-tighter shadow-rose-500/20">{displayStats.invoiceCount.overdue} Critical overdue items</p>
                 </div>
-                <div className="admin-card">
-                    <p style={{ fontSize: '0.8rem', color: '#666', marginBottom: '0.25rem' }}>Total Invoices</p>
-                    <p style={{ fontSize: '1.75rem', fontWeight: 700, color: '#fff' }}>{displayStats.invoiceCount.total}</p>
+
+                <div className="bg-white/5 border border-white/10 rounded-2xl p-6 relative overflow-hidden group hover:border-brand-500/30 transition-all">
+                    <div className="absolute top-0 right-0 p-4 opacity-5 group-hover:opacity-10 transition-opacity">
+                        <FileText size={48} />
+                    </div>
+                    <p className="text-[10px] font-black text-slate-500 uppercase tracking-widest mb-1">Total Issued</p>
+                    <p className="text-3xl font-black text-white">{displayStats.invoiceCount.total}</p>
+                    <p className="mt-4 text-[10px] font-bold text-slate-500 uppercase">Cumulative invoice count</p>
                 </div>
             </div>
 
-            {/* Filters */}
-            <div style={{ display: 'flex', gap: '0.5rem', marginBottom: '1.5rem' }}>
-                {(['all', 'pending', 'paid', 'overdue'] as const).map(f => (
-                    <button
-                        key={f}
-                        onClick={() => setFilter(f)}
-                        className={`admin-btn ${filter === f ? 'admin-btn-primary' : 'admin-btn-secondary'}`}
-                        style={{ padding: '0.5rem 1rem', fontSize: '0.85rem' }}
-                    >
-                        {f.charAt(0).toUpperCase() + f.slice(1)} {f !== 'all' && `(${displayStats.invoiceCount[f]})`}
-                    </button>
-                ))}
+            {/* Filters & Actions */}
+            <div className="flex flex-col md:flex-row justify-between items-center gap-4 mb-6">
+                <div className="flex bg-white/5 p-1 rounded-xl border border-white/10 w-full md:w-auto">
+                    {(['all', 'pending', 'paid', 'overdue'] as const).map(f => (
+                        <button
+                            key={f}
+                            onClick={() => setFilter(f)}
+                            className={`flex-1 md:flex-none px-6 py-2 rounded-lg text-[10px] font-black uppercase tracking-widest transition-all ${filter === f ? 'bg-brand-600 text-black shadow-lg shadow-brand-500/10' : 'text-slate-500 hover:text-white hover:bg-white/5'}`}
+                        >
+                            {f} {f !== 'all' && <span className="ml-1 opacity-50">({displayStats.invoiceCount[f]})</span>}
+                        </button>
+                    ))}
+                </div>
+
+                <div className="relative w-full md:w-64">
+                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500" size={14} />
+                    <input
+                        type="text"
+                        placeholder="SEARCH INVOICE #"
+                        className="w-full bg-white/5 border border-white/10 rounded-xl py-2 pl-10 pr-4 text-[10px] font-black text-white uppercase outline-none focus:border-brand-500 transition-all"
+                    />
+                </div>
             </div>
 
             {/* Invoices Table */}
-            <div className="admin-card" style={{ padding: 0, overflow: 'hidden' }}>
-                <table className="admin-table">
-                    <thead>
-                        <tr>
-                            <th>Invoice #</th>
-                            <th>Client</th>
-                            <th>Project</th>
-                            <th>Status</th>
-                            <th>Total</th>
-                            <th>Due Date</th>
-                            <th>Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {loading ? (
-                            <tr><td colSpan={7} style={{ textAlign: 'center', padding: '2rem' }}>Loading...</td></tr>
-                        ) : filteredInvoices.length === 0 ? (
-                            <tr>
-                                <td colSpan={7} style={{ padding: 0 }}>
-                                    <div style={{ padding: '2rem' }}>
-                                        <EmptyState
-                                            type="finance"
-                                            title={invoices.length === 0 ? "No Invoices Issued" : "No Invoices Found"}
-                                            description={invoices.length === 0
-                                                ? "Create your first invoice to start getting paid. Track payments and manage finance."
-                                                : `No invoices match the status "${filter}".`}
-                                            actionLabel={invoices.length === 0 ? "New Invoice" : undefined}
-                                            onAction={invoices.length === 0 ? () => { } : undefined}
-                                        />
-                                    </div>
-                                </td>
+            <div className="bg-[#111] border border-white/10 rounded-2xl overflow-hidden shadow-2xl">
+                <div className="overflow-x-auto">
+                    <table className="w-full text-left border-collapse">
+                        <thead>
+                            <tr className="border-b border-white/10 bg-white/[0.02]">
+                                <th className="py-4 px-6 text-[10px] font-black text-slate-500 uppercase tracking-widest">Number</th>
+                                <th className="py-4 px-6 text-[10px] font-black text-slate-500 uppercase tracking-widest">Client</th>
+                                <th className="py-4 px-6 text-[10px] font-black text-slate-500 uppercase tracking-widest">Project</th>
+                                <th className="py-4 px-6 text-[10px] font-black text-slate-500 uppercase tracking-widest">Status</th>
+                                <th className="py-4 px-6 text-[10px] font-black text-slate-500 uppercase tracking-widest">Total</th>
+                                <th className="py-4 px-6 text-[10px] font-black text-slate-500 uppercase tracking-widest">Due Date</th>
+                                <th className="py-4 px-6 text-[10px] font-black text-slate-500 uppercase tracking-widest">Actions</th>
                             </tr>
-                        ) : (
-                            filteredInvoices.map(invoice => (
-                                <InvoiceRow key={invoice.id} invoice={invoice} />
-                            ))
-                        )}
-                    </tbody>
-                </table>
+                        </thead>
+                        <tbody>
+                            {loading ? (
+                                <tr>
+                                    <td colSpan={7} className="py-20 text-center">
+                                        <div className="flex flex-col items-center gap-4">
+                                            <div className="w-8 h-8 border-2 border-brand-500 border-t-transparent rounded-full animate-spin"></div>
+                                            <p className="text-[10px] font-black text-slate-500 uppercase tracking-widest">Analyzing Financial Records...</p>
+                                        </div>
+                                    </td>
+                                </tr>
+                            ) : filteredInvoices.length === 0 ? (
+                                <tr>
+                                    <td colSpan={7}>
+                                        <div className="py-20">
+                                            <EmptyState
+                                                type="finance"
+                                                title={invoices.length === 0 ? "No Invoices Issued" : "No Invoices Found"}
+                                                description={invoices.length === 0
+                                                    ? "Create your first invoice to start getting paid. Track payments and manage finance."
+                                                    : `No invoices match the status "${filter}".`}
+                                                actionLabel={invoices.length === 0 ? "New Invoice" : undefined}
+                                                onAction={invoices.length === 0 ? () => { } : undefined}
+                                            />
+                                        </div>
+                                    </td>
+                                </tr>
+                            ) : (
+                                <AnimatePresence mode="popLayout">
+                                    {filteredInvoices.map(invoice => (
+                                        <InvoiceRow key={invoice.id} invoice={invoice} />
+                                    ))}
+                                </AnimatePresence>
+                            )}
+                        </tbody>
+                    </table>
+                </div>
             </div>
         </div>
     );

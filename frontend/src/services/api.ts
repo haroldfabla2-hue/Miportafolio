@@ -1,4 +1,6 @@
 import axios from 'axios';
+import type { Lead, Client, CalendarEvent } from '../types/models';
+
 
 // API configuration and base URL
 const API_BASE_URL = import.meta.env.VITE_API_URL || '';
@@ -216,6 +218,141 @@ export const cmsAdminApi = {
         const response = await apiInstance.patch(`/cms/admin/${id}/publish`, { publish });
         return response.data;
     },
+};
+
+// CRM API
+export const leadsApi = {
+    getAll: async (status?: string): Promise<Lead[]> => {
+        const response = await apiInstance.get('/leads', { params: { status } });
+        return response.data;
+    },
+
+    getStats: async (): Promise<any> => {
+        const response = await apiInstance.get('/leads/stats');
+        return response.data;
+    },
+
+    create: async (data: Partial<Lead>): Promise<Lead> => {
+        const response = await apiInstance.post('/leads', data);
+        return response.data;
+    },
+
+    update: async (id: string, data: Partial<Lead>): Promise<Lead> => {
+        const response = await apiInstance.put(`/leads/${id}`, data);
+        return response.data;
+    },
+
+    updateStatus: async (id: string, status: string): Promise<Lead> => {
+        const response = await apiInstance.put(`/leads/${id}/status`, { status });
+        return response.data;
+    },
+
+    delete: async (id: string): Promise<void> => {
+        await apiInstance.delete(`/leads/${id}`);
+    },
+
+    // Composite action: Create Client from Lead + Mark Lead as WON
+    convert: async (lead: Lead): Promise<Client> => {
+        // 1. Create Client
+        const clientData = {
+            name: lead.name,
+            email: lead.email,
+            company: lead.company || 'Unknown',
+            status: 'ACTIVE',
+            avatar: `https://ui-avatars.com/api/?name=${lead.name}&background=random`
+        };
+        const clientResponse = await apiInstance.post('/clients', clientData);
+
+        // 2. Mark Lead as WON
+        await apiInstance.put(`/leads/${lead.id}/status`, { status: 'WON' });
+
+        return clientResponse.data;
+    }
+};
+
+export const clientsApi = {
+    getAll: async (): Promise<Client[]> => {
+        const response = await apiInstance.get('/clients');
+        return response.data;
+    },
+    create: async (data: any): Promise<Client> => {
+        const response = await apiInstance.post('/clients', data);
+        return response.data;
+    },
+    update: async (id: string, data: any): Promise<Client> => {
+        const response = await apiInstance.put(`/clients/${id}`, data);
+        return response.data;
+    },
+    delete: async (id: string): Promise<void> => {
+        await apiInstance.delete(`/clients/${id}`);
+    }
+};
+
+export const eventsApi = {
+    getAll: async (params?: { start?: string; end?: string; userId?: string; projectId?: string; clientId?: string }): Promise<CalendarEvent[]> => {
+        const response = await apiInstance.get('/events', { params });
+        return response.data;
+    },
+
+    getOne: async (id: string): Promise<CalendarEvent> => {
+        const response = await apiInstance.get(`/events/${id}`);
+        return response.data;
+    },
+
+    create: async (data: Partial<CalendarEvent>): Promise<CalendarEvent> => {
+        const response = await apiInstance.post('/events', data);
+        return response.data;
+    },
+
+    update: async (id: string, data: Partial<CalendarEvent>): Promise<CalendarEvent> => {
+        const response = await apiInstance.put(`/events/${id}`, data);
+        return response.data;
+    },
+
+    delete: async (id: string): Promise<void> => {
+        await apiInstance.delete(`/events/${id}`);
+    }
+};
+
+export const financeApi = {
+    getStats: async () => {
+        const response = await apiInstance.get('/finance');
+        return response.data;
+    },
+    getSummary: async () => {
+        const response = await apiInstance.get('/finance/summary');
+        return response.data;
+    },
+    getChart: async () => {
+        const response = await apiInstance.get('/finance/chart');
+        return response.data;
+    },
+    getInvoices: async () => {
+        const response = await apiInstance.get('/finance/invoices');
+        return response.data;
+    },
+    getBills: async () => {
+        const response = await apiInstance.get('/finance/bills');
+        return response.data;
+    }
+};
+
+export const reportsApi = {
+    getAll: async () => {
+        const response = await apiInstance.get('/reports');
+        return response.data;
+    },
+    getOne: async (id: string) => {
+        const response = await apiInstance.get(`/reports/${id}`);
+        return response.data;
+    },
+    generate: async (type: string, prompt: string) => {
+        const response = await apiInstance.post('/reports/generate', { type, prompt });
+        return response.data;
+    },
+    delete: async (id: string) => {
+        await apiInstance.delete(`/reports/${id}`);
+    }
 };
 
 // Auth-aware fetch wrapper for components still using fetch()

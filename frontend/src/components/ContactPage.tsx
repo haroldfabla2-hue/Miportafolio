@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import axios from 'axios';
+import SEO from './SEO';
 
 const API_BASE = import.meta.env.VITE_API_URL || '';
 
@@ -36,6 +37,7 @@ const ContactPage: React.FC = () => {
 
     return (
         <div style={{ paddingTop: '150px', minHeight: '100vh', paddingBottom: '100px' }}>
+            <SEO title="Contact" description="Get in touch with us to start your next extraordinary digital project." />
             {/* Hero Section */}
             <section style={{
                 padding: '0 var(--spacing-lg)',

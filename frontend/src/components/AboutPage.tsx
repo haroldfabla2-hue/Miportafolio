@@ -1,9 +1,11 @@
 import React from 'react';
 import { motion } from 'framer-motion';
+import SEO from './SEO';
 
 const AboutPage: React.FC = () => {
     return (
         <div style={{ paddingTop: '150px', minHeight: '100vh', paddingBottom: '100px' }}>
+            <SEO title="About Us" description="Learn more about our journey, philosophy, and the impact we create through digital craftsmanship." />
             {/* Hero Section */}
             <section style={{
                 padding: '0 var(--spacing-lg)',

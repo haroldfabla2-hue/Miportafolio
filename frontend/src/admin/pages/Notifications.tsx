@@ -204,17 +204,17 @@ const NotificationsPage: React.FC = () => {
         }
     };
 
-    // Demo data
-    const demoNotifications: Notification[] = [
-        { id: '1', title: 'New project assigned', message: 'You have been assigned as the manager for "Nuestras Casas - Phase 2"', type: 'INFO', read: false, entityType: 'PROJECT', entityId: 'proj-1', createdAt: new Date(Date.now() - 3600000).toISOString() },
-        { id: '2', title: 'Payment received', message: 'Invoice INV-2024-0042 ($3,500.00) has been paid by Bijou Me', type: 'SUCCESS', read: false, entityType: 'INVOICE', entityId: 'inv-1', createdAt: new Date(Date.now() - 7200000).toISOString() },
-        { id: '3', title: 'Task overdue', message: 'The task "Homepage wireframes" is 2 days overdue', type: 'WARNING', read: false, entityType: 'TASK', entityId: 'task-1', createdAt: new Date(Date.now() - 86400000).toISOString() },
-        { id: '4', title: 'Deployment failed', message: 'The staging deployment for BSSN USA failed. Check the logs for details.', type: 'ERROR', read: true, entityType: 'PROJECT', entityId: 'proj-2', createdAt: new Date(Date.now() - 172800000).toISOString() },
-        { id: '5', title: 'New team member', message: 'María López has joined the team as a Designer', type: 'INFO', read: true, entityType: 'USER', createdAt: new Date(Date.now() - 259200000).toISOString() },
-        { id: '6', title: 'Milestone completed', message: 'Milestone "Design Phase" completed for Virako Travel rebrand', type: 'SUCCESS', read: true, entityType: 'PROJECT', createdAt: new Date(Date.now() - 345600000).toISOString() },
-    ];
+    const deleteAllNotifications = async () => {
+        if (!confirm('Are you sure you want to delete ALL notifications permanently?')) return;
+        setNotifications([]);
+        try {
+            await authFetch('/api/notifications', { method: 'DELETE' });
+        } catch (error) {
+            console.error('Failed to delete all notifications:', error);
+        }
+    };
 
-    const displayNotifications = notifications.length > 0 ? notifications : demoNotifications;
+    const displayNotifications = notifications;
     const filteredNotifications = filter === 'UNREAD'
         ? displayNotifications.filter(n => !n.read)
         : displayNotifications;
@@ -242,11 +242,18 @@ const NotificationsPage: React.FC = () => {
                     </h1>
                     <p className="admin-page-subtitle">Stay updated with your activity.</p>
                 </div>
-                {unreadCount > 0 && (
-                    <button className="admin-btn admin-btn-secondary" onClick={markAllAsRead}>
-                        Mark all as read
-                    </button>
-                )}
+                <div style={{ display: 'flex', gap: '0.75rem' }}>
+                    {notifications.length > 0 && (
+                        <button className="admin-btn admin-btn-secondary" onClick={deleteAllNotifications} style={{ color: '#ef4444' }}>
+                            Clear all
+                        </button>
+                    )}
+                    {unreadCount > 0 && (
+                        <button className="admin-btn admin-btn-secondary" onClick={markAllAsRead}>
+                            Mark all as read
+                        </button>
+                    )}
+                </div>
             </div>
 
             {/* Filter Tabs */}
