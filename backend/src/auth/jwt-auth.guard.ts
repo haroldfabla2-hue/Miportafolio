@@ -36,7 +36,7 @@ export class JwtAuthGuard implements CanActivate {
         const token = authHeader.split(' ')[1];
 
         try {
-            const secret = this.configService.get('JWT_SECRET') || 'iris-crm-secret-key';
+            const secret = this.configService.get('JWT_SECRET') || 'your-jwt-secret-change-in-prod';
             // Debug Log
             // console.log('Verifying token:', token.substring(0, 10) + '...', 'with secret starting:', secret.substring(0, 4));
 

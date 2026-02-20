@@ -72,7 +72,7 @@ export class ChatGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
             }
 
             // Verify JWT
-            const secret = this.configService.get('JWT_SECRET') || 'iris-crm-secret-key';
+            const secret = this.configService.get('JWT_SECRET') || 'your-jwt-secret-change-in-prod';
             const payload = this.jwtService.verify(token, { secret });
 
             client.userId = payload.sub;

@@ -35,7 +35,7 @@ export class TokenService {
         private prisma: PrismaService,
         private configService: ConfigService,
     ) {
-        this.jwtSecret = this.configService.get('JWT_SECRET') || 'iris-crm-secret-key';
+        this.jwtSecret = this.configService.get('JWT_SECRET') || 'your-jwt-secret-change-in-prod';
         this.accessExpiry = this.configService.get('JWT_ACCESS_EXPIRY') || '15m';
         this.refreshExpiry = this.configService.get('JWT_REFRESH_EXPIRY') || '7d';
     }
