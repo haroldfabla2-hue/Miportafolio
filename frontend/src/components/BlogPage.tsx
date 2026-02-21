@@ -58,7 +58,7 @@ const BlogPage: React.FC = () => {
             {loading ? (
                 <div style={{
                     display: 'grid',
-                    gridTemplateColumns: 'repeat(auto-fill, minmax(350px, 1fr))',
+                    gridTemplateColumns: 'repeat(auto-fill, minmax(320px, 1fr))',
                     gap: '2rem'
                 }}>
                     {[1, 2, 3].map((i) => (
@@ -93,7 +93,7 @@ const BlogPage: React.FC = () => {
             ) : (
                 <div style={{
                     display: 'grid',
-                    gridTemplateColumns: 'repeat(auto-fill, minmax(350px, 1fr))',
+                    gridTemplateColumns: 'repeat(auto-fill, minmax(320px, 1fr))',
                     gap: '2rem'
                 }}>
                     {posts.map((post, index) => (
@@ -110,8 +110,11 @@ const BlogPage: React.FC = () => {
                                     style={{
                                         backgroundColor: 'rgba(255,255,255,0.02)',
                                         borderRadius: '16px',
-                                        overflow: 'hidden',
+                                        overflow: 'hidden', flex: 1,,
                                         border: '1px solid #222',
+                                        minHeight: '420px',
+                                        display: 'flex',
+                                        flexDirection: 'column',
                                         transition: 'border-color 0.3s',
                                         cursor: 'pointer'
                                     }}
@@ -122,7 +125,7 @@ const BlogPage: React.FC = () => {
                                         <div style={{
                                             width: '100%',
                                             height: '200px',
-                                            overflow: 'hidden'
+                                            overflow: 'hidden', flex: 1,
                                         }}>
                                             <img
                                                 src={post.coverImage}
@@ -169,7 +172,7 @@ const BlogPage: React.FC = () => {
                                             display: '-webkit-box',
                                             WebkitLineClamp: 3,
                                             WebkitBoxOrient: 'vertical',
-                                            overflow: 'hidden'
+                                            overflow: 'hidden', flex: 1,
                                         }}>
                                             {post.metaDesc || post.content.substring(0, 150)}
                                         </p>
