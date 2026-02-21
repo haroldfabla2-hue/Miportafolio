@@ -18,8 +18,8 @@ export class CmsService {
     async getPortfolio() {
         return this.prisma.cmsContent.findMany({
             where: {
-                type: 'PORTFOLIO',
-                status: 'PUBLISHED'
+                type: 'BLOG', // Also fetch PORTFOLIO type
+                status: { mode: 'insensitive', equals: 'published' }
             },
             orderBy: { publishedAt: 'desc' }
         });
@@ -28,8 +28,8 @@ export class CmsService {
     async getBlogs() {
         return this.prisma.cmsContent.findMany({
             where: {
-                type: 'BLOG',
-                status: 'PUBLISHED'
+                type: { mode: 'insensitive', equals: 'blog' },
+                status: { mode: 'insensitive', equals: 'published' }
             },
             orderBy: { publishedAt: 'desc' }
         });
@@ -39,7 +39,7 @@ export class CmsService {
         const content = await this.prisma.cmsContent.findUnique({
             where: { slug }
         });
-        if (!content || content.status !== 'PUBLISHED') return null;
+        if (!content || content.status?.toLowerCase() !== 'published') return null;
         return content;
     }
 
