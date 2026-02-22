@@ -110,7 +110,7 @@ const BlogPage: React.FC = () => {
                                     style={{
                                         backgroundColor: 'rgba(255,255,255,0.02)',
                                         borderRadius: '16px',
-                                        overflow: 'hidden', flex: 1,,
+                                        overflow: 'hidden', flex: 1,
                                         border: '1px solid #222',
                                         minHeight: '420px',
                                         display: 'flex',

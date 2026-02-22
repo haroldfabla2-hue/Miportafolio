@@ -14,6 +14,7 @@ const Home = () => {
                 title="Premium Agency OS"
                 description="MiWeb is a high-end agency management system with AI insights and predictive simulations."
             />
+            <Hero />
             <About />
             <Projects />
             <Process />
