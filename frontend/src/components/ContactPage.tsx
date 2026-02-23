@@ -1,11 +1,13 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import axios from 'axios';
+import { useTranslation } from 'react-i18next';
 import SEO from './SEO';
 
 const API_BASE = import.meta.env.VITE_API_URL || '';
 
 const ContactPage: React.FC = () => {
+    const { t } = useTranslation();
     const [formData, setFormData] = useState({
         name: '',
         email: '',
@@ -29,7 +31,7 @@ const ContactPage: React.FC = () => {
             setSubmitted(true);
             setFormData({ name: '', email: '', company: '', message: '' });
         } catch (err: any) {
-            setError(err.response?.data?.message || 'Something went wrong. Please try again.');
+            setError(err.response?.data?.message || t('contact.somethingWrong'));
         } finally {
             setSubmitting(false);
         }
@@ -59,7 +61,7 @@ const ContactPage: React.FC = () => {
                         textTransform: 'uppercase'
                     }}
                 >
-                    Let's <br /> Talk
+                    {t('contact.heroTitle')}
                 </motion.h1>
                 <motion.p
                     initial={{ opacity: 0, y: 20 }}
@@ -67,7 +69,7 @@ const ContactPage: React.FC = () => {
                     transition={{ duration: 0.8, delay: 0.2 }}
                     style={{ fontSize: '1.5rem', color: '#999', maxWidth: '600px' }}
                 >
-                    Have a project in mind? Let's build something extraordinary together.
+                    {t('contact.heroSubtitle')}
                 </motion.p>
             </section>
 
@@ -85,25 +87,25 @@ const ContactPage: React.FC = () => {
                         animate={{ opacity: 1, x: 0 }}
                         transition={{ duration: 0.8, delay: 0.4 }}
                     >
-                        <h3 style={{ fontSize: '2rem', fontWeight: 800, marginBottom: '2rem' }}>Get in Touch</h3>
+                        <h3 style={{ fontSize: '2rem', fontWeight: 800, marginBottom: '2rem' }}>{t('contact.getInTouch')}</h3>
 
                         <div style={{ marginBottom: '3rem' }}>
-                            <h4 style={{ fontSize: '1rem', color: '#666', textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: '1rem' }}>Email</h4>
+                            <h4 style={{ fontSize: '1rem', color: '#666', textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: '1rem' }}>{t('contact.emailLabel')}</h4>
                             <a href="mailto:albertofarah6@gmail.com" style={{ fontSize: '1.5rem', color: '#fff', textDecoration: 'none', fontWeight: 600 }}>
                                 albertofarah6@gmail.com
                             </a>
                         </div>
 
                         <div style={{ marginBottom: '3rem' }}>
-                            <h4 style={{ fontSize: '1rem', color: '#666', textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: '1rem' }}>Socials</h4>
+                            <h4 style={{ fontSize: '1rem', color: '#666', textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: '1rem' }}>{t('contact.socials')}</h4>
                             <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
                                 <a href="https://www.linkedin.com/in/alberto-farah-blair-a7b1a45a/" target="_blank" rel="noopener noreferrer" style={{ fontSize: '1.2rem', color: '#fff', textDecoration: 'none' }}>LinkedIn ↗</a>
                             </div>
                         </div>
 
                         <div style={{ marginBottom: '3rem' }}>
-                            <h4 style={{ fontSize: '1rem', color: '#666', textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: '1rem' }}>Location</h4>
-                            <p style={{ fontSize: '1.2rem', color: '#ccc' }}>Arequipa, Peru (Available Worldwide)</p>
+                            <h4 style={{ fontSize: '1rem', color: '#666', textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: '1rem' }}>{t('contact.location')}</h4>
+                            <p style={{ fontSize: '1.2rem', color: '#ccc' }}>{t('contact.locationValue')}</p>
                         </div>
                     </motion.div>
 
@@ -126,8 +128,8 @@ const ContactPage: React.FC = () => {
                                 }}
                             >
                                 <p style={{ fontSize: '3rem', marginBottom: '1rem' }}>✓</p>
-                                <h3 style={{ fontSize: '1.5rem', fontWeight: 700, marginBottom: '0.5rem' }}>Message Sent!</h3>
-                                <p style={{ color: '#888' }}>I'll get back to you as soon as possible.</p>
+                                <h3 style={{ fontSize: '1.5rem', fontWeight: 700, marginBottom: '0.5rem' }}>{t('contact.messageSent')}</h3>
+                                <p style={{ color: '#888' }}>{t('contact.responseMessage')}</p>
                                 <button
                                     onClick={() => setSubmitted(false)}
                                     style={{
@@ -141,13 +143,13 @@ const ContactPage: React.FC = () => {
                                         fontSize: '0.9rem'
                                     }}
                                 >
-                                    Send Another Message
+                                    {t('contact.sendAnother')}
                                 </button>
                             </motion.div>
                         ) : (
                             <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '2rem' }}>
                                 <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
-                                    <label htmlFor="name" style={{ fontSize: '0.9rem', color: '#666', fontWeight: 700, textTransform: 'uppercase' }}>Name</label>
+                                    <label htmlFor="name" style={{ fontSize: '0.9rem', color: '#666', fontWeight: 700, textTransform: 'uppercase' }}>{t('contact.name')}</label>
                                     <input
                                         type="text"
                                         id="name"
@@ -164,12 +166,12 @@ const ContactPage: React.FC = () => {
                                             fontSize: '1.2rem',
                                             outline: 'none'
                                         }}
-                                        placeholder="What's your name?"
+                                        placeholder={t('contact.placeholder.name')}
                                     />
                                 </div>
 
                                 <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
-                                    <label htmlFor="email" style={{ fontSize: '0.9rem', color: '#666', fontWeight: 700, textTransform: 'uppercase' }}>Email</label>
+                                    <label htmlFor="email" style={{ fontSize: '0.9rem', color: '#666', fontWeight: 700, textTransform: 'uppercase' }}>{t('contact.email')}</label>
                                     <input
                                         type="email"
                                         id="email"
@@ -186,12 +188,12 @@ const ContactPage: React.FC = () => {
                                             fontSize: '1.2rem',
                                             outline: 'none'
                                         }}
-                                        placeholder="Your email address"
+                                        placeholder={t('contact.placeholder.email')}
                                     />
                                 </div>
 
                                 <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
-                                    <label htmlFor="company" style={{ fontSize: '0.9rem', color: '#666', fontWeight: 700, textTransform: 'uppercase' }}>Company <span style={{ color: '#444', fontWeight: 400 }}>(Optional)</span></label>
+                                    <label htmlFor="company" style={{ fontSize: '0.9rem', color: '#666', fontWeight: 700, textTransform: 'uppercase' }}>{t('contact.company')} <span style={{ color: '#444', fontWeight: 400 }}>{t('contact.optional')}</span></label>
                                     <input
                                         type="text"
                                         id="company"
@@ -207,12 +209,12 @@ const ContactPage: React.FC = () => {
                                             fontSize: '1.2rem',
                                             outline: 'none'
                                         }}
-                                        placeholder="Your company name"
+                                        placeholder={t('contact.placeholder.company')}
                                     />
                                 </div>
 
                                 <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
-                                    <label htmlFor="message" style={{ fontSize: '0.9rem', color: '#666', fontWeight: 700, textTransform: 'uppercase' }}>Message</label>
+                                    <label htmlFor="message" style={{ fontSize: '0.9rem', color: '#666', fontWeight: 700, textTransform: 'uppercase' }}>{t('contact.message')}</label>
                                     <textarea
                                         id="message"
                                         name="message"
@@ -230,7 +232,7 @@ const ContactPage: React.FC = () => {
                                             outline: 'none',
                                             resize: 'vertical'
                                         }}
-                                        placeholder="Tell me about your project..."
+                                        placeholder={t('contact.placeholder.message')}
                                     />
                                 </div>
 
@@ -261,7 +263,7 @@ const ContactPage: React.FC = () => {
                                         transition: 'all 0.3s'
                                     }}
                                 >
-                                    {submitting ? 'Sending...' : 'Send Message'}
+                                    {submitting ? t('contact.sending') : t('contact.send')}
                                 </button>
                             </form>
                         )}

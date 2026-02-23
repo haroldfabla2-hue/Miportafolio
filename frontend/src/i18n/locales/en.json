@@ -16,7 +16,10 @@
     "learnMore": "Learn More",
     "getStarted": "Get Started",
     "viewAll": "View All",
-    "comingSoon": "Coming Soon"
+    "comingSoon": "Coming Soon",
+    "role": "Role",
+    "retry": "Retry",
+    "year": "Year"
   },
   "nav": {
     "home": "Home",
@@ -27,14 +30,24 @@
     "contact": "Contact"
   },
   "home": {
-    "heroTitle": "Building Digital Experiences That Matter",
+    "heroTitle": "Creating Impactful Websites",
     "heroSubtitle": "I craft elegant solutions for complex problems",
     "welcomeMessage": "Welcome to my digital playground",
+    "hero": {
+      "availableForWork": "AVAILABLE FOR WORK",
+      "creating": "CREATING",
+      "impactful": "IMPACTFUL",
+      "websites": "WEBSITES",
+      "subtitle": "I help brands stand out in the digital era. Together we will set the new status quo. No nonsense, always on the cutting edge."
+    },
+    "seoTitle": "Premium Agency OS",
+    "seoDescription": "MiWeb is a high-end agency management system with AI insights and predictive simulations.",
     "statistics": {
       "projectsCompleted": "Projects Completed",
       "yearsExperience": "Years Experience",
       "happyClients": "Happy Clients",
-      "awardsWon": "Awards Won"
+      "awardsWon": "Awards Won",
+      "clientSatisfaction": "Client Satisfaction"
     },
     "whyWorkWithMe": "WHY WORK WITH ME?",
     "ctaTitle": "Let's Build Something Amazing",
@@ -47,21 +60,74 @@
     "peru": "Arequipa, Peru",
     "moreAbout": "More About Me",
     "myApproach": "My Approach",
-    "journey": "Journey"
+    "journey": "Journey",
+    "designJourney": "Design Journey",
+    "discoverTitle": "DISCOVER MY",
+    "discoverSubtitle": "DESIGN JOURNEY.",
+    "bio": "I started my journey 5 years ago transforming ideas into digital reality.",
+    "yearsExperience": "Years of Experience"
   },
   "projects": {
     "title": "Projects",
     "subtitle": "Selected work and experiments",
     "all": "All",
     "featured": "Featured",
-    "viewProject": "View Project"
+    "viewProject": "View Project",
+    "heroTitle": "ALL PROJECTS",
+    "heroSubtitle": "A curated selection of digital experiences, websites, and brand identities crafted with precision and passion.",
+    "errorLoading": "Unable to load projects. Please try again later.",
+    "selectedWork": "Selected Work",
+    "viewAllProjects": "View All Projects"
   },
   "services": {
     "title": "Services",
     "subtitle": "What I can do for you",
+    "whatIOffer": "WHAT I OFFER",
+    "comprehensiveSolutions": "Comprehensive digital solutions for modern businesses.",
+    "webDesign": {
+      "title": "Web Design",
+      "items": ["UI/UX Design", "Wireframing", "Prototyping", "Design Systems"]
+    },
+    "development": {
+      "title": "Development",
+      "items": ["React / Next.js", "Animation", "CMS Integration", "eCommerce"]
+    },
+    "branding": {
+      "title": "Branding",
+      "items": ["Logo Design", "Brand Identity", "Social Assets", "Guidelines"]
+    },
     "webDevelopment": "Web Development",
     "uiDesign": "UI/UX Design",
-    "consulting": "Technical Consulting"
+    "branding": "Branding",
+    "consulting": "Technical Consulting",
+    "heroTitle": "Expertise & Solutions",
+    "heroSubtitle": "A comprehensive suite of digital services designed to elevate your brand.",
+    "myProcess": "My Process",
+    "processDescription": "A transparent and collaborative workflow designed to deliver exceptional results.",
+    "webDesign": {
+      "title": "Web Design",
+      "description": "Crafting visually stunning and user-centric interfaces. I focus on aesthetic excellence paired with intuitive functionality to create digital experiences that captivate and convert."
+    },
+    "webDev": {
+      "title": "Web Development",
+      "description": "Bringing designs to life with clean, robust, and scalable code. Specializing in modern React ecosystems, animation libraries, and performance-first architecture."
+    },
+    "branding": {
+      "title": "Branding & Strategy",
+      "description": "Defining the core identity of your business. From logo design to comprehensive brand guidelines, I help build brands that resonate and endure."
+    },
+    "steps": {
+      "discovery": "Discovery",
+      "discoveryDesc": "We start by understanding your business goals, target audience, and unique value proposition. This foundation ensures the design aligns with your vision.",
+      "strategy": "Strategy",
+      "strategyDesc": "Developing a roadmap and digital strategy to ensure project success. We define the user journey and key performance indicators.",
+      "design": "Design",
+      "designDesc": "Crafting pixel-perfect, user-centric interfaces that engage and convert. We focus on modern aesthetics and intuitive usability.",
+      "development": "Development",
+      "developmentDesc": "Turning designs into clean, efficient code using React, TypeScript, and modern animation libraries. Ensuring speed, SEO, and responsiveness.",
+      "launch": "Launch",
+      "launchDesc": "Deployment, testing, and final optimization. I provide documentation and support to help you manage and grow your new digital asset."
+    }
   },
   "blog": {
     "title": "Blog",
@@ -84,14 +150,36 @@
     "name": "Name",
     "email": "Email",
     "message": "Message",
+    "company": "Company",
     "send": "Send Message",
     "sending": "Sending...",
     "success": "Message sent successfully!",
-    "error": "Failed to send message"
+    "error": "Failed to send message",
+    "heroTitle": "Let's Talk",
+    "heroSubtitle": "Have a project in mind? Let's build something extraordinary together.",
+    "somethingWrong": "Something went wrong. Please try again.",
+    "getInTouch": "Get in Touch",
+    "emailLabel": "Email",
+    "socials": "Socials",
+    "location": "Location",
+    "locationValue": "Arequipa, Peru (Available Worldwide)",
+    "messageSent": "Message Sent!",
+    "responseMessage": "I'll get back to you as soon as possible.",
+    "sendAnother": "Send Another Message",
+    "placeholder": {
+      "name": "What's your name?",
+      "email": "Your email address",
+      "company": "Your company name",
+      "message": "Tell me about your project..."
+    },
+    "optional": "(Optional)"
   },
   "footer": {
     "rights": "All rights reserved",
-    "madeWith": "Made with"
+    "madeWith": "Made with",
+    "linkedin": "LinkedIn",
+    "instagram": "Instagram",
+    "email": "Email"
   },
   "errors": {
     "generic": "Something went wrong",

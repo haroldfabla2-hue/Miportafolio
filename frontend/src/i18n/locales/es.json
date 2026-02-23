@@ -16,7 +16,10 @@
     "learnMore": "Saber Más",
     "getStarted": "Comenzar",
     "viewAll": "Ver Todo",
-    "comingSoon": "Próximamente"
+    "comingSoon": "Próximamente",
+    "role": "Rol",
+    "retry": "Reintentar",
+    "year": "Año"
   },
   "nav": {
     "home": "Inicio",
@@ -27,14 +30,17 @@
     "contact": "Contacto"
   },
   "home": {
-    "heroTitle": "Creando Experiencias Digitales Que Importan",
+    "heroTitle": "Creando Websites de Impacto",
     "heroSubtitle": "Creo soluciones elegantes para problemas complejos",
     "welcomeMessage": "Bienvenido a mi playground digital",
+    "seoTitle": "Premium Agency OS",
+    "seoDescription": "MiWeb es un sistema de gestión de agencia de alta gama con información de IA y simulaciones predictivas.",
     "statistics": {
       "projectsCompleted": "Proyectos Completados",
       "yearsExperience": "Años de Experiencia",
       "happyClients": "Clientes Felices",
-      "awardsWon": "Premios Ganados"
+      "awardsWon": "Premios Ganados",
+      "clientSatisfaction": "Satisfacción del Cliente"
     },
     "whyWorkWithMe": "¿POR QUÉ TRABAJAR CONMIGO?",
     "ctaTitle": "Construyamos Algo Increíble",
@@ -47,21 +53,72 @@
     "peru": "Arequipa, Perú",
     "moreAbout": "Más Sobre Mí",
     "myApproach": "Mi Enfoque",
-    "journey": "Trayectoria"
+    "journey": "Trayectoria",
+    "designJourney": "Trayectoria de Diseño",
+    "discoverTitle": "DESCUBRE MI",
+    "discoverSubtitle": "TRAYECTORIA DE DISEÑO.",
+    "bio": "Comencé mi viaje hace 5 años transformando ideas en realidad digital.",
+    "yearsExperience": "Años de Experiencia"
   },
   "projects": {
     "title": "Proyectos",
     "subtitle": "Trabajo seleccionado y experimentos",
     "all": "Todos",
     "featured": "Destacados",
-    "viewProject": "Ver Proyecto"
+    "viewProject": "Ver Proyecto",
+    "heroTitle": "TODOS LOS PROYECTOS",
+    "heroSubtitle": "Una selección curada de experiencias digitales, sitios web e identidades de marca creadas con precisión y pasión.",
+    "errorLoading": "No se pudieron cargar los proyectos. Por favor, inténtalo de nuevo más tarde."
   },
   "services": {
     "title": "Servicios",
     "subtitle": "Lo que puedo hacer por ti",
+    "whatIOffer": "LO QUE OFREZCO",
+    "comprehensiveSolutions": "Soluciones digitales integrales para empresas modernas.",
+    "webDesign": {
+      "title": "Diseño Web",
+      "items": ["Diseño UI/UX", "Wireframing", "Prototipado", "Sistemas de Diseño"]
+    },
+    "development": {
+      "title": "Desarrollo",
+      "items": ["React / Next.js", "Animación", "Integración CMS", "eCommerce"]
+    },
+    "branding": {
+      "title": "Marca",
+      "items": ["Diseño de Logo", "Identidad de Marca", "Assets Sociales", "Guías"]
+    },
     "webDevelopment": "Desarrollo Web",
     "uiDesign": "Diseño UI/UX",
-    "consulting": "Consultoría Técnica"
+    "branding": "Marca",
+    "consulting": "Consultoría Técnica",
+    "heroTitle": "Expertise y Soluciones",
+    "heroSubtitle": "Un conjunto completo de servicios digitales diseñados para elevar tu marca.",
+    "myProcess": "Mi Proceso",
+    "processDescription": "Un flujo de trabajo transparente y colaborativo diseñado para ofrecer resultados excepcionales.",
+    "webDesign": {
+      "title": "Diseño Web",
+      "description": "Creando interfaces visualmente impresionantes y centradas en el usuario. Me enfoco en la excelencia estética combinada con funcionalidad intuitiva para crear experiencias digitales que cautivan y convierten."
+    },
+    "webDev": {
+      "title": "Desarrollo Web",
+      "description": "Dando vida a los diseños con código limpio, robusto y escalable. Especializándome en ecosistemas modernos de React, bibliotecas de animación y arquitectura centrada en el rendimiento."
+    },
+    "branding": {
+      "title": "Marca y Estrategia",
+      "description": "Definiendo la identidad central de tu negocio. Desde diseño de logotipos hasta guías de marca completas, ayudo a construir marcas que resuenan y perduran."
+    },
+    "steps": {
+      "discovery": "Descubrimiento",
+      "discoveryDesc": "Comenzamos entendiendo los objetivos de tu negocio, tu audiencia objetivo y tu propuesta de valor única. Esta base asegura que el diseño se alinea con tu visión.",
+      "strategy": "Estrategia",
+      "strategyDesc": "Desarrollando una hoja de ruta y estrategia digital para asegurar el éxito del proyecto. Definimos el journey del usuario y los indicadores clave de rendimiento.",
+      "design": "Diseño",
+      "designDesc": "Creando interfaces perfectas en píxeles y centradas en el usuario que involucran y convierten. Nos enfocamos en estética moderna y usabilidad intuitiva.",
+      "development": "Desarrollo",
+      "developmentDesc": "Convirtiendo diseños en código limpio y eficiente usando React, TypeScript y bibliotecas de animación modernas. Asegurando velocidad, SEO y capacidad de respuesta.",
+      "launch": "Lanzamiento",
+      "launchDesc": "Despliegue, pruebas y optimización final. Proporciono documentación y soporte para ayudarte a gestionar y hacer crecer tu nuevo activo digital."
+    }
   },
   "blog": {
     "title": "Blog",
@@ -84,14 +141,48 @@
     "name": "Nombre",
     "email": "Email",
     "message": "Mensaje",
+    "company": "Empresa",
     "send": "Enviar Mensaje",
     "sending": "Enviando...",
     "success": "¡Mensaje enviado exitosamente!",
-    "error": "Error al enviar mensaje"
+    "error": "Error al enviar mensaje",
+    "heroTitle": "Hablemos",
+    "heroSubtitle": "¿Tienes un proyecto en mente? Construyamos algo extraordinario juntos.",
+    "somethingWrong": "Algo salió mal. Por favor, inténtalo de nuevo.",
+    "locationValue": "Arequipa, Perú (Disponible en todo el mundo)"
+  },
+  "hero": {
+    "availableForWork": "DISPONIBLE PARA TRABAJAR",
+    "creating": "CREANDO",
+    "impactful": "IMPACTO",
+    "websites": "WEBSITES",
+    "subtitle": "Ayudo a las marcas a destacar en la era digital. Juntos estableceremos un nuevo estándar. Sin tonterías, siempre a la vanguardia."
+  },
+  "projects": {
+    "selectedWork": "Trabajo Destacado",
+    "viewAllProjects": "Ver Todos los Proyectos",
+    "getInTouch": "Contáctame",
+    "emailLabel": "Email",
+    "socials": "Redes Sociales",
+    "location": "Ubicación",
+    "locationValue": "Arequipa, Perú (Disponible Worldwide)",
+    "messageSent": "¡Mensaje Enviado!",
+    "responseMessage": "Te responderé lo antes posible.",
+    "sendAnother": "Enviar Otro Mensaje",
+    "placeholder": {
+      "name": "¿Cómo te llamas?",
+      "email": "Tu dirección de email",
+      "company": "Nombre de tu empresa",
+      "message": "Cuéntame sobre tu proyecto..."
+    },
+    "optional": "(Opcional)"
   },
   "footer": {
     "rights": "Todos los derechos reservados",
-    "madeWith": "Hecho con"
+    "madeWith": "Hecho con",
+    "linkedin": "LinkedIn",
+    "instagram": "Instagram",
+    "email": "Email"
   },
   "errors": {
     "generic": "Algo salió mal",

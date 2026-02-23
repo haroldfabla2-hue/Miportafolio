@@ -1,7 +1,9 @@
 import React from 'react';
 import { motion } from 'framer-motion';
+import { useTranslation } from 'react-i18next';
 
 const About: React.FC = () => {
+    const { t } = useTranslation();
     return (
         <section
             id="about"
@@ -29,7 +31,7 @@ const About: React.FC = () => {
                     }}>
                         <img
                             src="/about-journey.png"
-                            alt="Design Journey"
+                            alt={t('about.designJourney')}
                             style={{
                                 width: '100%',
                                 height: '100%',
@@ -44,7 +46,7 @@ const About: React.FC = () => {
                             padding: '2rem',
                             background: 'linear-gradient(to top, rgba(0,0,0,0.7), transparent)'
                         }}>
-                            <span style={{ display: 'block', fontSize: '1.5rem', fontWeight: 'bold', color: '#fff' }}>Based in Arequipa, Peru</span>
+                            <span style={{ display: 'block', fontSize: '1.5rem', fontWeight: 'bold', color: '#fff' }}>{t('about.basedIn')} {t('about.peru')}</span>
                         </div>
                     </div>
 
@@ -56,11 +58,11 @@ const About: React.FC = () => {
                             transition={{ duration: 0.6 }}
                             style={{ fontSize: '3.5rem', lineHeight: '1.1', fontWeight: 800, marginBottom: 'var(--spacing-lg)' }}
                         >
-                            DISCOVER MY <br />
-                            DESIGN JOURNEY.
+                            {t('about.discoverTitle')} <br />
+                            {t('about.discoverSubtitle')}
                         </motion.h2>
                         <p style={{ fontSize: '1.1rem', color: '#555', lineHeight: '1.6', marginBottom: 'var(--spacing-lg)' }}>
-                            I started my journey 5 years ago... [Placeholder for bio content] ...transforming ideas into digital reality.
+                            {t('about.bio')}
                         </p>
 
                         <button style={{
@@ -73,7 +75,7 @@ const About: React.FC = () => {
                             gap: '0.5rem',
                             width: 'fit-content'
                         }}>
-                            More About Me
+                            {t('common.learnMore')} {t('about.title')}
                         </button>
                     </div>
                 </div>
@@ -88,11 +90,11 @@ const About: React.FC = () => {
                     justifyContent: 'space-around',
                     alignItems: 'center'
                 }}>
-                    <StatItem number="05+" label="Years of Experience" />
+                    <StatItem number="05+" label={t('about.yearsExperience')} />
                     <div style={{ width: '1px', height: '50px', backgroundColor: 'rgba(0,0,0,0.1)' }} />
-                    <StatItem number="20+" label="Projects Completed" />
+                    <StatItem number="20+" label={t('home.statistics.projectsCompleted')} />
                     <div style={{ width: '1px', height: '50px', backgroundColor: 'rgba(0,0,0,0.1)' }} />
-                    <StatItem number="98%" label="Client Satisfaction" />
+                    <StatItem number="98%" label={t('home.statistics.clientSatisfaction')} />
                 </div>
             </div>
         </section>

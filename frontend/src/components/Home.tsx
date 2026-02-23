@@ -1,5 +1,6 @@
 import React from 'react';
 import { motion } from 'framer-motion';
+import { useTranslation } from 'react-i18next';
 import SEO from './SEO';
 import Hero from './Hero';
 import About from './About';
@@ -8,11 +9,13 @@ import Process from './Process';
 import Services from './Services';
 
 const Home = () => {
+    const { t } = useTranslation();
+    
     return (
         <div className="home-container overflow-hidden">
             <SEO
-                title="Premium Agency OS"
-                description="MiWeb is a high-end agency management system with AI insights and predictive simulations."
+                title={t('home.seoTitle')}
+                description={t('home.seoDescription')}
             />
             <Hero />
             <About />

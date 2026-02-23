@@ -1,6 +1,10 @@
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 
 const Footer: React.FC = () => {
+    const { t } = useTranslation();
+    const currentYear = new Date().getFullYear();
+    
     return (
         <footer style={{
             backgroundColor: '#000',
@@ -23,13 +27,13 @@ const Footer: React.FC = () => {
             }}>
                 <div>
                     <img src="/logo.png" alt="Alberto Farah" style={{ height: '120px', marginBottom: '1rem' }} />
-                    <p style={{ color: '#666' }}>© 2025 All Rights Reserved.</p>
+                    <p style={{ color: '#666' }}>© {currentYear} {t('footer.rights')}.</p>
                 </div>
 
                 <div style={{ display: 'flex', gap: '2rem' }}>
-                    <a href="#" style={{ color: '#fff', fontWeight: 600 }}>LinkedIn</a>
-                    <a href="#" style={{ color: '#fff', fontWeight: 600 }}>Instagram</a>
-                    <a href="#" style={{ color: '#fff', fontWeight: 600 }}>Email</a>
+                    <a href="https://linkedin.com/in/alberto-farah-blair" target="_blank" rel="noopener noreferrer" style={{ color: '#fff', fontWeight: 600 }}>{t('footer.linkedin')}</a>
+                    <a href="https://instagram.com" target="_blank" rel="noopener noreferrer" style={{ color: '#fff', fontWeight: 600 }}>{t('footer.instagram')}</a>
+                    <a href="mailto:albertofarah6@gmail.com" style={{ color: '#fff', fontWeight: 600 }}>{t('footer.email')}</a>
                 </div>
             </div>
         </footer>

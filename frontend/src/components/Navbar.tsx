@@ -67,14 +67,20 @@ const Navbar: React.FC = () => {
                         initial={{ opacity: 0, x: -20 }}
                         animate={{ opacity: 1, x: 0 }}
                         style={{
-                            fontSize: '1.5rem',
-                            fontWeight: 800,
-                            color: '#fff',
-                            letterSpacing: '-0.02em',
-                            textTransform: 'uppercase'
+                            display: 'flex',
+                            alignItems: 'center',
+                            gap: '0.5rem'
                         }}
                     >
-                        Alberto<span style={{ color: '#A3FF00' }}>.farah</span>
+                        <img 
+                            src="/logo.png" 
+                            alt="Alberto Farah" 
+                            style={{ 
+                                height: '40px', 
+                                width: 'auto',
+                                objectFit: 'contain'
+                            }} 
+                        />
                     </motion.div>
                 </Link>
 

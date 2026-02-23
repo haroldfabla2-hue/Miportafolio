@@ -1,10 +1,12 @@
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 import ProjectCard from './ProjectCard';
 import { usePortfolio } from '../hooks/usePortfolio';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 
 const Projects: React.FC = () => {
+    const { t } = useTranslation();
     const { projects, loading, error } = usePortfolio();
 
     // Loading skeleton
@@ -19,7 +21,7 @@ const Projects: React.FC = () => {
                     textTransform: 'uppercase',
                     fontWeight: 800
                 }}>
-                    Selected Work
+                    {t('projects.selectedWork')}
                 </h2>
                 <div style={{
                     display: 'grid',
@@ -45,8 +47,8 @@ const Projects: React.FC = () => {
     if (error) {
         return (
             <section id="work" style={{ padding: 'var(--spacing-xl) 0', maxWidth: 'var(--spacing-container)', margin: '0 auto', paddingLeft: 'var(--spacing-lg)', paddingRight: 'var(--spacing-lg)' }}>
-                <h2 style={{ fontSize: '4rem', textTransform: 'uppercase', fontWeight: 800 }}>Selected Work</h2>
-                <p style={{ color: '#ff5f56', fontSize: '1.2rem' }}>Unable to load projects. Please try again later.</p>
+                <h2 style={{ fontSize: '4rem', textTransform: 'uppercase', fontWeight: 800 }}>{t('projects.selectedWork')}</h2>
+                <p style={{ color: '#ff5f56', fontSize: '1.2rem' }}>{t('projects.errorLoading')}</p>
             </section>
         );
     }
@@ -61,7 +63,7 @@ const Projects: React.FC = () => {
                 textTransform: 'uppercase',
                 fontWeight: 800
             }}>
-                Selected Work
+                {t('projects.selectedWork')}
             </h2>
             <div style={{
                 display: 'grid',
@@ -96,7 +98,7 @@ const Projects: React.FC = () => {
                         whileHover={{ scale: 1.05, backgroundColor: '#fff', color: '#000' }}
                         whileTap={{ scale: 0.95 }}
                     >
-                        View All Projects
+                        {t('projects.viewAllProjects')}
                         <span>→</span>
                     </motion.button>
                 </Link>

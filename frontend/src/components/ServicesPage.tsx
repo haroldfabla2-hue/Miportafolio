@@ -1,58 +1,15 @@
 import React, { useRef } from 'react';
 import { motion, useScroll, useTransform, MotionValue } from 'framer-motion';
+import { useTranslation } from 'react-i18next';
 import SEO from './SEO';
-
-// Services data
-const services = [
-    {
-        title: "Web Design",
-        description: "Crafting visually stunning and user-centric interfaces. I focus on aesthetic excellence paired with intuitive functionality to create digital experiences that captivate and convert.",
-        tags: ["UI/UX", "Art Direction", "Prototyping", "Design Systems"]
-    },
-    {
-        title: "Web Development",
-        description: "Bringing designs to life with clean, robust, and scalable code. Specializing in modern React ecosystems, animation libraries, and performance-first architecture.",
-        tags: ["React/Vite", "TypeScript", "GSAP/Framer Motion", "WebGL"]
-    },
-    {
-        title: "Branding & Strategy",
-        description: "Defining the core identity of your business. From logo design to comprehensive brand guidelines, I help build brands that resonate and endure.",
-        tags: ["Logo Design", "Brand Identity", "Strategy", "Visual Language"]
-    }
-];
-
-// Process data
-const steps = [
-    {
-        number: '01',
-        title: 'Discovery',
-        description: 'We start by understanding your business goals, target audience, and unique value proposition. This foundation ensures the design aligns with your vision.'
-    },
-    {
-        number: '02',
-        title: 'Strategy',
-        description: 'Developing a roadmap and digital strategy to ensure project success. We define the user journey and key performance indicators.'
-    },
-    {
-        number: '03',
-        title: 'Design',
-        description: 'Crafting pixel-perfect, user-centric interfaces that engage and convert. We focus on modern aesthetics and intuitive usability.'
-    },
-    {
-        number: '04',
-        title: 'Development',
-        description: 'Turning designs into clean, efficient code using React, TypeScript, and modern animation libraries. Ensuring speed, SEO, and responsiveness.'
-    },
-    {
-        number: '05',
-        title: 'Launch',
-        description: 'Deployment, testing, and final optimization. I provide documentation and support to help you manage and grow your new digital asset.'
-    }
-];
 
 // Process Card Component
 interface ProcessCardProps {
-    item: typeof steps[0];
+    item: {
+        number: string;
+        title: string;
+        description: string;
+    };
     index: number;
     progress: MotionValue<number>;
     range: [number, number];
@@ -102,8 +59,57 @@ const ProcessCard: React.FC<ProcessCardProps> = ({ item, index, progress, range,
 
 // Services Page Component
 const ServicesPage: React.FC = () => {
+    const { t } = useTranslation();
     const servicesContainer = useRef<HTMLDivElement>(null);
     const processContainer = useRef<HTMLDivElement>(null);
+
+    // Services data - defined inside component to use t()
+    const services = [
+        {
+            title: t('services.webDesign.title'),
+            description: t('services.webDesign.description'),
+            tags: ["UI/UX", "Art Direction", "Prototyping", "Design Systems"]
+        },
+        {
+            title: t('services.webDev.title'),
+            description: t('services.webDev.description'),
+            tags: ["React/Vite", "TypeScript", "GSAP/Framer Motion", "WebGL"]
+        },
+        {
+            title: t('services.branding.title'),
+            description: t('services.branding.description'),
+            tags: ["Logo Design", "Brand Identity", "Strategy", "Visual Language"]
+        }
+    ];
+
+    // Process data - defined inside component to use t()
+    const steps = [
+        {
+            number: '01',
+            title: t('services.steps.discovery'),
+            description: t('services.steps.discoveryDesc')
+        },
+        {
+            number: '02',
+            title: t('services.steps.strategy'),
+            description: t('services.steps.strategyDesc')
+        },
+        {
+            number: '03',
+            title: t('services.steps.design'),
+            description: t('services.steps.designDesc')
+        },
+        {
+            number: '04',
+            title: t('services.steps.development'),
+            description: t('services.steps.developmentDesc')
+        },
+        {
+            number: '05',
+            title: t('services.steps.launch'),
+            description: t('services.steps.launchDesc')
+        }
+    ];
     
     const { scrollYProgress: servicesProgress } = useScroll({
         target: servicesContainer,
@@ -117,7 +123,7 @@ const ServicesPage: React.FC = () => {
 
     return (
         <div style={{ paddingTop: '150px', minHeight: '100vh', paddingBottom: '100px' }}>
-            <SEO title="Expertise" description="Comprehensive digital services designed to elevate your brand." />
+            <SEO title={t('services.title')} description={t('services.heroSubtitle')} />
             
             {/* Hero Section */}
             <section style={{
@@ -140,7 +146,7 @@ const ServicesPage: React.FC = () => {
                         textTransform: 'uppercase'
                     }}
                 >
-                    Expertise & <br /> Solutions
+                    {t('services.heroTitle')}
                 </motion.h1>
                 <motion.p
                     initial={{ opacity: 0, y: 20 }}
@@ -148,7 +154,7 @@ const ServicesPage: React.FC = () => {
                     transition={{ duration: 0.8, delay: 0.2 }}
                     style={{ fontSize: '1.5rem', color: '#999', maxWidth: '600px' }}
                 >
-                    A comprehensive suite of digital services designed to elevate your brand.
+                    {t('services.heroSubtitle')}
                 </motion.p>
             </section>
 
@@ -209,9 +215,9 @@ const ServicesPage: React.FC = () => {
             {/* Process Section - WITH ANIMATION */}
             <section ref={processContainer} style={{ marginBottom: '20vh', padding: '0 var(--spacing-lg)' }}>
                 <div style={{ maxWidth: '1000px', margin: '0 auto 100px auto' }}>
-                    <h4 style={{ color: 'var(--color-accent)', marginBottom: '1rem', textTransform: 'uppercase', letterSpacing: '0.2em' }}>My Process</h4>
+                    <h4 style={{ color: 'var(--color-accent)', marginBottom: '1rem', textTransform: 'uppercase', letterSpacing: '0.2em' }}>{t('services.myProcess')}</h4>
                     <p style={{ fontSize: '2rem', color: '#fff', maxWidth: '600px' }}>
-                        A transparent and collaborative workflow designed to deliver exceptional results.
+                        {t('services.processDescription')}
                     </p>
                 </div>
                 {steps.map((step, i) => {

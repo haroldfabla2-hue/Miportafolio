@@ -1,7 +1,10 @@
 import React from 'react';
 import { motion } from 'framer-motion';
+import { useTranslation } from 'react-i18next';
 
 const Services: React.FC = () => {
+    const { t } = useTranslation();
+    
     return (
         <section
             id="services"
@@ -55,8 +58,8 @@ const Services: React.FC = () => {
                 zIndex: 1
             }}>
                 <div style={{ textAlign: 'center', marginBottom: 'var(--spacing-xl)' }}>
-                    <h2 style={{ fontSize: '3rem', fontWeight: 800, marginBottom: '1rem' }}>WHAT I OFFER</h2>
-                    <p style={{ color: '#888', fontSize: '1.2rem' }}>Comprehensive digital solutions for modern businesses.</p>
+                    <h2 style={{ fontSize: '3rem', fontWeight: 800, marginBottom: '1rem' }}>{t('services.title')}</h2>
+                    <p style={{ color: '#888', fontSize: '1.2rem' }}>{t('services.subtitle')}</p>
                 </div>
 
                 <div style={{
@@ -65,16 +68,16 @@ const Services: React.FC = () => {
                     gap: '2rem'
                 }}>
                     <ServiceCard
-                        title="Web Design"
-                        items={['UI/UX Design', 'Wireframing', 'Prototyping', 'Design Systems']}
+                        title={t('services.webDesign.title')}
+                        items={t('services.webDesign.items', { returnObjects: true }) as string[]}
                     />
                     <ServiceCard
-                        title="Development"
-                        items={['React / Next.js', 'Animation', 'CMS Integration', 'eCommerce']}
+                        title={t('services.development.title')}
+                        items={t('services.development.items', { returnObjects: true }) as string[]}
                         highlight
                     />
                     <ServiceCard
-                        title="Branding"
+                        title={t('services.branding.title')}
                         items={['Logo Design', 'Brand Identity', 'Social Assets', 'Guidelines']}
                     />
                 </div>

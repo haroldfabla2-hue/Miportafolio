@@ -1,10 +1,12 @@
 import React from 'react';
 import { motion } from 'framer-motion';
+import { useTranslation } from 'react-i18next';
 import SEO from './SEO';
 import { usePortfolio } from '../hooks/usePortfolio';
 import ProjectCard from './ProjectCard';
 
 const ProjectsPage: React.FC = () => {
+    const { t } = useTranslation();
     const { projects, loading, error } = usePortfolio();
 
     // Loading skeleton for page
@@ -76,8 +78,8 @@ const ProjectsPage: React.FC = () => {
                     maxWidth: 'var(--spacing-container)',
                     margin: '0 auto'
                 }}>
-                    <h1 style={{ fontSize: '4rem', fontWeight: 900, marginBottom: '2rem' }}>ALL PROJECTS</h1>
-                    <p style={{ color: '#ff5f56', fontSize: '1.2rem' }}>Unable to load projects. Please try again later.</p>
+                    <h1 style={{ fontSize: '4rem', fontWeight: 900, marginBottom: '2rem' }}>{t('projects.heroTitle')}</h1>
+                    <p style={{ color: '#ff5f56', fontSize: '1.2rem' }}>{t('projects.errorLoading')}</p>
                 </section>
             </div>
         );
@@ -106,7 +108,7 @@ const ProjectsPage: React.FC = () => {
                         marginBottom: '30px'
                     }}
                 >
-                    ALL PROJECTS
+                    {t('projects.heroTitle')}
                 </motion.h1>
                 <motion.p
                     initial={{ opacity: 0, y: 20 }}
@@ -114,7 +116,7 @@ const ProjectsPage: React.FC = () => {
                     transition={{ duration: 0.8, delay: 0.2 }}
                     style={{ fontSize: '1.5rem', color: '#999', maxWidth: '600px' }}
                 >
-                    A curated selection of digital experiences, websites, and brand identities crafted with precision and passion.
+                    {t('projects.heroSubtitle')}
                 </motion.p>
             </section>
 
@@ -179,7 +181,7 @@ const ProjectsPage: React.FC = () => {
                                 </div>
 
                                 <div style={{ fontSize: '0.9rem', color: '#666', textTransform: 'uppercase', fontWeight: 700, letterSpacing: '0.1em' }}>
-                                    ROLE: <span style={{ color: '#fff' }}>{project.role}</span>
+                                    {t('common.role')}: <span style={{ color: '#fff' }}>{project.role}</span>
                                 </div>
                             </div>
 

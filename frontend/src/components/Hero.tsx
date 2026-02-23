@@ -1,7 +1,9 @@
 import React from 'react';
 import { motion, type Variants, useScroll, useTransform } from 'framer-motion';
+import { useTranslation } from 'react-i18next';
 
 const Hero: React.FC = () => {
+    const { t } = useTranslation();
     const containerVariants: Variants = {
         hidden: { opacity: 0 },
         visible: {
@@ -86,7 +88,7 @@ const Hero: React.FC = () => {
                                 zIndex: 1
                             }} />
                         </div>
-                        AVAILABLE FOR WORK
+                        {t('home.hero.availableForWork')}
                     </div>
                 </motion.div>
 
@@ -99,7 +101,7 @@ const Hero: React.FC = () => {
                         marginBottom: '0.5rem',
                         letterSpacing: '-0.02em'
                     }}>
-                        CREATING
+                        {t('home.heroTitle').toUpperCase()}
                     </motion.div>
                     <motion.div variants={itemVariants} style={{
                         fontSize: 'clamp(3rem, 7vw, 6rem)',
@@ -112,7 +114,7 @@ const Hero: React.FC = () => {
                         alignItems: 'center',
                         gap: '1rem'
                     }}>
-                        IMPACTFUL <span style={{
+                        <span style={{
                             height: '2px',
                             flexGrow: 1,
                             backgroundColor: 'var(--color-accent)',
@@ -126,7 +128,7 @@ const Hero: React.FC = () => {
                         lineHeight: '0.9',
                         letterSpacing: '-0.02em'
                     }}>
-                        WEBSITES.
+                        {t('home.hero.websites')}
                     </motion.div>
                 </motion.h1>
 
@@ -146,7 +148,7 @@ const Hero: React.FC = () => {
                         color: '#999',
                         fontWeight: 400
                     }}>
-                        I help brands stand out in the digital era. Together we will set the new status quo. No nonsense, always on the cutting edge.
+                        {t('home.heroSubtitle')}
                     </p>
                 </motion.div>
             </motion.div>
