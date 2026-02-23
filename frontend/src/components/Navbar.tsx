@@ -1,18 +1,16 @@
 import React, { useState, useEffect } from 'react';
 import { motion, useScroll, useTransform } from 'framer-motion';
-import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { useAuth } from '../context/AuthContext';
+import { Link, useLocation } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import ContactModal from './ContactModal';
 
 const Navbar: React.FC = () => {
-    const { isAuthenticated } = useAuth();
-    const navigate = useNavigate();
+    const { t, i18n } = useTranslation();
     const [isScrolled, setIsScrolled] = useState(false);
     const [isModalOpen, setIsModalOpen] = useState(false);
     const { scrollY } = useScroll();
     const location = useLocation();
 
-    // Transform opacity/blur based on scroll
     const navBackground = useTransform(
         scrollY,
         [0, 50],
@@ -33,13 +31,18 @@ const Navbar: React.FC = () => {
     }, []);
 
     const links = [
-        { name: 'Home', path: '/' },
-        { name: 'Projects', path: '/projects' },
-        { name: 'Services', path: '/services' },
-        { name: 'About', path: '/about' },
-        { name: 'Blog', path: '/blog' },
-        { name: 'Contact', path: '/contact' },
+        { name: t('nav.home'), path: '/' },
+        { name: t('nav.projects'), path: '/projects' },
+        { name: t('nav.services'), path: '/services' },
+        { name: t('nav.about'), path: '/about' },
+        { name: t('nav.blog'), path: '/blog' },
+        { name: t('nav.contact'), path: '/contact' },
     ];
+
+    const toggleLanguage = () => {
+        const newLang = i18n.language === 'en' ? 'es' : 'en';
+        i18n.changeLanguage(newLang);
+    };
 
     return (
         <>
@@ -48,117 +51,85 @@ const Navbar: React.FC = () => {
                     display: 'flex',
                     justifyContent: 'space-between',
                     alignItems: 'center',
-                    padding: '1.2rem var(--spacing-lg)',
-                    fontFamily: 'var(--font-family)',
+                    padding: '1.5rem 4rem',
                     position: 'fixed',
                     top: 0,
                     left: 0,
                     right: 0,
-                    zIndex: 100,
-                    backgroundColor: navBackground,
+                    zIndex: 1000,
+                    background: navBackground,
                     backdropFilter: navBackdrop,
-                    borderBottom: isScrolled ? '1px solid rgba(255,255,255,0.05)' : 'none',
+                    transition: 'all 0.3s ease'
                 }}
             >
-                {/* Logo */}
                 <Link to="/" style={{ textDecoration: 'none' }}>
                     <motion.div
                         initial={{ opacity: 0, x: -20 }}
                         animate={{ opacity: 1, x: 0 }}
-                        className="logo"
                         style={{
-                            zIndex: 101,
-                            display: 'flex',
-                            alignItems: 'center'
+                            fontSize: '1.5rem',
+                            fontWeight: 800,
+                            color: '#fff',
+                            letterSpacing: '-0.02em',
+                            textTransform: 'uppercase'
                         }}
                     >
-                        <img
-                            src="/logo.png"
-                            alt="Alberto Farah"
-                            style={{
-                                height: '60px',
-                                width: 'auto'
-                            }}
-                        />
+                        Alberto<span style={{ color: '#A3FF00' }}>.farah</span>
                     </motion.div>
                 </Link>
 
-                {/* Desktop Links */}
-                <ul style={{ display: 'flex', gap: '3rem', alignItems: 'center', listStyle: 'none', margin: 0, padding: 0 }}>
-                    {links.map((link, i) => (
-                        <motion.li
-                            key={link.name}
-                            initial={{ opacity: 0, y: -10 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            transition={{ delay: 0.1 * i }}
-                        >
+                <div style={{ display: 'flex', alignItems: 'center', gap: '2rem' }}>
+                    <div style={{ display: 'flex', gap: '2rem' }}>
+                        {links.map((link, index) => (
                             <Link
+                                key={link.path}
                                 to={link.path}
                                 style={{
-                                    fontSize: '0.9rem',
-                                    fontWeight: 600,
-                                    color: location.pathname === link.path ? 'var(--color-accent)' : '#fff',
-                                    opacity: location.pathname === link.path ? 1 : 0.8,
-                                    position: 'relative',
                                     textDecoration: 'none',
+                                    color: location.pathname === link.path ? '#A3FF00' : '#888',
+                                    fontSize: '0.9rem',
+                                    fontWeight: 500,
+                                    textTransform: 'uppercase',
+                                    letterSpacing: '0.05em',
                                     transition: 'color 0.3s'
                                 }}
-                                className="nav-link"
                             >
-                                {link.name}
+                                <motion.span
+                                    initial={{ opacity: 0, y: -10 }}
+                                    animate={{ opacity: 1, y: 0 }}
+                                    transition={{ delay: index * 0.1 }}
+                                    onMouseEnter={(e) => e.currentTarget.style.color = '#fff'}
+                                    onMouseLeave={(e) => e.currentTarget.style.color = location.pathname === link.path ? '#A3FF00' : '#888'}
+                                >
+                                    {link.name}
+                                </motion.span>
                             </Link>
-                        </motion.li>
-                    ))}
-                </ul>
+                        ))}
+                    </div>
 
-                {/* Right Actions: CTA & Login */}
-                <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+                    {/* Language Switcher */}
                     <motion.button
-                        initial={{ opacity: 0, x: 20 }}
-                        animate={{ opacity: 1, x: 0 }}
-                        onClick={() => isAuthenticated ? navigate('/admin') : navigate('/admin/login')}
+                        initial={{ opacity: 0, scale: 0.8 }}
+                        animate={{ opacity: 1, scale: 1 }}
+                        onClick={toggleLanguage}
                         style={{
-                            backgroundColor: 'transparent',
-                            color: '#fff',
-                            padding: '0.8rem 1.2rem',
-                            borderRadius: '50px',
+                            background: 'transparent',
+                            border: '1px solid #333',
+                            borderRadius: '20px',
+                            padding: '0.4rem 0.8rem',
+                            color: '#A3FF00',
+                            fontSize: '0.8rem',
                             fontWeight: 600,
-                            fontSize: '0.9rem',
                             cursor: 'pointer',
-                            border: '1px solid rgba(255,255,255,0.2)',
-                            transition: 'all 0.2s',
+                            textTransform: 'uppercase'
                         }}
-                        whileHover={{ scale: 1.05, borderColor: '#fff' }}
-                        whileTap={{ scale: 0.95 }}
+                        whileHover={{ background: 'rgba(163, 255, 0, 0.1)', borderColor: '#A3FF00' }}
                     >
-                        {isAuthenticated ? 'Dashboard' : 'Log In'}
-                    </motion.button>
-
-                    <motion.button
-                        initial={{ opacity: 0, x: 20 }}
-                        animate={{ opacity: 1, x: 0 }}
-                        onClick={() => setIsModalOpen(true)}
-                        style={{
-                            backgroundColor: 'var(--color-accent)',
-                            color: '#000',
-                            padding: '0.8rem 1.6rem',
-                            borderRadius: '50px',
-                            fontWeight: 700,
-                            fontSize: '0.9rem',
-                            display: 'flex',
-                            alignItems: 'center',
-                            gap: '0.5rem',
-                            cursor: 'pointer',
-                            border: 'none'
-                        }}
-                        whileHover={{ scale: 1.05, backgroundColor: '#fff' }}
-                        whileTap={{ scale: 0.95 }}
-                    >
-                        Start Your Project
-                        <svg width="10" height="10" viewBox="0 0 12 12" fill="none" dangerouslySetInnerHTML={{ __html: '<path d="M1 11L11 1M11 1H1M11 1V11" stroke="currentColor" stroke-width="2" stroke-line-cap="round" stroke-line-join="round"/>' }} />
+                        {i18n.language === 'en' ? '🇪🇸 ES' : '🇺🇸 EN'}
                     </motion.button>
                 </div>
             </motion.nav>
+
             <ContactModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} />
         </>
     );

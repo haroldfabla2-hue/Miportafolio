@@ -1,0 +1,101 @@
+{
+  "common": {
+    "loading": "Cargando...",
+    "save": "Guardar",
+    "cancel": "Cancelar",
+    "delete": "Eliminar",
+    "edit": "Editar",
+    "add": "Añadir",
+    "search": "Buscar",
+    "filter": "Filtrar",
+    "sort": "Ordenar",
+    "back": "Volver",
+    "next": "Siguiente",
+    "submit": "Enviar",
+    "close": "Cerrar",
+    "learnMore": "Saber Más",
+    "getStarted": "Comenzar",
+    "viewAll": "Ver Todo",
+    "comingSoon": "Próximamente"
+  },
+  "nav": {
+    "home": "Inicio",
+    "projects": "Proyectos",
+    "services": "Servicios",
+    "about": "Nosotros",
+    "blog": "Blog",
+    "contact": "Contacto"
+  },
+  "home": {
+    "heroTitle": "Creando Experiencias Digitales Que Importan",
+    "heroSubtitle": "Creo soluciones elegantes para problemas complejos",
+    "welcomeMessage": "Bienvenido a mi playground digital",
+    "statistics": {
+      "projectsCompleted": "Proyectos Completados",
+      "yearsExperience": "Años de Experiencia",
+      "happyClients": "Clientes Felices",
+      "awardsWon": "Premios Ganados"
+    },
+    "whyWorkWithMe": "¿POR QUÉ TRABAJAR CONMIGO?",
+    "ctaTitle": "Construyamos Algo Increíble",
+    "ctaSubtitle": "¿Listo para dar vida a tu visión?"
+  },
+  "about": {
+    "title": "Sobre Mí",
+    "subtitle": "El viaje detrás del código",
+    "basedIn": "Ubicado en",
+    "peru": "Arequipa, Perú",
+    "moreAbout": "Más Sobre Mí",
+    "myApproach": "Mi Enfoque",
+    "journey": "Trayectoria"
+  },
+  "projects": {
+    "title": "Proyectos",
+    "subtitle": "Trabajo seleccionado y experimentos",
+    "all": "Todos",
+    "featured": "Destacados",
+    "viewProject": "Ver Proyecto"
+  },
+  "services": {
+    "title": "Servicios",
+    "subtitle": "Lo que puedo hacer por ti",
+    "webDevelopment": "Desarrollo Web",
+    "uiDesign": "Diseño UI/UX",
+    "consulting": "Consultoría Técnica"
+  },
+  "blog": {
+    "title": "Blog",
+    "subtitle": "Pensamientos sobre diseño, desarrollo y construcción de experiencias digitales que importan",
+    "searchPlaceholder": "Buscar posts...",
+    "allTopics": "Todos los Temas",
+    "newest": "Más Recientes",
+    "az": "A-Z",
+    "clear": "Limpiar",
+    "postsFound": "posts encontrados",
+    "noPostsFound": "No se encontraron posts",
+    "tryAdjusting": "Intenta ajustar tu búsqueda o filtros",
+    "viewAllPosts": "Ver Todos los Posts",
+    "loadMore": "Cargar Más",
+    "more": "más"
+  },
+  "contact": {
+    "title": "Contáctame",
+    "subtitle": "Creemos algo juntos",
+    "name": "Nombre",
+    "email": "Email",
+    "message": "Mensaje",
+    "send": "Enviar Mensaje",
+    "sending": "Enviando...",
+    "success": "¡Mensaje enviado exitosamente!",
+    "error": "Error al enviar mensaje"
+  },
+  "footer": {
+    "rights": "Todos los derechos reservados",
+    "madeWith": "Hecho con"
+  },
+  "errors": {
+    "generic": "Algo salió mal",
+    "notFound": "Página no encontrada",
+    "serverError": "Error del servidor"
+  }
+}

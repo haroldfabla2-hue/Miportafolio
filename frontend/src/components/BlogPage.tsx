@@ -1,12 +1,14 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import SEO from './SEO';
 import { contentApi, type CmsContent } from '../services/api';
 
 const POSTS_PER_PAGE = 6;
 
 const BlogPage: React.FC = () => {
+    const { t } = useTranslation();
     const [posts, setPosts] = useState<CmsContent[]>([]);
     const [loading, setLoading] = useState(true);
     const [visibleCount, setVisibleCount] = useState(POSTS_PER_PAGE);
@@ -137,7 +139,7 @@ const BlogPage: React.FC = () => {
                 <div style={{ flex: '1 1 250px', minWidth: '200px' }}>
                     <input
                         type="text"
-                        placeholder="🔍 Search posts..."
+                        placeholder={t('blog.searchPlaceholder')}
                         value={searchQuery}
                         onChange={(e) => { setSearchQuery(e.target.value); setVisibleCount(POSTS_PER_PAGE); }}
                         style={{
@@ -168,7 +170,7 @@ const BlogPage: React.FC = () => {
                         minWidth: '150px'
                     }}
                 >
-                    <option value="">🏷️ All Topics</option>
+                    <option value="">{t('blog.allTopics')}</option>
                     {allTags.map(tag => (
                         <option key={tag} value={tag}>{tag}</option>
                     ))}
@@ -189,8 +191,8 @@ const BlogPage: React.FC = () => {
                         minWidth: '140px'
                     }}
                 >
-                    <option value="date">📅 Newest</option>
-                    <option value="title">🔤 A-Z</option>
+                    <option value="date">{t('blog.newest')}</option>
+                    <option value="title">{t('blog.az')}</option>
                 </select>
 
                 {/* Reset button */}
@@ -208,14 +210,14 @@ const BlogPage: React.FC = () => {
                             fontWeight: 600
                         }}
                     >
-                        ✕ Clear
+                        {t('blog.clear')}
                     </button>
                 )}
             </div>
 
             {/* Contador de resultados */}
             <div style={{ color: '#666', fontSize: '0.9rem', marginBottom: '1.5rem' }}>
-                {filteredPosts.length} post{filteredPosts.length !== 1 ? 's' : ''} found
+                {filteredPosts.length} {t('blog.postsFound')}
                 {searchQuery && ` for "${searchQuery}"`}
                 {selectedTag && ` in ${selectedTag}`}
             </div>
@@ -249,10 +251,10 @@ const BlogPage: React.FC = () => {
                 >
                     <p style={{ fontSize: '4rem', marginBottom: '1rem' }}>🔍</p>
                     <h3 style={{ fontSize: '1.5rem', fontWeight: 700, marginBottom: '0.5rem' }}>
-                        No posts found
+                        {t('blog.noPostsFound')}
                     </h3>
                     <p style={{ color: '#666', fontSize: '1rem', marginBottom: '1rem' }}>
-                        Try adjusting your search or filters
+                        {t('blog.tryAdjusting')}
                     </p>
                     <button
                         onClick={handleReset}
@@ -406,7 +408,7 @@ const BlogPage: React.FC = () => {
                                     e.currentTarget.style.color = '#A3FF00';
                                 }}
                             >
-                                Load More ({filteredPosts.length - visibleCount} more)
+                                {t('blog.loadMore')} ({filteredPosts.length - visibleCount} {t('blog.more')})
                             </button>
                         </div>
                     )}

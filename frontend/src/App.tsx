@@ -1,4 +1,5 @@
 // React is auto-imported by JSX transform
+import './i18n'; // Initialize i18n
 import { lazy, Suspense } from 'react';
 import Layout from './components/Layout';
 import Navbar from './components/Navbar';

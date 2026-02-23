@@ -1,0 +1,101 @@
+{
+  "common": {
+    "loading": "Loading...",
+    "save": "Save",
+    "cancel": "Cancel",
+    "delete": "Delete",
+    "edit": "Edit",
+    "add": "Add",
+    "search": "Search",
+    "filter": "Filter",
+    "sort": "Sort",
+    "back": "Back",
+    "next": "Next",
+    "submit": "Submit",
+    "close": "Close",
+    "learnMore": "Learn More",
+    "getStarted": "Get Started",
+    "viewAll": "View All",
+    "comingSoon": "Coming Soon"
+  },
+  "nav": {
+    "home": "Home",
+    "projects": "Projects",
+    "services": "Services",
+    "about": "About",
+    "blog": "Blog",
+    "contact": "Contact"
+  },
+  "home": {
+    "heroTitle": "Building Digital Experiences That Matter",
+    "heroSubtitle": "I craft elegant solutions for complex problems",
+    "welcomeMessage": "Welcome to my digital playground",
+    "statistics": {
+      "projectsCompleted": "Projects Completed",
+      "yearsExperience": "Years Experience",
+      "happyClients": "Happy Clients",
+      "awardsWon": "Awards Won"
+    },
+    "whyWorkWithMe": "WHY WORK WITH ME?",
+    "ctaTitle": "Let's Build Something Amazing",
+    "ctaSubtitle": "Ready to bring your vision to life?"
+  },
+  "about": {
+    "title": "About Me",
+    "subtitle": "The journey behind the code",
+    "basedIn": "Based in",
+    "peru": "Arequipa, Peru",
+    "moreAbout": "More About Me",
+    "myApproach": "My Approach",
+    "journey": "Journey"
+  },
+  "projects": {
+    "title": "Projects",
+    "subtitle": "Selected work and experiments",
+    "all": "All",
+    "featured": "Featured",
+    "viewProject": "View Project"
+  },
+  "services": {
+    "title": "Services",
+    "subtitle": "What I can do for you",
+    "webDevelopment": "Web Development",
+    "uiDesign": "UI/UX Design",
+    "consulting": "Technical Consulting"
+  },
+  "blog": {
+    "title": "Blog",
+    "subtitle": "Thoughts on design, development, and building digital experiences that matter",
+    "searchPlaceholder": "Search posts...",
+    "allTopics": "All Topics",
+    "newest": "Newest",
+    "az": "A-Z",
+    "clear": "Clear",
+    "postsFound": "posts found",
+    "noPostsFound": "No posts found",
+    "tryAdjusting": "Try adjusting your search or filters",
+    "viewAllPosts": "View All Posts",
+    "loadMore": "Load More",
+    "more": "more"
+  },
+  "contact": {
+    "title": "Get In Touch",
+    "subtitle": "Let's create something together",
+    "name": "Name",
+    "email": "Email",
+    "message": "Message",
+    "send": "Send Message",
+    "sending": "Sending...",
+    "success": "Message sent successfully!",
+    "error": "Failed to send message"
+  },
+  "footer": {
+    "rights": "All rights reserved",
+    "madeWith": "Made with"
+  },
+  "errors": {
+    "generic": "Something went wrong",
+    "notFound": "Page not found",
+    "serverError": "Server error"
+  }
+}
