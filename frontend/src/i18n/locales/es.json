@@ -35,6 +35,13 @@
     "welcomeMessage": "Bienvenido a mi playground digital",
     "seoTitle": "Premium Agency OS",
     "seoDescription": "MiWeb es un sistema de gestión de agencia de alta gama con información de IA y simulaciones predictivas.",
+    "hero": {
+      "availableForWork": "DISPONIBLE PARA TRABAJAR",
+      "creating": "CREANDO",
+      "impactful": "IMPACTO",
+      "websites": "WEBSITES",
+      "subtitle": "Ayudo a las marcas a destacar en la era digital. Juntos estableceremos un nuevo estándar. Sin tonterías, siempre a la vanguardia."
+    },
     "statistics": {
       "projectsCompleted": "Proyectos Completados",
       "yearsExperience": "Años de Experiencia",
@@ -68,7 +75,9 @@
     "viewProject": "Ver Proyecto",
     "heroTitle": "TODOS LOS PROYECTOS",
     "heroSubtitle": "Una selección curada de experiencias digitales, sitios web e identidades de marca creadas con precisión y pasión.",
-    "errorLoading": "No se pudieron cargar los proyectos. Por favor, inténtalo de nuevo más tarde."
+    "errorLoading": "No se pudieron cargar los proyectos. Por favor, inténtalo de nuevo más tarde.",
+    "selectedWork": "Trabajo Destacado",
+    "viewAllProjects": "Ver Todos los Proyectos"
   },
   "services": {
     "title": "Servicios",
@@ -77,35 +86,29 @@
     "comprehensiveSolutions": "Soluciones digitales integrales para empresas modernas.",
     "webDesign": {
       "title": "Diseño Web",
-      "items": ["Diseño UI/UX", "Wireframing", "Prototipado", "Sistemas de Diseño"]
+      "items": ["Diseño UI/UX", "Wireframing", "Prototipado", "Sistemas de Diseño"],
+      "description": "Creando interfaces visualmente impresionantes y centradas en el usuario. Me enfoco en la excelencia estética combinada con funcionalidad intuitiva para crear experiencias digitales que cautivan y convierten."
     },
     "development": {
       "title": "Desarrollo",
-      "items": ["React / Next.js", "Animación", "Integración CMS", "eCommerce"]
+      "items": ["React / Next.js", "Animación", "Integración CMS", "eCommerce"],
+      "description": "Convirtiendo diseños en código limpio y eficiente usando React, TypeScript y bibliotecas de animación modernas. Asegurando velocidad, SEO y capacidad de respuesta."
     },
     "branding": {
       "title": "Marca",
-      "items": ["Diseño de Logo", "Identidad de Marca", "Assets Sociales", "Guías"]
+      "items": ["Diseño de Logo", "Identidad de Marca", "Assets Sociales", "Guías"],
+      "description": "Definiendo la identidad central de tu negocio. Desde diseño de logotipos hasta guías de marca completas, ayudo a construir marcas que resuenan y perduran."
     },
     "webDevelopment": "Desarrollo Web",
     "uiDesign": "Diseño UI/UX",
-    "branding": "Marca",
     "consulting": "Consultoría Técnica",
     "heroTitle": "Expertise y Soluciones",
     "heroSubtitle": "Un conjunto completo de servicios digitales diseñados para elevar tu marca.",
     "myProcess": "Mi Proceso",
     "processDescription": "Un flujo de trabajo transparente y colaborativo diseñado para ofrecer resultados excepcionales.",
-    "webDesign": {
-      "title": "Diseño Web",
-      "description": "Creando interfaces visualmente impresionantes y centradas en el usuario. Me enfoco en la excelencia estética combinada con funcionalidad intuitiva para crear experiencias digitales que cautivan y convierten."
-    },
     "webDev": {
       "title": "Desarrollo Web",
       "description": "Dando vida a los diseños con código limpio, robusto y escalable. Especializándome en ecosistemas modernos de React, bibliotecas de animación y arquitectura centrada en el rendimiento."
-    },
-    "branding": {
-      "title": "Marca y Estrategia",
-      "description": "Definiendo la identidad central de tu negocio. Desde diseño de logotipos hasta guías de marca completas, ayudo a construir marcas que resuenan y perduran."
     },
     "steps": {
       "discovery": "Descubrimiento",
@@ -149,23 +152,11 @@
     "heroTitle": "Hablemos",
     "heroSubtitle": "¿Tienes un proyecto en mente? Construyamos algo extraordinario juntos.",
     "somethingWrong": "Algo salió mal. Por favor, inténtalo de nuevo.",
-    "locationValue": "Arequipa, Perú (Disponible en todo el mundo)"
-  },
-  "hero": {
-    "availableForWork": "DISPONIBLE PARA TRABAJAR",
-    "creating": "CREANDO",
-    "impactful": "IMPACTO",
-    "websites": "WEBSITES",
-    "subtitle": "Ayudo a las marcas a destacar en la era digital. Juntos estableceremos un nuevo estándar. Sin tonterías, siempre a la vanguardia."
-  },
-  "projects": {
-    "selectedWork": "Trabajo Destacado",
-    "viewAllProjects": "Ver Todos los Proyectos",
     "getInTouch": "Contáctame",
     "emailLabel": "Email",
     "socials": "Redes Sociales",
     "location": "Ubicación",
-    "locationValue": "Arequipa, Perú (Disponible Worldwide)",
+    "locationValue": "Arequipa, Perú (Disponible en todo el mundo)",
     "messageSent": "¡Mensaje Enviado!",
     "responseMessage": "Te responderé lo antes posible.",
     "sendAnother": "Enviar Otro Mensaje",

@@ -33,6 +33,8 @@
     "heroTitle": "Creating Impactful Websites",
     "heroSubtitle": "I craft elegant solutions for complex problems",
     "welcomeMessage": "Welcome to my digital playground",
+    "seoTitle": "Premium Agency OS",
+    "seoDescription": "MiWeb is a high-end agency management system with AI insights and predictive simulations.",
     "hero": {
       "availableForWork": "AVAILABLE FOR WORK",
       "creating": "CREATING",
@@ -40,8 +42,6 @@
       "websites": "WEBSITES",
       "subtitle": "I help brands stand out in the digital era. Together we will set the new status quo. No nonsense, always on the cutting edge."
     },
-    "seoTitle": "Premium Agency OS",
-    "seoDescription": "MiWeb is a high-end agency management system with AI insights and predictive simulations.",
     "statistics": {
       "projectsCompleted": "Projects Completed",
       "yearsExperience": "Years Experience",
@@ -86,35 +86,29 @@
     "comprehensiveSolutions": "Comprehensive digital solutions for modern businesses.",
     "webDesign": {
       "title": "Web Design",
-      "items": ["UI/UX Design", "Wireframing", "Prototyping", "Design Systems"]
+      "items": ["UI/UX Design", "Wireframing", "Prototyping", "Design Systems"],
+      "description": "Crafting visually stunning and user-centric interfaces. I focus on aesthetic excellence paired with intuitive functionality to create digital experiences that captivate and convert."
     },
     "development": {
       "title": "Development",
-      "items": ["React / Next.js", "Animation", "CMS Integration", "eCommerce"]
+      "items": ["React / Next.js", "Animation", "CMS Integration", "eCommerce"],
+      "description": "Turning designs into clean, efficient code using React, TypeScript, and modern animation libraries. Ensuring speed, SEO, and responsiveness."
     },
     "branding": {
       "title": "Branding",
-      "items": ["Logo Design", "Brand Identity", "Social Assets", "Guidelines"]
+      "items": ["Logo Design", "Brand Identity", "Social Assets", "Guidelines"],
+      "description": "Defining the core identity of your business. From logo design to comprehensive brand guidelines, I help build brands that resonate and endure."
     },
     "webDevelopment": "Web Development",
     "uiDesign": "UI/UX Design",
-    "branding": "Branding",
     "consulting": "Technical Consulting",
     "heroTitle": "Expertise & Solutions",
     "heroSubtitle": "A comprehensive suite of digital services designed to elevate your brand.",
     "myProcess": "My Process",
     "processDescription": "A transparent and collaborative workflow designed to deliver exceptional results.",
-    "webDesign": {
-      "title": "Web Design",
-      "description": "Crafting visually stunning and user-centric interfaces. I focus on aesthetic excellence paired with intuitive functionality to create digital experiences that captivate and convert."
-    },
     "webDev": {
       "title": "Web Development",
       "description": "Bringing designs to life with clean, robust, and scalable code. Specializing in modern React ecosystems, animation libraries, and performance-first architecture."
-    },
-    "branding": {
-      "title": "Branding & Strategy",
-      "description": "Defining the core identity of your business. From logo design to comprehensive brand guidelines, I help build brands that resonate and endure."
     },
     "steps": {
       "discovery": "Discovery",
