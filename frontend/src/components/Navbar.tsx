@@ -76,7 +76,7 @@ const Navbar: React.FC = () => {
                             src="/logo.png" 
                             alt="Alberto Farah" 
                             style={{ 
-                                height: '40px', 
+                                height: '80px', 
                                 width: 'auto',
                                 objectFit: 'contain'
                             }} 

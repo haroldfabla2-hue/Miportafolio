@@ -5,6 +5,7 @@ import { useTranslation } from 'react-i18next';
 import SEO from './SEO';
 
 const API_BASE = import.meta.env.VITE_API_URL || '';
+const CONTACT_EMAIL = 'alberto.farah.b@gmail.com';
 
 const ContactPage: React.FC = () => {
     const { t } = useTranslation();
@@ -91,8 +92,8 @@ const ContactPage: React.FC = () => {
 
                         <div style={{ marginBottom: '3rem' }}>
                             <h4 style={{ fontSize: '1rem', color: '#666', textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: '1rem' }}>{t('contact.emailLabel')}</h4>
-                            <a href="mailto:albertofarah6@gmail.com" style={{ fontSize: '1.5rem', color: '#fff', textDecoration: 'none', fontWeight: 600 }}>
-                                albertofarah6@gmail.com
+                            <a href={`mailto:${CONTACT_EMAIL}`} style={{ fontSize: '1.5rem', color: '#fff', textDecoration: 'none', fontWeight: 600 }}>
+                                {CONTACT_EMAIL}
                             </a>
                         </div>
 

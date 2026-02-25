@@ -118,27 +118,52 @@ apiInstance.interceptors.response.use(
 
 
 // CMS Content types matching the backend schema
+export interface LocalizedCmsEntry {
+    title?: string;
+    content?: string;
+    metaTitle?: string | null;
+    metaDesc?: string | null;
+    role?: string;
+    services?: string[];
+    tags?: string[];
+}
+
+export type LocalizedCmsMap = Record<string, LocalizedCmsEntry>;
+
+export interface CmsMetadata {
+    year?: string;
+    url?: string;
+    role?: string;
+    services?: string[];
+    i18n?: LocalizedCmsMap;
+    [key: string]: unknown;
+}
+
 export interface CmsContent {
     id: string;
     slug: string;
-    type: 'PORTFOLIO' | 'BLOG' | 'REPORT';
+    type: 'PORTFOLIO' | 'BLOG' | 'REPORT' | 'PAGE';
     title: string;
     content: string;
     metaTitle: string | null;
     metaDesc: string | null;
     tags: string[];
-    metadata: {
-        year: string;
-        url: string;
-        role: string;
-        services: string[];
-    } | null;
+    metadata: CmsMetadata | null;
     coverImage: string | null;
     status: string;
     publishedAt: string | null;
     createdAt: string;
     updatedAt: string;
 }
+
+export interface ProjectTranslationEntry {
+    title?: string;
+    description?: string;
+    role?: string;
+    services?: string[];
+}
+
+export type ProjectTranslations = Record<string, ProjectTranslationEntry>;
 
 // Transformed Project type for frontend consumption
 export interface Project {
@@ -149,6 +174,144 @@ export interface Project {
     description: string;
     role: string;
     services: string[];
+    translations?: ProjectTranslations;
+}
+
+function normalizeLanguageKey(language: string): string {
+    return language.toLowerCase().split('-')[0];
+}
+
+function hasText(value: unknown): value is string {
+    return typeof value === 'string' && value.trim().length > 0;
+}
+
+function sanitizeStringArray(value: unknown): string[] | null {
+    if (!Array.isArray(value)) {
+        return null;
+    }
+    return value.filter((item): item is string => hasText(item));
+}
+
+function pickLocalizedEntry(localizedMap: LocalizedCmsMap | undefined, language: string): LocalizedCmsEntry | null {
+    if (!localizedMap) {
+        return null;
+    }
+
+    const candidates = [language, normalizeLanguageKey(language)]
+        .map(normalizeLanguageKey)
+        .filter((key, index, list) => list.indexOf(key) === index);
+
+    for (const candidate of candidates) {
+        const match = Object.entries(localizedMap).find(
+            ([key]) => normalizeLanguageKey(key) === candidate
+        );
+        if (match) {
+            return match[1];
+        }
+    }
+
+    return null;
+}
+
+function extractProjectTranslations(metadata: CmsMetadata | null): ProjectTranslations | undefined {
+    const localizedMap = metadata?.i18n;
+    if (!localizedMap) {
+        return undefined;
+    }
+
+    const translations: ProjectTranslations = {};
+
+    Object.entries(localizedMap).forEach(([language, localized]) => {
+        const normalizedLanguage = normalizeLanguageKey(language);
+        const services = sanitizeStringArray(localized.services);
+
+        const entry: ProjectTranslationEntry = {};
+        if (hasText(localized.title)) entry.title = localized.title;
+        if (hasText(localized.content)) entry.description = localized.content;
+        if (hasText(localized.role)) entry.role = localized.role;
+        if (services && services.length > 0) entry.services = services;
+
+        if (Object.keys(entry).length > 0) {
+            translations[normalizedLanguage] = entry;
+        }
+    });
+
+    return Object.keys(translations).length > 0 ? translations : undefined;
+}
+
+export function localizeCmsContent(content: CmsContent, language: string): CmsContent {
+    const localized = pickLocalizedEntry(content.metadata?.i18n, language);
+    if (!localized) {
+        return content;
+    }
+
+    const localizedServices = sanitizeStringArray(localized.services);
+    const localizedTags = sanitizeStringArray(localized.tags);
+    const hasLocalizedRole = hasText(localized.role);
+    const hasLocalizedServices = localizedServices !== null && localizedServices.length > 0;
+
+    const metadata = content.metadata && (hasLocalizedRole || hasLocalizedServices)
+        ? {
+            ...content.metadata,
+            ...(hasLocalizedRole ? { role: localized.role } : {}),
+            ...(hasLocalizedServices ? { services: localizedServices } : {}),
+        }
+        : content.metadata;
+
+    return {
+        ...content,
+        title: hasText(localized.title) ? localized.title : content.title,
+        content: hasText(localized.content) ? localized.content : content.content,
+        metaTitle: localized.metaTitle === null
+            ? null
+            : hasText(localized.metaTitle) ? localized.metaTitle : content.metaTitle,
+        metaDesc: localized.metaDesc === null
+            ? null
+            : hasText(localized.metaDesc) ? localized.metaDesc : content.metaDesc,
+        tags: localizedTags && localizedTags.length > 0 ? localizedTags : content.tags,
+        metadata,
+    };
+}
+
+function pickProjectTranslation(
+    translations: ProjectTranslations | undefined,
+    language: string
+): ProjectTranslationEntry | null {
+    if (!translations) {
+        return null;
+    }
+
+    const candidates = [language, normalizeLanguageKey(language)]
+        .map(normalizeLanguageKey)
+        .filter((key, index, list) => list.indexOf(key) === index);
+
+    for (const candidate of candidates) {
+        const match = Object.entries(translations).find(
+            ([key]) => normalizeLanguageKey(key) === candidate
+        );
+        if (match) {
+            return match[1];
+        }
+    }
+
+    return null;
+}
+
+export function localizeProject(project: Project, language: string): Project {
+    const localized = pickProjectTranslation(project.translations, language);
+    if (!localized) {
+        return project;
+    }
+
+    const localizedServices = sanitizeStringArray(localized.services);
+
+    return {
+        ...project,
+        title: hasText(localized.title) ? localized.title : project.title,
+        description: hasText(localized.description) ? localized.description : project.description,
+        role: hasText(localized.role) ? localized.role : project.role,
+        services: localizedServices && localizedServices.length > 0 ? localizedServices : project.services,
+    };
 }
 
 // Transform CmsContent to Project format
@@ -160,7 +323,8 @@ export function transformCmsToProject(cms: CmsContent): Project {
         image: cms.coverImage || '/projects/placeholder.png',
         description: cms.content,
         role: cms.metadata?.role || '',
-        services: cms.metadata?.services || cms.tags || []
+        services: cms.metadata?.services || cms.tags || [],
+        translations: extractProjectTranslations(cms.metadata),
     };
 }
 

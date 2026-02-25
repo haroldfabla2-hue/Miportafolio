@@ -29,22 +29,26 @@ const ProcessCard: React.FC<ProcessCardProps> = ({ item, index, progress, range,
             position: 'sticky',
             top: 0
         }}>
-            <motion.div style={{
-                backgroundColor: 'var(--color-bg)',
-                borderRadius: '25px',
-                padding: 'clamp(2rem, 5vw, 4rem)',
-                width: 'clamp(300px, 90vw, 1000px)',
-                height: 'clamp(300px, 60vh, 500px)',
-                transformOrigin: 'top',
-                scale,
-                border: '1px solid #333',
-                position: 'relative',
-                top: `calc(-5vh + ${index * 25}px)`,
-                display: 'flex',
-                flexDirection: 'column',
-                justifyContent: 'space-between',
-                boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.5)'
-            }}>
+            <motion.div
+                whileHover={{ y: -10, borderColor: '#4a4a4a', boxShadow: '0 35px 70px -20px rgba(0, 0, 0, 0.65)' }}
+                transition={{ y: { duration: 0.25, ease: 'easeOut' } }}
+                style={{
+                    backgroundColor: 'var(--color-bg)',
+                    borderRadius: '25px',
+                    padding: 'clamp(2rem, 5vw, 4rem)',
+                    width: 'clamp(300px, 90vw, 1000px)',
+                    height: 'clamp(300px, 60vh, 500px)',
+                    transformOrigin: 'top',
+                    scale,
+                    border: '1px solid #333',
+                    position: 'relative',
+                    top: `calc(-5vh + ${index * 25}px)`,
+                    display: 'flex',
+                    flexDirection: 'column',
+                    justifyContent: 'space-between',
+                    boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.5)'
+                }}
+            >
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
                     <h2 style={{ fontSize: 'clamp(1.5rem, 4vw, 3rem)', margin: 0, lineHeight: 1 }}>{item.title}</h2>
                     <span style={{ fontSize: '1.5rem', color: 'var(--color-accent)', fontFamily: 'monospace' }}>{item.number}</span>

@@ -4,6 +4,7 @@ import { useTranslation } from 'react-i18next';
 const Footer: React.FC = () => {
     const { t } = useTranslation();
     const currentYear = new Date().getFullYear();
+    const contactEmail = 'alberto.farah.b@gmail.com';
     
     return (
         <footer style={{
@@ -33,7 +34,7 @@ const Footer: React.FC = () => {
                 <div style={{ display: 'flex', gap: '2rem' }}>
                     <a href="https://linkedin.com/in/alberto-farah-blair" target="_blank" rel="noopener noreferrer" style={{ color: '#fff', fontWeight: 600 }}>{t('footer.linkedin')}</a>
                     <a href="https://instagram.com" target="_blank" rel="noopener noreferrer" style={{ color: '#fff', fontWeight: 600 }}>{t('footer.instagram')}</a>
-                    <a href="mailto:albertofarah6@gmail.com" style={{ color: '#fff', fontWeight: 600 }}>{t('footer.email')}</a>
+                    <a href={`mailto:${contactEmail}`} style={{ color: '#fff', fontWeight: 600 }}>{t('footer.email')}</a>
                 </div>
             </div>
         </footer>

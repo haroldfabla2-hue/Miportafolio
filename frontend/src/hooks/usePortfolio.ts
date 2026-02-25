@@ -1,5 +1,6 @@
-import { useState, useEffect } from 'react';
-import { contentApi, type Project } from '../services/api';
+import { useState, useEffect, useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
+import { contentApi, localizeProject, type Project } from '../services/api';
 import { projects as staticProjects } from '../data/projects';
 
 interface UsePortfolioResult {
@@ -15,6 +16,7 @@ interface UsePortfolioResult {
  * This ensures the public website always displays content.
  */
 export function usePortfolio(): UsePortfolioResult {
+    const { i18n } = useTranslation();
     const [projects, setProjects] = useState<Project[]>(staticProjects);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
@@ -55,8 +57,12 @@ export function usePortfolio(): UsePortfolioResult {
         };
     }, []);
 
-    return { projects, loading, error };
+    const localizedProjects = useMemo(
+        () => projects.map((project) => localizeProject(project, i18n.language)),
+        [projects, i18n.language]
+    );
+
+    return { projects: localizedProjects, loading, error };
 }
 
 export default usePortfolio;
-

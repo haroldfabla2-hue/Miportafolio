@@ -3,18 +3,20 @@ import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import SEO from './SEO';
-import { contentApi, type CmsContent } from '../services/api';
+import { contentApi, localizeCmsContent, type CmsContent } from '../services/api';
 
 const POSTS_PER_PAGE = 6;
+const FALLBACK_DATE_LOCALE = 'en-US';
 
 const BlogPage: React.FC = () => {
-    const { t } = useTranslation();
+    const { t, i18n } = useTranslation();
     const [posts, setPosts] = useState<CmsContent[]>([]);
     const [loading, setLoading] = useState(true);
     const [visibleCount, setVisibleCount] = useState(POSTS_PER_PAGE);
     const [searchQuery, setSearchQuery] = useState('');
     const [selectedTag, setSelectedTag] = useState<string>('');
     const [sortBy, setSortBy] = useState<'date' | 'title'>('date');
+    const dateLocale = i18n.language.startsWith('es') ? 'es-ES' : FALLBACK_DATE_LOCALE;
 
     useEffect(() => {
         async function fetchPosts() {
@@ -30,18 +32,23 @@ const BlogPage: React.FC = () => {
         fetchPosts();
     }, []);
 
+    const localizedPosts = useMemo(
+        () => posts.map((post) => localizeCmsContent(post, i18n.language)),
+        [posts, i18n.language]
+    );
+
     // Obtener todos los tags únicos
     const allTags = useMemo(() => {
         const tags = new Set<string>();
-        posts.forEach(post => {
+        localizedPosts.forEach(post => {
             post.tags?.forEach(tag => tags.add(tag));
         });
         return Array.from(tags).sort();
-    }, [posts]);
+    }, [localizedPosts]);
 
     // Filtrar y ordenar posts
     const filteredPosts = useMemo(() => {
-        let result = [...posts];
+        let result = [...localizedPosts];
         
         // Filtro por búsqueda
         if (searchQuery) {
@@ -73,7 +80,7 @@ const BlogPage: React.FC = () => {
         });
 
         return result;
-    }, [posts, searchQuery, selectedTag, sortBy]);
+    }, [localizedPosts, searchQuery, selectedTag, sortBy]);
 
     // Posts visibles (con paginación)
     const visiblePosts = filteredPosts.slice(0, visibleCount);
@@ -112,7 +119,7 @@ const BlogPage: React.FC = () => {
                     letterSpacing: '-0.02em'
                 }}
             >
-                Blog
+                {t('blog.title')}
             </motion.h1>
             
             <motion.p
@@ -121,7 +128,7 @@ const BlogPage: React.FC = () => {
                 transition={{ delay: 0.2 }}
                 style={{ color: '#888', fontSize: '1.2rem', marginBottom: '2rem', maxWidth: '600px' }}
             >
-                Thoughts on design, development, and building digital experiences that matter.
+                {t('blog.subtitle')}
             </motion.p>
 
             {/* Filtros y Búsqueda */}
@@ -269,7 +276,7 @@ const BlogPage: React.FC = () => {
                             fontWeight: 600
                         }}
                     >
-                        View All Posts
+                        {t('blog.viewAllPosts')}
                     </button>
                 </motion.div>
             ) : (
@@ -371,7 +378,7 @@ const BlogPage: React.FC = () => {
                                                 color: '#555'
                                             }}>
                                                 {post.publishedAt
-                                                    ? new Date(post.publishedAt).toLocaleDateString('en-US', {
+                                                    ? new Date(post.publishedAt).toLocaleDateString(dateLocale, {
                                                         year: 'numeric', month: 'long', day: 'numeric'
                                                     })
                                                     : 'Draft'}

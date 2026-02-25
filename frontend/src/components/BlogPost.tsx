@@ -1,13 +1,23 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { contentApi, type CmsContent } from '../services/api';
+import { useTranslation } from 'react-i18next';
+import { contentApi, localizeCmsContent, type CmsContent } from '../services/api';
+
+const FALLBACK_DATE_LOCALE = 'en-US';
 
 const BlogPost: React.FC = () => {
+    const { i18n } = useTranslation();
     const { slug } = useParams<{ slug: string }>();
     const [post, setPost] = useState<CmsContent | null>(null);
     const [loading, setLoading] = useState(true);
     const [notFound, setNotFound] = useState(false);
+    const dateLocale = i18n.language.startsWith('es') ? 'es-ES' : FALLBACK_DATE_LOCALE;
+
+    const localizedPost = useMemo(
+        () => (post ? localizeCmsContent(post, i18n.language) : null),
+        [post, i18n.language]
+    );
 
     useEffect(() => {
         async function fetchPost() {
@@ -47,7 +57,7 @@ const BlogPost: React.FC = () => {
         );
     }
 
-    if (notFound || !post) {
+    if (notFound || !localizedPost) {
         return (
             <section style={{
                 maxWidth: '800px',
@@ -96,9 +106,9 @@ const BlogPost: React.FC = () => {
             </Link>
 
             {/* Tags */}
-            {post.tags && post.tags.length > 0 && (
+            {localizedPost.tags && localizedPost.tags.length > 0 && (
                 <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap', marginBottom: '1rem' }}>
-                    {post.tags.map(tag => (
+                    {localizedPost.tags.map(tag => (
                         <span key={tag} style={{
                             padding: '0.2rem 0.8rem',
                             fontSize: '0.8rem',
@@ -120,20 +130,20 @@ const BlogPost: React.FC = () => {
                 marginBottom: '1rem',
                 letterSpacing: '-0.02em'
             }}>
-                {post.title}
+                {localizedPost.title}
             </h1>
 
             {/* Date */}
             <p style={{ color: '#555', fontSize: '0.9rem', marginBottom: '3rem' }}>
-                {post.publishedAt
-                    ? new Date(post.publishedAt).toLocaleDateString('en-US', {
+                {localizedPost.publishedAt
+                    ? new Date(localizedPost.publishedAt).toLocaleDateString(dateLocale, {
                         year: 'numeric', month: 'long', day: 'numeric'
                     })
                     : 'Draft'}
             </p>
 
             {/* Cover Image */}
-            {post.coverImage && (
+            {localizedPost.coverImage && (
                 <div style={{
                     width: '100%',
                     borderRadius: '16px',
@@ -142,8 +152,8 @@ const BlogPost: React.FC = () => {
                     border: '1px solid #222'
                 }}>
                     <img
-                        src={post.coverImage}
-                        alt={post.title}
+                        src={localizedPost.coverImage}
+                        alt={localizedPost.title}
                         style={{ width: '100%', height: 'auto', display: 'block' }}
                     />
                 </div>
@@ -152,7 +162,7 @@ const BlogPost: React.FC = () => {
             {/* Content */}
             <div
                 className="blog-content"
-                dangerouslySetInnerHTML={{ __html: post.content }}
+                dangerouslySetInnerHTML={{ __html: localizedPost.content }}
                 style={{
                     fontSize: '1.1rem',
                     lineHeight: 1.8,

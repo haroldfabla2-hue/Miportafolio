@@ -1,3 +1,24 @@
+export interface LocalizedCmsEntry {
+    title?: string;
+    content?: string;
+    metaTitle?: string | null;
+    metaDesc?: string | null;
+    role?: string;
+    services?: string[];
+    tags?: string[];
+}
+
+export type LocalizedCmsMap = Record<string, LocalizedCmsEntry>;
+
+export interface CmsMetadata {
+    year?: string;
+    url?: string;
+    role?: string;
+    services?: string[];
+    i18n?: LocalizedCmsMap;
+    [key: string]: unknown;
+}
+
 // CMS Content types matching the backend schema
 export interface CmsContent {
     id: string;
@@ -8,18 +29,22 @@ export interface CmsContent {
     metaTitle: string | null;
     metaDesc: string | null;
     tags: string[];
-    metadata: {
-        year: string;
-        url: string;
-        role: string;
-        services: string[];
-    } | null;
+    metadata: CmsMetadata | null;
     coverImage: string | null;
     status: string;
     publishedAt: string | null;
     createdAt: string;
     updatedAt: string;
 }
+
+export interface ProjectTranslationEntry {
+    title?: string;
+    description?: string;
+    role?: string;
+    services?: string[];
+}
+
+export type ProjectTranslations = Record<string, ProjectTranslationEntry>;
 
 // Transformed Project type for frontend consumption
 export interface Project {
@@ -30,6 +55,7 @@ export interface Project {
     description: string;
     role: string;
     services: string[];
+    translations?: ProjectTranslations;
 }
 
 // Transform CmsContent to Project format
