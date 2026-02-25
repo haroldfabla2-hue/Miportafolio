@@ -27,7 +27,8 @@
     "services": "Servicios",
     "about": "Nosotros",
     "blog": "Blog",
-    "contact": "Contacto"
+    "contact": "Contacto",
+    "adminCms": "Admin / CMS"
   },
   "home": {
     "heroTitle": "Creando Websites de Impacto",

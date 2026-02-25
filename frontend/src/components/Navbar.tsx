@@ -133,6 +133,30 @@ const Navbar: React.FC = () => {
                     >
                         {i18n.language === 'en' ? '🇪🇸 ES' : '🇺🇸 EN'}
                     </motion.button>
+
+                    <Link to="/admin/login" style={{ textDecoration: 'none' }}>
+                        <motion.button
+                            initial={{ opacity: 0, x: 20 }}
+                            animate={{ opacity: 1, x: 0 }}
+                            transition={{ delay: 0.2 }}
+                            style={{
+                                backgroundColor: 'transparent',
+                                color: '#fff',
+                                padding: '0.6rem 1rem',
+                                borderRadius: '999px',
+                                fontWeight: 600,
+                                fontSize: '0.85rem',
+                                cursor: 'pointer',
+                                border: '1px solid rgba(255,255,255,0.25)',
+                                textTransform: 'uppercase',
+                                letterSpacing: '0.04em'
+                            }}
+                            whileHover={{ scale: 1.03, borderColor: '#fff' }}
+                            whileTap={{ scale: 0.98 }}
+                        >
+                            {t('nav.adminCms')}
+                        </motion.button>
+                    </Link>
                 </div>
             </motion.nav>
 

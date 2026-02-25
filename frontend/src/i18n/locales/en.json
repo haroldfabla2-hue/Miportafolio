@@ -27,7 +27,8 @@
     "services": "Services",
     "about": "About",
     "blog": "Blog",
-    "contact": "Contact"
+    "contact": "Contact",
+    "adminCms": "Admin / CMS"
   },
   "home": {
     "heroTitle": "Creating Impactful Websites",
