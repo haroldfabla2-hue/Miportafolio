@@ -30,7 +30,8 @@ export class AuthService {
 
     async validateUser(email: string, pass: string): Promise<any> {
         try {
-            const user = await this.usersService.findOne(email);
+            const normalizedEmail = email?.trim().toLowerCase();
+            const user = await this.usersService.findOne(normalizedEmail);
             if (user && user.password) {
                 const isValid = await bcrypt.compare(pass, user.password);
                 if (isValid) {
@@ -46,13 +47,14 @@ export class AuthService {
     }
 
     async register(email: string, password: string, name: string) {
-        const existing = await this.usersService.findOne(email);
+        const normalizedEmail = email?.trim().toLowerCase();
+        const existing = await this.usersService.findOne(normalizedEmail);
         if (existing) {
             throw new ConflictException('Email already registered');
         }
 
         const user = await this.usersService.create({
-            email,
+            email: normalizedEmail,
             password,
             name,
             role: 'CLIENT',

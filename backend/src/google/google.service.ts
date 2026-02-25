@@ -105,7 +105,7 @@ export class GoogleService {
     async getConnectionStatus(userId: string) {
         const user = await this.usersService.findById(userId);
         return {
-            connected: !!user?.googleRefreshToken,
+            connected: !!(user?.googleConnected && (user?.googleRefreshToken || user?.googleAccessToken)),
             email: user?.email, // Or specific google email if stored separately
             scopes: user?.googleScopes
         };

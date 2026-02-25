@@ -49,7 +49,17 @@ export class UsersService {
     }
 
     async findOne(email: string) {
-        return this.prisma.user.findUnique({ where: { email } });
+        const normalizedEmail = email?.trim().toLowerCase();
+        if (!normalizedEmail) return null;
+
+        return this.prisma.user.findFirst({
+            where: {
+                email: {
+                    equals: normalizedEmail,
+                    mode: 'insensitive',
+                },
+            },
+        });
     }
 
     async findById(id: string) {
@@ -83,14 +93,15 @@ export class UsersService {
     }
 
     async create(data: any) {
-        const existing = await this.prisma.user.findUnique({ where: { email: data.email } });
+        const normalizedEmail = data.email?.trim().toLowerCase();
+        const existing = await this.findOne(normalizedEmail);
         if (existing) throw new ConflictException('Email already exists');
 
         const hashedPassword = data.password ? await bcrypt.hash(data.password, 10) : null;
 
         return this.prisma.user.create({
             data: {
-                email: data.email,
+                email: normalizedEmail,
                 name: data.name,
                 password: hashedPassword,
                 role: data.role || 'CLIENT',
@@ -121,15 +132,35 @@ export class UsersService {
         if (!user) throw new NotFoundException('User not found');
 
         const updateData: any = {};
-        if (data.name) updateData.name = data.name;
-        if (data.role) updateData.role = data.role;
+        if (data.name !== undefined) updateData.name = data.name;
+        if (data.role !== undefined) updateData.role = data.role;
         if (data.avatar !== undefined) updateData.avatar = data.avatar;
         if (data.hourlyRate !== undefined) updateData.hourlyRate = data.hourlyRate;
-        if (data.password) updateData.password = await bcrypt.hash(data.password, 10);
+        if (data.password !== undefined) {
+            updateData.password = data.password ? await bcrypt.hash(data.password, 10) : null;
+        }
+        if (data.monthlySalary !== undefined) updateData.monthlySalary = data.monthlySalary;
+        if (data.reputationScore !== undefined) updateData.reputationScore = data.reputationScore;
+        if (data.phone !== undefined) updateData.phone = data.phone;
+        if (data.jobTitle !== undefined) updateData.jobTitle = data.jobTitle;
+        if (data.profileDetails !== undefined) updateData.profileDetails = data.profileDetails;
+        if (data.workerRoleId !== undefined) updateData.workerRoleId = data.workerRoleId;
+
+        // Google integration fields
+        if (data.googleAccessToken !== undefined) updateData.googleAccessToken = data.googleAccessToken;
+        if (data.googleRefreshToken !== undefined) updateData.googleRefreshToken = data.googleRefreshToken;
+        if (data.googleTokenExpiry !== undefined) {
+            updateData.googleTokenExpiry = data.googleTokenExpiry ? new Date(data.googleTokenExpiry) : null;
+        }
+        if (data.googleConnected !== undefined) updateData.googleConnected = data.googleConnected;
+        if (data.googleScopes !== undefined) updateData.googleScopes = Array.isArray(data.googleScopes) ? data.googleScopes : [];
+
+        if (data.onboardingCompleted !== undefined) updateData.onboardingCompleted = data.onboardingCompleted;
+
         if (data.assignedDriveFolderId !== undefined) updateData.assignedDriveFolderId = data.assignedDriveFolderId;
         if (data.assignedDriveFolderName !== undefined) updateData.assignedDriveFolderName = data.assignedDriveFolderName;
         if (data.twoFactorEnabled !== undefined) updateData.twoFactorEnabled = data.twoFactorEnabled;
-        if (data.twoFactorSecret) updateData.twoFactorSecret = data.twoFactorSecret;
+        if (data.twoFactorSecret !== undefined) updateData.twoFactorSecret = data.twoFactorSecret;
 
         return this.prisma.user.update({
             where: { id },
@@ -186,7 +217,8 @@ export class UsersService {
         }
 
         // 2. Check if user already exists
-        const existing = await this.prisma.user.findUnique({ where: { email: data.email } });
+        const normalizedEmail = data.email?.trim().toLowerCase();
+        const existing = await this.findOne(normalizedEmail);
         if (existing) {
             throw new ConflictException('User with this email already exists.');
         }
@@ -197,7 +229,7 @@ export class UsersService {
 
         const user = await this.prisma.user.create({
             data: {
-                email: data.email,
+                email: normalizedEmail,
                 name: data.name,
                 role: role as any,
                 password: null, // No password initially
@@ -211,7 +243,7 @@ export class UsersService {
 
         await this.prisma.invitation.create({
             data: {
-                email: data.email,
+                email: normalizedEmail,
                 token,
                 role: role as any,
                 expiresAt,

@@ -9,6 +9,6 @@ export class OnboardingController {
 
     @Post('complete')
     async completeOnboarding(@Request() req, @Body() body: any) {
-        return this.usersService.completeOnboarding(req.user.userId, body);
+        return this.usersService.completeOnboarding(req.user.id, body);
     }
 }
