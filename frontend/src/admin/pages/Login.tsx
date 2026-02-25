@@ -5,7 +5,8 @@ import { useAuth } from '../../context/AuthContext';
 import api from '../../services/api';
 import '../styles/admin.css';
 
-const googleClientId = import.meta.env.VITE_GOOGLE_CLIENT_ID;
+const FALLBACK_GOOGLE_CLIENT_ID = '228619635923-0jtm5nl5fiqovu1fhchm552vf0rnp4bk.apps.googleusercontent.com';
+const googleClientId = import.meta.env.VITE_GOOGLE_CLIENT_ID || FALLBACK_GOOGLE_CLIENT_ID;
 
 const LoginPage: React.FC = () => {
     const navigate = useNavigate();
@@ -228,22 +229,30 @@ const LoginPage: React.FC = () => {
 
                     <button
                         type="button"
-                        onClick={() => googleLogin && googleLogin()}
+                        onClick={() => {
+                            if (!googleLogin) {
+                                setError('Google Sign-In is not configured. Contact support.');
+                                return;
+                            }
+                            googleLogin();
+                        }}
+                        disabled={!googleLogin}
                         style={{
                             width: '100%',
                             padding: '1rem',
                             background: 'transparent',
                             border: '1px solid var(--admin-border-color)',
                             borderRadius: '10px',
-                            color: '#fff',
+                            color: googleLogin ? '#fff' : '#888',
                             fontSize: '0.95rem',
                             fontWeight: 600,
-                            cursor: 'pointer',
+                            cursor: googleLogin ? 'pointer' : 'not-allowed',
                             display: 'flex',
                             alignItems: 'center',
                             justifyContent: 'center',
                             gap: '0.75rem',
-                            transition: 'all 0.2s'
+                            transition: 'all 0.2s',
+                            opacity: googleLogin ? 1 : 0.7
                         }}
                     >
                         <svg width="20" height="20" viewBox="0 0 24 24">

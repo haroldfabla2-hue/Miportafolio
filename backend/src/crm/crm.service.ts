@@ -1,17 +1,54 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
+import { Prisma } from '@prisma/client';
 
 @Injectable()
 export class CrmService {
     constructor(private prisma: PrismaService) { }
 
+    private isAdmin(user: any): boolean {
+        return user?.role === 'ADMIN' || user?.role === 'SUPER_ADMIN';
+    }
+
+    private buildProjectScope(user: any): Prisma.ProjectWhereInput {
+        if (this.isAdmin(user)) {
+            return {};
+        }
+
+        if (user?.role === 'WORKER') {
+            return {
+                OR: [
+                    { managerId: user.id },
+                    { team: { some: { id: user.id } } },
+                ],
+            };
+        }
+
+        if (user?.role === 'CLIENT') {
+            return { client: { email: user.email } };
+        }
+
+        return { id: '__forbidden__' };
+    }
+
     async getStats(user: any) {
-        // Enforce user permissions/tenancy if needed. For now, assuming Global Admin or scoped by user logic if multitenant.
-        // Simple counts for dashboard
+        const projectScope = this.buildProjectScope(user);
+        const activeWhere: Prisma.ProjectWhereInput = {
+            AND: [projectScope, { status: { in: ['IN_PROGRESS', 'PLANNING'] } }],
+        };
+
         const [totalProjects, activeProjects, totalClients] = await Promise.all([
-            this.prisma.project.count(),
-            this.prisma.project.count({ where: { status: 'IN_PROGRESS' } }), // Assuming 'IN_PROGRESS' map to active
-            this.prisma.client.count(),
+            this.prisma.project.count({ where: projectScope }),
+            this.prisma.project.count({ where: activeWhere }),
+            this.isAdmin(user)
+                ? this.prisma.client.count()
+                : this.prisma.project
+                    .findMany({
+                        where: projectScope,
+                        distinct: ['clientId'],
+                        select: { clientId: true },
+                    })
+                    .then((rows) => rows.length),
         ]);
 
         // Revenue could be complex, simple aggregation for now if Invoice model exists
@@ -36,11 +73,13 @@ export class CrmService {
         };
     }
 
-    async getRecentActivities(limit: number = 10) {
+    async getRecentActivities(user: any, limit: number = 10) {
         // Fetch recent audit logs or activities
         // If AuditLog exists
         try {
+            const where = this.isAdmin(user) ? {} : { userId: user.id };
             const logs = await this.prisma.auditLog.findMany({
+                where,
                 take: limit,
                 orderBy: { timestamp: 'desc' },
                 include: { user: { select: { name: true, avatar: true } } }
@@ -62,9 +101,15 @@ export class CrmService {
         }
     }
 
-    async getActiveProjects() {
+    async getActiveProjects(user: any) {
+        const projectScope = this.buildProjectScope(user);
         return this.prisma.project.findMany({
-            where: { status: { in: ['IN_PROGRESS', 'PLANNING'] } },
+            where: {
+                AND: [
+                    projectScope,
+                    { status: { in: ['IN_PROGRESS', 'PLANNING'] } },
+                ],
+            },
             take: 5,
             orderBy: { updatedAt: 'desc' },
             include: { client: { select: { name: true } } }

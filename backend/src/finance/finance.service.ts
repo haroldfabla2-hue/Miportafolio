@@ -10,6 +10,10 @@ export class FinanceService {
         private notificationsService: NotificationsService
     ) { }
 
+    private isAdmin(user: any): boolean {
+        return user?.role === 'ADMIN' || user?.role === 'SUPER_ADMIN';
+    }
+
     async getInvoices(user: any) {
         let whereClause: any = {};
 
@@ -19,7 +23,18 @@ export class FinanceService {
             });
             if (client) {
                 whereClause = { clientId: client.id };
+            } else {
+                whereClause = { id: '__forbidden__' };
             }
+        } else if (user.role === 'WORKER') {
+            whereClause = {
+                OR: [
+                    { project: { managerId: user.id } },
+                    { project: { team: { some: { id: user.id } } } },
+                ],
+            };
+        } else if (!this.isAdmin(user)) {
+            whereClause = { id: '__forbidden__' };
         }
 
         return this.prisma.invoice.findMany({
@@ -32,9 +47,27 @@ export class FinanceService {
         });
     }
 
-    async getInvoice(id: string) {
-        const invoice = await this.prisma.invoice.findUnique({
-            where: { id },
+    async getInvoice(id: string, user: any) {
+        let accessWhere: any = {};
+
+        if (user.role === 'CLIENT') {
+            accessWhere = { client: { email: user.email } };
+        } else if (user.role === 'WORKER') {
+            accessWhere = {
+                OR: [
+                    { project: { managerId: user.id } },
+                    { project: { team: { some: { id: user.id } } } },
+                ],
+            };
+        } else if (!this.isAdmin(user)) {
+            accessWhere = { id: '__forbidden__' };
+        }
+
+        const invoice = await this.prisma.invoice.findFirst({
+            where: {
+                id,
+                ...accessWhere,
+            },
             include: {
                 client: true,
                 project: true,
@@ -113,10 +146,22 @@ export class FinanceService {
     }
 
     async getFinancialStats(user: any) {
+        const where =
+            this.isAdmin(user)
+                ? {}
+                : user.role === 'CLIENT'
+                    ? { client: { email: user.email } }
+                    : user.role === 'WORKER'
+                        ? {
+                            OR: [
+                                { project: { managerId: user.id } },
+                                { project: { team: { some: { id: user.id } } } },
+                            ],
+                        }
+                        : { id: '__forbidden__' };
+
         const invoices = await this.prisma.invoice.findMany({
-            where: user.role !== 'ADMIN' && user.role !== 'SUPER_ADMIN'
-                ? { client: { email: user.email } }
-                : {},
+            where,
         });
 
         const paid = invoices.filter(i => i.status === 'PAID');
@@ -141,11 +186,25 @@ export class FinanceService {
         const dateLimit = new Date();
         dateLimit.setMonth(dateLimit.getMonth() - 6);
 
+        const accessFilter =
+            this.isAdmin(user)
+                ? {}
+                : user.role === 'CLIENT'
+                    ? { client: { email: user.email } }
+                    : user.role === 'WORKER'
+                        ? {
+                            OR: [
+                                { project: { managerId: user.id } },
+                                { project: { team: { some: { id: user.id } } } },
+                            ],
+                        }
+                        : { id: '__forbidden__' };
+
         const invoices = await this.prisma.invoice.findMany({
             where: {
                 status: 'PAID',
                 createdAt: { gte: dateLimit },
-                ...(user.role !== 'ADMIN' && user.role !== 'SUPER_ADMIN' ? { client: { email: user.email } } : {})
+                ...accessFilter,
             },
             orderBy: { createdAt: 'asc' }
         });
@@ -170,9 +229,29 @@ export class FinanceService {
         return result;
     }
 
-    async getTimeLogs(projectId?: string) {
+    async getTimeLogs(user: any, projectId?: string) {
+        const where: any = {};
+
+        if (projectId) {
+            where.projectId = projectId;
+        }
+
+        if (!this.isAdmin(user)) {
+            if (user.role === 'CLIENT') {
+                where.project = { client: { email: user.email } };
+            } else if (user.role === 'WORKER') {
+                where.OR = [
+                    { userId: user.id },
+                    { project: { managerId: user.id } },
+                    { project: { team: { some: { id: user.id } } } },
+                ];
+            } else {
+                return [];
+            }
+        }
+
         return this.prisma.timeLog.findMany({
-            where: projectId ? { projectId } : {},
+            where,
             include: {
                 user: { select: { id: true, name: true, avatar: true } },
                 project: { select: { id: true, name: true } },
@@ -296,11 +375,32 @@ export class FinanceService {
 
     // ==================== FINANCIAL SUMMARY ====================
 
-    async getFinancialSummary() {
-        const [invoices, bills] = await Promise.all([
-            this.prisma.invoice.findMany(),
-            this.prisma.bill.findMany(),
-        ]);
+    async getFinancialSummary(user: any) {
+        const invoiceWhere = this.isAdmin(user)
+            ? {}
+            : { client: { email: user.email } };
+
+        const invoices = await this.prisma.invoice.findMany({ where: invoiceWhere });
+
+        if (!this.isAdmin(user)) {
+            const paidInvoices = invoices.filter(i => i.status === 'PAID');
+            const outstandingInvoices = invoices.filter(i => i.status !== 'PAID' && i.status !== 'VOID');
+
+            return {
+                receivables: {
+                    totalBilled: invoices.reduce((sum, i) => sum + i.total, 0),
+                    outstanding: outstandingInvoices.reduce((sum, i) => sum + i.total, 0),
+                    collected: paidInvoices.reduce((sum, i) => sum + i.total, 0),
+                },
+                payables: {
+                    totalBilled: 0,
+                    pending: 0,
+                },
+                netPosition: paidInvoices.reduce((sum, i) => sum + i.total, 0),
+            };
+        }
+
+        const bills = await this.prisma.bill.findMany();
 
         const paidInvoices = invoices.filter(i => i.status === 'PAID');
         const outstandingInvoices = invoices.filter(i => i.status !== 'PAID' && i.status !== 'VOID');

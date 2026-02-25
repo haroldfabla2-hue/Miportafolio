@@ -2,6 +2,8 @@ import React, { createContext, useContext, useState, useEffect, useCallback } fr
 import { GoogleOAuthProvider } from '@react-oauth/google';
 import api from '../services/api';
 
+const FALLBACK_GOOGLE_CLIENT_ID = '228619635923-0jtm5nl5fiqovu1fhchm552vf0rnp4bk.apps.googleusercontent.com';
+
 // Define User Interface matching backend
 export interface User {
     id: string;
@@ -138,7 +140,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
     const isAdmin = user?.role === 'ADMIN' || user?.role === 'SUPER_ADMIN';
 
-    const googleClientId = import.meta.env.VITE_GOOGLE_CLIENT_ID;
+    const googleClientId = import.meta.env.VITE_GOOGLE_CLIENT_ID || FALLBACK_GOOGLE_CLIENT_ID;
 
     // Wrap with GoogleOAuthProvider only if client ID is available
     const content = googleClientId ? (
@@ -175,4 +177,3 @@ export const useAuth = () => {
     }
     return context;
 };
-

@@ -2,13 +2,16 @@ import { Controller, Get, Post, Delete, Body, Query, Req, UseGuards, Param, Uplo
 import { GoogleService } from './google.service';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 import { FileFieldsInterceptor } from '@nestjs/platform-express';
+import { PermissionGuard } from '../guards/permission.guard';
+import { RequiresPermission } from '../decorators/requires-permission.decorator';
 
 @Controller('google/gmail')
-@UseGuards(JwtAuthGuard)
+@UseGuards(JwtAuthGuard, PermissionGuard)
 export class GmailController {
     constructor(private readonly googleService: GoogleService) { }
 
     @Get('messages')
+    @RequiresPermission('email:access')
     async listMessages(@Req() req, @Query('maxResults') maxResults = 20, @Query('q') q = '') {
         const gmail = await this.googleService.getGmailClient(req.user.id);
         const response = await gmail.users.messages.list({
@@ -64,6 +67,7 @@ export class GmailController {
     }
 
     @Get('unread-count')
+    @RequiresPermission('email:access')
     async getUnreadCount(@Req() req) {
         const gmail = await this.googleService.getGmailClient(req.user.id);
         const response = await gmail.users.messages.list({
@@ -84,6 +88,7 @@ export class GmailController {
     }
 
     @Get('messages/:id')
+    @RequiresPermission('email:access')
     async getMessage(@Req() req, @Param('id') id: string) {
         const gmail = await this.googleService.getGmailClient(req.user.id);
         const response = await gmail.users.messages.get({
@@ -95,6 +100,7 @@ export class GmailController {
     }
 
     @Post('messages/:id/read')
+    @RequiresPermission('email:access')
     async markAsRead(@Req() req, @Param('id') id: string) {
         const gmail = await this.googleService.getGmailClient(req.user.id);
         await gmail.users.messages.modify({
@@ -108,6 +114,7 @@ export class GmailController {
     }
 
     @Delete('messages/:id')
+    @RequiresPermission('email:access')
     async deleteMessage(@Req() req, @Param('id') id: string) {
         const gmail = await this.googleService.getGmailClient(req.user.id);
         await gmail.users.messages.trash({
@@ -118,6 +125,7 @@ export class GmailController {
     }
 
     @Get('threads')
+    @RequiresPermission('email:access')
     async listThreads(@Req() req, @Query('maxResults') maxResults = 20, @Query('q') q = '') {
         const gmail = await this.googleService.getGmailClient(req.user.id);
         const response = await gmail.users.threads.list({
@@ -129,6 +137,7 @@ export class GmailController {
     }
 
     @Get('threads/:id')
+    @RequiresPermission('email:access')
     async getThread(@Req() req, @Param('id') id: string) {
         const gmail = await this.googleService.getGmailClient(req.user.id);
         const response = await gmail.users.threads.get({
@@ -140,6 +149,7 @@ export class GmailController {
     }
 
     @Post('send')
+    @RequiresPermission('email:access')
     @UseInterceptors(FileFieldsInterceptor([
         { name: 'attachments', maxCount: 5 }
     ]))
@@ -179,12 +189,14 @@ export class GmailController {
     }
 
     @Post('threads/:id/reply')
+    @RequiresPermission('email:access')
     async reply(@Req() req, @Param('id') threadId: string, @Body() body: { messageId: string, body: string, replyAll: boolean }) {
         const gmail = await this.googleService.getGmailClient(req.user.id);
         return { status: 'Not implemented in prototype', threadId };
     }
 
     @Post('threads/:id/modify')
+    @RequiresPermission('email:access')
     async modifyThread(@Req() req, @Param('id') id: string, @Body() body: { addLabels: string[], removeLabels: string[] }) {
         const gmail = await this.googleService.getGmailClient(req.user.id);
         const response = await gmail.users.threads.modify({
@@ -198,4 +210,3 @@ export class GmailController {
         return response.data;
     }
 }
-

@@ -76,6 +76,8 @@ const AdminLayout: React.FC = () => {
     const { user, isAuthenticated, isLoading, logout, hasPermission } = useAuth();
     const { socket } = useSocket();
     const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
+    const [mobileSidebarOpen, setMobileSidebarOpen] = useState(false);
+    const [isMobileView, setIsMobileView] = useState(false);
     const [showUserMenu, setShowUserMenu] = useState(false);
     const [showIrisFloat, setShowIrisFloat] = useState(false);
     const location = useLocation();
@@ -92,6 +94,25 @@ const AdminLayout: React.FC = () => {
         // Global data refresh on Admin mount
         refresh();
     }, []);
+
+    useEffect(() => {
+        const mediaQuery = window.matchMedia('(max-width: 768px)');
+        const handleViewportChange = () => {
+            const mobile = mediaQuery.matches;
+            setIsMobileView(mobile);
+            if (!mobile) {
+                setMobileSidebarOpen(false);
+            }
+        };
+
+        handleViewportChange();
+        mediaQuery.addEventListener('change', handleViewportChange);
+        return () => mediaQuery.removeEventListener('change', handleViewportChange);
+    }, []);
+
+    useEffect(() => {
+        setMobileSidebarOpen(false);
+    }, [location.pathname]);
 
     useEffect(() => {
         if (isAuthenticated) {
@@ -184,11 +205,19 @@ const AdminLayout: React.FC = () => {
         return location.pathname.startsWith(path);
     };
 
+    const toggleSidebar = () => {
+        if (isMobileView) {
+            setMobileSidebarOpen(prev => !prev);
+            return;
+        }
+        setSidebarCollapsed(prev => !prev);
+    };
+
     return (
         <TourProvider>
             <div className="admin-container">
                 {/* Sidebar */}
-                <aside className={`admin-sidebar ${sidebarCollapsed ? 'collapsed' : ''}`}>
+                <aside className={`admin-sidebar ${sidebarCollapsed ? 'collapsed' : ''} ${mobileSidebarOpen ? 'open' : ''}`}>
                     <div className="admin-sidebar-header">
                         <div className="admin-sidebar-logo" style={{ boxShadow: 'var(--neon-glow)' }}>I</div>
                         <span className="admin-sidebar-title" style={{
@@ -222,6 +251,7 @@ const AdminLayout: React.FC = () => {
                                     key={item.id}
                                     to={item.path!}
                                     className={`admin-nav-item ${isActive(item.path!) ? 'active' : ''}`}
+                                    onClick={() => setMobileSidebarOpen(false)}
                                 >
                                     {icons[item.icon as keyof typeof icons]}
                                     <span>{item.label}</span>
@@ -238,9 +268,11 @@ const AdminLayout: React.FC = () => {
                         <div className="admin-header-left">
                             <button
                                 className="admin-toggle-btn"
-                                onClick={() => setSidebarCollapsed(!sidebarCollapsed)}
+                                onClick={toggleSidebar}
                             >
-                                {sidebarCollapsed ? icons.menu : icons.close}
+                                {(isMobileView && !mobileSidebarOpen) || (!isMobileView && sidebarCollapsed)
+                                    ? icons.menu
+                                    : icons.close}
                             </button>
 
                             <div className="admin-search">
@@ -295,6 +327,13 @@ const AdminLayout: React.FC = () => {
                     notification={activeNotification}
                     onClose={() => setActiveNotification(null)}
                 />
+
+                {mobileSidebarOpen && (
+                    <div
+                        className="admin-sidebar-overlay"
+                        onClick={() => setMobileSidebarOpen(false)}
+                    />
+                )}
             </div>
         </TourProvider>
     );

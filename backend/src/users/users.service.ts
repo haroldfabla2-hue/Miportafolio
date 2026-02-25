@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException, ConflictException, UnauthorizedException } from '@nestjs/common';
+import { Injectable, NotFoundException, ConflictException, UnauthorizedException, ForbiddenException } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { GmailService } from '../google/gmail.service';
 import * as bcrypt from 'bcryptjs';
@@ -10,6 +10,55 @@ export class UsersService {
         private prisma: PrismaService,
         private gmailService: GmailService
     ) { }
+
+    private isAdmin(user?: any): boolean {
+        return user?.role === 'SUPER_ADMIN' || user?.role === 'ADMIN';
+    }
+
+    private readonly safeUserSelect = {
+        id: true,
+        email: true,
+        name: true,
+        role: true,
+        avatar: true,
+        hourlyRate: true,
+        reputationScore: true,
+        createdAt: true,
+        googleConnected: true,
+        googleScopes: true,
+        googleTokenExpiry: true,
+        assignedDriveFolderId: true,
+        assignedDriveFolderName: true,
+        twoFactorEnabled: true,
+        onboardingCompleted: true,
+        phone: true,
+        jobTitle: true,
+        profileDetails: true,
+    } as const;
+
+    private readonly internalUserSelect = {
+        id: true,
+        email: true,
+        name: true,
+        role: true,
+        avatar: true,
+        hourlyRate: true,
+        reputationScore: true,
+        createdAt: true,
+        googleConnected: true,
+        googleRefreshToken: true,
+        googleAccessToken: true,
+        googleScopes: true,
+        googleTokenExpiry: true,
+        assignedDriveFolderId: true,
+        assignedDriveFolderName: true,
+        twoFactorEnabled: true,
+        twoFactorSecret: true,
+        onboardingCompleted: true,
+        phone: true,
+        jobTitle: true,
+        profileDetails: true,
+    } as const;
 
     async findAll(user: any) {
         // Role-based filtering
@@ -62,32 +111,25 @@ export class UsersService {
         });
     }
 
-    async findById(id: string) {
+    async findById(id: string, viewer?: any) {
+        if (viewer && !this.isAdmin(viewer) && viewer.id !== id) {
+            throw new ForbiddenException('You can only access your own user profile');
+        }
+
         const user = await this.prisma.user.findUnique({
             where: { id },
-            select: {
-                id: true,
-                email: true,
-                name: true,
-                role: true,
-                avatar: true,
-                hourlyRate: true,
-                reputationScore: true,
-                createdAt: true,
-                googleConnected: true,
-                googleRefreshToken: true,
-                googleAccessToken: true,
-                googleScopes: true,
-                googleTokenExpiry: true,
-                assignedDriveFolderId: true,
-                assignedDriveFolderName: true,
-                twoFactorEnabled: true,
-                onboardingCompleted: true,
-                phone: true,
-                jobTitle: true,
-                profileDetails: true,
-            },
+            select: this.safeUserSelect,
         });
+        if (!user) throw new NotFoundException('User not found');
+        return user;
+    }
+
+    async findByIdInternal(id: string) {
+        const user = await this.prisma.user.findUnique({
+            where: { id },
+            select: this.internalUserSelect,
+        });
+
         if (!user) throw new NotFoundException('User not found');
         return user;
     }
@@ -127,24 +169,31 @@ export class UsersService {
         });
     }
 
-    async update(id: string, data: any) {
+    async update(id: string, data: any, actor?: any) {
         const user = await this.prisma.user.findUnique({ where: { id } });
         if (!user) throw new NotFoundException('User not found');
 
+        if (actor && !this.isAdmin(actor) && actor.id !== id) {
+            throw new ForbiddenException('You can only update your own profile');
+        }
+
+        const canManageRoles = actor ? this.isAdmin(actor) : true;
+        const canManageSensitive = actor ? this.isAdmin(actor) : true;
+
         const updateData: any = {};
         if (data.name !== undefined) updateData.name = data.name;
-        if (data.role !== undefined) updateData.role = data.role;
+        if (data.role !== undefined && canManageRoles) updateData.role = data.role;
         if (data.avatar !== undefined) updateData.avatar = data.avatar;
-        if (data.hourlyRate !== undefined) updateData.hourlyRate = data.hourlyRate;
+        if (data.hourlyRate !== undefined && canManageSensitive) updateData.hourlyRate = data.hourlyRate;
         if (data.password !== undefined) {
             updateData.password = data.password ? await bcrypt.hash(data.password, 10) : null;
         }
-        if (data.monthlySalary !== undefined) updateData.monthlySalary = data.monthlySalary;
-        if (data.reputationScore !== undefined) updateData.reputationScore = data.reputationScore;
+        if (data.monthlySalary !== undefined && canManageSensitive) updateData.monthlySalary = data.monthlySalary;
+        if (data.reputationScore !== undefined && canManageSensitive) updateData.reputationScore = data.reputationScore;
         if (data.phone !== undefined) updateData.phone = data.phone;
         if (data.jobTitle !== undefined) updateData.jobTitle = data.jobTitle;
         if (data.profileDetails !== undefined) updateData.profileDetails = data.profileDetails;
-        if (data.workerRoleId !== undefined) updateData.workerRoleId = data.workerRoleId;
+        if (data.workerRoleId !== undefined && canManageRoles) updateData.workerRoleId = data.workerRoleId;
 
         // Google integration fields
         if (data.googleAccessToken !== undefined) updateData.googleAccessToken = data.googleAccessToken;
@@ -184,28 +233,49 @@ export class UsersService {
         });
     }
 
-    async remove(id: string) {
+    async remove(id: string, actor?: any) {
         const user = await this.prisma.user.findUnique({ where: { id } });
         if (!user) throw new NotFoundException('User not found');
+
+        if (actor && !this.isAdmin(actor) && actor.id !== id) {
+            throw new ForbiddenException('You can only remove your own user');
+        }
 
         return this.prisma.user.delete({ where: { id } });
     }
 
-    async getStats() {
-        const [total, admins, workers, clients] = await Promise.all([
-            this.prisma.user.count(),
-            this.prisma.user.count({ where: { role: 'ADMIN' } }),
-            this.prisma.user.count({ where: { role: 'WORKER' } }),
-            this.prisma.user.count({ where: { role: 'CLIENT' } }),
-        ]);
+    async getStats(user?: any) {
+        if (!user || this.isAdmin(user)) {
+            const [total, admins, workers, clients] = await Promise.all([
+                this.prisma.user.count(),
+                this.prisma.user.count({ where: { role: 'ADMIN' } }),
+                this.prisma.user.count({ where: { role: 'WORKER' } }),
+                this.prisma.user.count({ where: { role: 'CLIENT' } }),
+            ]);
+
+            return {
+                total,
+                byRole: {
+                    admins,
+                    workers,
+                    clients
+                }
+            };
+        }
+
+        const visibleUsers = await this.findAll(user);
+        const byRole = visibleUsers.reduce((acc: Record<string, number>, u: any) => {
+            acc[u.role] = (acc[u.role] || 0) + 1;
+            return acc;
+        }, {});
 
         return {
-            total,
+            total: visibleUsers.length,
             byRole: {
-                admins,
-                workers,
-                clients
-            }
+                admins: byRole.ADMIN || 0,
+                workers: byRole.WORKER || 0,
+                clients: byRole.CLIENT || 0,
+            },
         };
     }
 

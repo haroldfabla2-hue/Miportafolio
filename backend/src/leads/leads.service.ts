@@ -15,8 +15,22 @@ export class LeadsService {
         private configService: ConfigService,
     ) { }
 
-    async findAll() {
+    private buildWhereClause(user: any) {
+        if (user?.role === 'ADMIN' || user?.role === 'SUPER_ADMIN') {
+            return {};
+        }
+
+        if (user?.role === 'WORKER') {
+            return { assignedToId: user.id };
+        }
+
+        return { id: '__forbidden__' };
+    }
+
+    async findAll(user: any) {
+        const whereClause = this.buildWhereClause(user);
         return this.prisma.lead.findMany({
+            where: whereClause,
             include: {
                 assignedTo: { select: { id: true, name: true, avatar: true } },
             },
@@ -24,9 +38,15 @@ export class LeadsService {
         });
     }
 
-    async findByStatus(status: LeadStatus) {
+    async findByStatus(status: LeadStatus, user: any) {
+        const whereClause = this.buildWhereClause(user);
         return this.prisma.lead.findMany({
-            where: { status },
+            where: {
+                AND: [
+                    whereClause,
+                    { status },
+                ],
+            },
             include: {
                 assignedTo: { select: { id: true, name: true, avatar: true } },
             },
@@ -34,9 +54,15 @@ export class LeadsService {
         });
     }
 
-    async findOne(id: string) {
-        const lead = await this.prisma.lead.findUnique({
-            where: { id },
+    async findOne(id: string, user: any) {
+        const whereClause = this.buildWhereClause(user);
+        const lead = await this.prisma.lead.findFirst({
+            where: {
+                AND: [
+                    { id },
+                    whereClause,
+                ],
+            },
             include: {
                 assignedTo: true,
             },
@@ -71,7 +97,8 @@ export class LeadsService {
         return lead;
     }
 
-    async update(id: string, data: any) {
+    async update(id: string, data: any, user: any) {
+        await this.findOne(id, user);
         return this.prisma.lead.update({
             where: { id },
             data,
@@ -81,7 +108,8 @@ export class LeadsService {
         });
     }
 
-    async updateStatus(id: string, status: string) {
+    async updateStatus(id: string, status: string, user: any) {
+        await this.findOne(id, user);
         return this.prisma.lead.update({
             where: { id },
             data: {
@@ -93,12 +121,14 @@ export class LeadsService {
         });
     }
 
-    async delete(id: string) {
+    async delete(id: string, user: any) {
+        await this.findOne(id, user);
         return this.prisma.lead.delete({ where: { id } });
     }
 
-    async getStats() {
-        const leads = await this.prisma.lead.findMany();
+    async getStats(user: any) {
+        const whereClause = this.buildWhereClause(user);
+        const leads = await this.prisma.lead.findMany({ where: whereClause });
 
         const byStatus = leads.reduce((acc, lead) => {
             acc[lead.status] = (acc[lead.status] || 0) + 1;

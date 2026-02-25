@@ -4,10 +4,13 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { ChatController } from './chat.controller';
 import { ChatService } from './chat.service';
 import { ChatGateway } from './chat.gateway';
+import { PermissionsModule } from '../permissions/permissions.module';
+import { PermissionGuard } from '../guards/permission.guard';
 
 @Module({
     imports: [
         ConfigModule,
+        PermissionsModule,
         JwtModule.registerAsync({
             imports: [ConfigModule],
             useFactory: async (configService: ConfigService) => ({
@@ -17,8 +20,7 @@ import { ChatGateway } from './chat.gateway';
         }),
     ],
     controllers: [ChatController],
-    providers: [ChatService, ChatGateway],
+    providers: [ChatService, ChatGateway, PermissionGuard],
     exports: [ChatService, ChatGateway],
 })
 export class ChatModule { }
-

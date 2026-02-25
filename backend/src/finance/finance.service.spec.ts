@@ -55,7 +55,7 @@ describe('FinanceService', () => {
                 { status: 'PAID', amount: 1000 }
             ]);
 
-            const stats = await service.getFinancialSummary();
+            const stats = await service.getFinancialSummary({ role: 'ADMIN' });
 
             expect(stats.receivables.totalBilled).toBe(10000); // 8000 + 2000
             expect(stats.receivables.collected).toBe(8000);
@@ -68,7 +68,7 @@ describe('FinanceService', () => {
             mockPrismaService.invoice.findMany.mockResolvedValue([]);
             mockPrismaService.bill.findMany.mockResolvedValue([]);
 
-            const stats = await service.getFinancialSummary();
+            const stats = await service.getFinancialSummary({ role: 'ADMIN' });
 
             expect(stats.receivables.totalBilled).toBe(0);
         });

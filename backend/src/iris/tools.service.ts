@@ -16,7 +16,7 @@ export class ToolsService {
     private tools = {
         'create_task': {
             description: 'Create a new task. Args: title (string), description? (string), priority? (LOW|MEDIUM|HIGH)',
-            execute: async (args: any, user: any) => this.tasksService.create({ ...args, creatorId: user.id })
+            execute: async (args: any, user: any) => this.tasksService.create({ ...args, creatorId: user.id }, user)
         },
         'list_tasks': {
             description: 'List tasks. Args: status? (TODO|IN_PROGRESS|DONE)',
@@ -32,7 +32,7 @@ export class ToolsService {
         },
         'list_projects': {
             description: 'List active projects',
-            execute: async (args: any, user: any) => this.crmService.getActiveProjects()
+            execute: async (args: any, user: any) => this.crmService.getActiveProjects(user)
         },
         'create_project': {
             description: 'Create a project. Args: name (string), description? (string), clientId? (string)',
@@ -47,7 +47,7 @@ export class ToolsService {
         },
         'get_project_details': {
             description: 'Get full details of a specific project. Args: projectId (string)',
-            execute: async (args: any, user: any) => this.projectsService.findOne(args.projectId)
+            execute: async (args: any, user: any) => this.projectsService.findOne(args.projectId, user)
         },
         'list_clients': {
             description: 'List or search clients. Args: query? (string)',
@@ -64,7 +64,7 @@ export class ToolsService {
         },
         'get_client_history': {
             description: 'Get history and details for a client. Args: clientId (string)',
-            execute: async (args: any, user: any) => this.clientsService.findOne(args.clientId)
+            execute: async (args: any, user: any) => this.clientsService.findOne(args.clientId, user)
         },
         'create_client': {
             description: 'Create a client. Args: name (string), company? (string), email? (string)',
@@ -72,7 +72,7 @@ export class ToolsService {
         },
         'update_task': {
             description: 'Update a task. Args: taskId (string), updates (object)',
-            execute: async (args: any, user: any) => this.tasksService.update(args.taskId, args.updates)
+            execute: async (args: any, user: any) => this.tasksService.update(args.taskId, args.updates, user)
         }
     };
 

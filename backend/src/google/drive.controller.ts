@@ -3,13 +3,16 @@ import { GoogleService } from './google.service';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { Readable } from 'stream';
+import { PermissionGuard } from '../guards/permission.guard';
+import { RequiresPermission } from '../decorators/requires-permission.decorator';
 
 @Controller('google/drive')
-@UseGuards(JwtAuthGuard)
+@UseGuards(JwtAuthGuard, PermissionGuard)
 export class DriveController {
     constructor(private readonly googleService: GoogleService) { }
 
     @Get('files')
+    @RequiresPermission('files:access')
     async listFiles(@Req() req, @Query('folderId') folderId?: string, @Query('q') q?: string) {
         const drive = await this.googleService.getDriveClient(req.user.id);
 
@@ -74,6 +77,7 @@ export class DriveController {
     }
 
     @Post('upload')
+    @RequiresPermission('files:access')
     @UseInterceptors(FileInterceptor('file'))
     async uploadFile(@Req() req, @UploadedFile() file: Express.Multer.File, @Body('folderId') folderId?: string) {
         const drive = await this.googleService.getDriveClient(req.user.id);
@@ -101,6 +105,7 @@ export class DriveController {
     }
 
     @Post('folders')
+    @RequiresPermission('files:access')
     async createFolder(@Req() req, @Body() body: { name: string; parentId?: string }) {
         const drive = await this.googleService.getDriveClient(req.user.id);
 
@@ -122,6 +127,7 @@ export class DriveController {
     }
 
     @Delete('files/:id')
+    @RequiresPermission('files:access')
     async deleteFile(@Req() req, @Param('id') id: string) {
         const drive = await this.googleService.getDriveClient(req.user.id);
         await drive.files.delete({ fileId: id });

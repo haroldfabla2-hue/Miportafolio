@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable, NotFoundException, ForbiddenException } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { Prisma } from '@prisma/client';
 import { NotificationsService } from '../notifications/notifications.service';
@@ -10,29 +10,32 @@ export class TasksService {
         private notificationsService: NotificationsService
     ) { }
 
-    async findAll(user: any) {
-        let whereClause: Prisma.TaskWhereInput = {};
-
+    private buildWhereClause(user: any): Prisma.TaskWhereInput {
         if (user.role === 'ADMIN' || user.role === 'SUPER_ADMIN') {
-            // Admin sees all tasks
-            whereClause = {};
-        } else if (user.role === 'WORKER') {
-            // Workers see tasks assigned to them or on projects they're part of
-            whereClause = {
+            return {};
+        }
+
+        if (user.role === 'WORKER') {
+            return {
                 OR: [
                     { assigneeId: user.id },
                     { project: { team: { some: { id: user.id } } } },
                     { project: { managerId: user.id } },
                 ],
             };
-        } else if (user.role === 'CLIENT') {
-            // Clients see tasks on their projects
-            whereClause = {
+        }
+
+        if (user.role === 'CLIENT') {
+            return {
                 project: { client: { email: user.email } },
             };
-        } else {
-            return [];
         }
+
+        return { id: '__forbidden__' };
+    }
+
+    async findAll(user: any) {
+        const whereClause = this.buildWhereClause(user);
 
         try {
             return await this.prisma.task.findMany({
@@ -49,9 +52,15 @@ export class TasksService {
         }
     }
 
-    async findOne(id: string) {
-        const task = await this.prisma.task.findUnique({
-            where: { id },
+    async findOne(id: string, user: any) {
+        const whereClause = this.buildWhereClause(user);
+        const task = await this.prisma.task.findFirst({
+            where: {
+                AND: [
+                    { id },
+                    whereClause,
+                ],
+            },
             include: {
                 project: true,
                 assignee: true,
@@ -61,9 +70,15 @@ export class TasksService {
         return task;
     }
 
-    async findByProject(projectId: string) {
+    async findByProject(projectId: string, user: any) {
+        const whereClause = this.buildWhereClause(user);
         return this.prisma.task.findMany({
-            where: { projectId },
+            where: {
+                AND: [
+                    { projectId },
+                    whereClause,
+                ],
+            },
             include: {
                 assignee: { select: { id: true, name: true, avatar: true } },
             },
@@ -71,8 +86,25 @@ export class TasksService {
         });
     }
 
-    async create(data: any) {
+    async create(data: any, user: any) {
         const { projectId, assigneeId, ...rest } = data;
+
+        if (user.role !== 'ADMIN' && user.role !== 'SUPER_ADMIN') {
+            const allowedProject = await this.prisma.project.findFirst({
+                where: {
+                    id: projectId,
+                    OR: [
+                        { managerId: user.id },
+                        { team: { some: { id: user.id } } },
+                    ],
+                },
+                select: { id: true },
+            });
+
+            if (!allowedProject) {
+                throw new ForbiddenException('You cannot create tasks for this project');
+            }
+        }
 
         const task = await this.prisma.task.create({
             data: {
@@ -102,7 +134,8 @@ export class TasksService {
         return task;
     }
 
-    async update(id: string, data: any) {
+    async update(id: string, data: any, user: any) {
+        await this.findOne(id, user);
         const { projectId, assigneeId, ...rest } = data;
 
         // Prepare update data
@@ -121,7 +154,8 @@ export class TasksService {
         });
     }
 
-    async updateStatus(id: string, status: string) {
+    async updateStatus(id: string, status: string, user: any) {
+        await this.findOne(id, user);
         return this.prisma.task.update({
             where: { id },
             data: { status },
@@ -132,28 +166,15 @@ export class TasksService {
         });
     }
 
-    async remove(id: string) {
+    async remove(id: string, user: any) {
+        await this.findOne(id, user);
         return this.prisma.task.delete({ where: { id } });
     }
 
     async getTaskStats(user: any) {
-        let whereClause: Prisma.TaskWhereInput = {};
+        const whereClause = this.buildWhereClause(user);
 
-        if (user.role === 'ADMIN' || user.role === 'SUPER_ADMIN') {
-            whereClause = {};
-        } else if (user.role === 'WORKER') {
-            whereClause = {
-                OR: [
-                    { assigneeId: user.id },
-                    { project: { team: { some: { id: user.id } } } },
-                    { project: { managerId: user.id } },
-                ],
-            };
-        } else if (user.role === 'CLIENT') {
-            whereClause = {
-                project: { client: { email: user.email } },
-            };
-        } else {
+        if ((whereClause as any).id === '__forbidden__') {
             return { total: 0, completed: 0, pending: 0, byStatus: [], productivity: [] };
         }
 

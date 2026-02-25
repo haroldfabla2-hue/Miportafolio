@@ -17,6 +17,8 @@ import { ConfigService } from '@nestjs/config';
 interface AuthenticatedSocket extends Socket {
     userId?: string;
     userName?: string;
+    userRole?: string;
+    userEmail?: string;
 }
 
 interface MessagePayload {
@@ -77,6 +79,8 @@ export class ChatGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
 
             client.userId = payload.sub;
             client.userName = payload.name || 'Unknown';
+            client.userRole = payload.role || 'WORKER';
+            client.userEmail = payload.username || '';
             this.userSockets.set(client.id, client.userId);
 
             this.logger.log(`User ${client.userName} (${client.userId}) connected via WebSocket`);
@@ -127,7 +131,11 @@ export class ChatGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
 
         try {
             // Verify user has access to channel
-            const channel = await this.chatService.getChannel(channelId);
+            const channel = await this.chatService.getChannel(channelId, {
+                id: client.userId,
+                role: client.userRole,
+                email: client.userEmail,
+            });
 
             // Join the socket room
             client.join(channelId);
@@ -146,7 +154,11 @@ export class ChatGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
             });
 
             // Get recent messages
-            const messages = await this.chatService.getMessages(channelId, 50);
+            const messages = await this.chatService.getMessages(channelId, {
+                id: client.userId,
+                role: client.userRole,
+                email: client.userEmail,
+            }, 50);
 
             this.logger.log(`User ${client.userName} joined channel ${channelId}`);
 
@@ -201,7 +213,11 @@ export class ChatGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
 
         try {
             // Save message to database
-            const message = await this.chatService.sendMessage(channelId, client.userId, content);
+            const message = await this.chatService.sendMessage(channelId, {
+                id: client.userId,
+                role: client.userRole,
+                email: client.userEmail,
+            }, content);
 
             // Broadcast to all users in the channel (including sender)
             this.server.to(channelId).emit('message:new', message);

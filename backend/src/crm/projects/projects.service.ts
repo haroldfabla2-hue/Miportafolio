@@ -11,23 +11,29 @@ export class ProjectsService {
         private notificationsService: NotificationsService
     ) { }
 
-    async findAll(user: any) {
-        let whereClause: Prisma.ProjectWhereInput = {};
+    private buildWhereClause(user?: any): Prisma.ProjectWhereInput {
+        if (!user || user.role === 'ADMIN' || user.role === 'SUPER_ADMIN') {
+            return {};
+        }
 
-        if (user.role === 'ADMIN' || user.role === 'SUPER_ADMIN') {
-            whereClause = {};
-        } else if (user.role === 'WORKER') {
-            whereClause = {
+        if (user.role === 'WORKER') {
+            return {
                 OR: [
                     { managerId: user.id },
                     { team: { some: { id: user.id } } },
                 ],
             };
-        } else if (user.role === 'CLIENT') {
-            whereClause = { client: { email: user.email } };
-        } else {
-            return [];
         }
+
+        if (user.role === 'CLIENT') {
+            return { client: { email: user.email } };
+        }
+
+        return { id: '__forbidden__' };
+    }
+
+    async findAll(user: any) {
+        const whereClause = this.buildWhereClause(user);
 
         const projects = await this.prisma.project.findMany({
             where: whereClause,
@@ -52,9 +58,31 @@ export class ProjectsService {
         });
     }
 
-    async findOne(id: string) {
-        const project = await this.prisma.project.findUnique({
-            where: { id },
+    async findActive(user: any) {
+        const whereClause = this.buildWhereClause(user);
+
+        return this.prisma.project.findMany({
+            where: {
+                AND: [
+                    whereClause,
+                    { status: { in: ['IN_PROGRESS', 'PLANNING'] } },
+                ],
+            },
+            take: 5,
+            orderBy: { updatedAt: 'desc' },
+            include: { client: { select: { name: true } } },
+        });
+    }
+
+    async findOne(id: string, user?: any) {
+        const whereClause = this.buildWhereClause(user);
+        const project = await this.prisma.project.findFirst({
+            where: {
+                AND: [
+                    { id },
+                    whereClause,
+                ],
+            },
             include: {
                 client: true,
                 team: true,
@@ -120,7 +148,8 @@ export class ProjectsService {
         }
     }
 
-    async update(id: string, data: any) {
+    async update(id: string, data: any, user?: any) {
+        await this.findOne(id, user);
         const { teamIds, managerId, clientId, ...rest } = data;
 
         const updatedProject = await this.prisma.project.update({
@@ -165,8 +194,8 @@ export class ProjectsService {
         return updatedProject;
     }
 
-    async remove(id: string) {
+    async remove(id: string, user?: any) {
+        await this.findOne(id, user);
         return this.prisma.project.delete({ where: { id } });
     }
 }
-

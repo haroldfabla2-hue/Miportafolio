@@ -12,8 +12,59 @@ export class GoogleService {
         private readonly usersService: UsersService,
     ) { }
 
+    private getAllowedRedirectUris(): string[] {
+        const configuredList = (this.configService.get('GOOGLE_CALLBACK_URLS') || '')
+            .split(',')
+            .map((value: string) => value.trim())
+            .filter(Boolean);
+
+        const singleCallback = this.configService.get('GOOGLE_CALLBACK_URL');
+        const defaults = [
+            'https://albertofarah.com/admin/settings',
+            'https://albertofarah.com/admin/onboarding',
+            'http://localhost:5173/admin/settings',
+            'http://localhost:5173/admin/onboarding',
+        ];
+
+        return [...new Set([singleCallback, ...configuredList, ...defaults]
+            .filter(Boolean)
+            .map((uri) => {
+                try {
+                    return this.normalizeRedirectUri(uri);
+                } catch {
+                    return null;
+                }
+            })
+            .filter(Boolean))] as string[];
+    }
+
+    private normalizeRedirectUri(input: string): string {
+        const parsed = new URL(input);
+        return `${parsed.origin}${parsed.pathname}`;
+    }
+
+    private resolveRedirectUri(redirectUri?: string): string {
+        const allowedRedirectUris = this.getAllowedRedirectUris();
+        const fallback = allowedRedirectUris[0] || 'http://localhost:5173/admin/settings';
+
+        if (!redirectUri) {
+            return fallback;
+        }
+
+        try {
+            const normalized = this.normalizeRedirectUri(redirectUri);
+            if (allowedRedirectUris.includes(normalized)) {
+                return normalized;
+            }
+        } catch {
+            // Ignore invalid URI and fallback to configured value.
+        }
+
+        return fallback;
+    }
+
     private getOAuth2Client(redirectUri?: string): OAuth2Client {
-        const resolvedRedirectUri = redirectUri || this.configService.get('GOOGLE_CALLBACK_URL') || 'http://localhost:5173/admin/settings';
+        const resolvedRedirectUri = this.resolveRedirectUri(redirectUri);
         console.log('[GoogleService] Creating OAuth2Client with redirectUri:', resolvedRedirectUri);
 
         return new google.auth.OAuth2(
@@ -53,7 +104,7 @@ export class GoogleService {
 
 
     async getUserClient(userId: string): Promise<OAuth2Client> {
-        const user = await this.usersService.findById(userId);
+        const user = await this.usersService.findByIdInternal(userId);
 
         if (!user || !user.googleRefreshToken) {
             throw new UnauthorizedException('Google account not connected or permissions revoked');
@@ -103,7 +154,7 @@ export class GoogleService {
     }
 
     async getConnectionStatus(userId: string) {
-        const user = await this.usersService.findById(userId);
+        const user = await this.usersService.findByIdInternal(userId);
         return {
             connected: !!(user?.googleConnected && (user?.googleRefreshToken || user?.googleAccessToken)),
             email: user?.email, // Or specific google email if stored separately

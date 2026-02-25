@@ -6,15 +6,13 @@ import { Prisma } from '@prisma/client';
 export class ClientsService {
     constructor(private prisma: PrismaService) { }
 
-    async findAll(user: any) {
-        let whereClause: Prisma.ClientWhereInput = {};
-
+    private buildWhereClause(user: any): Prisma.ClientWhereInput {
         if (user.role === 'ADMIN' || user.role === 'SUPER_ADMIN') {
-            whereClause = {};
+            return {};
         } else if (user.role === 'CLIENT') {
-            whereClause = { email: user.email };
+            return { email: user.email };
         } else if (user.role === 'WORKER') {
-            whereClause = {
+            return {
                 projects: {
                     some: {
                         OR: [
@@ -24,9 +22,13 @@ export class ClientsService {
                     },
                 },
             };
-        } else {
-            return [];
         }
+
+        return { id: '__forbidden__' };
+    }
+
+    async findAll(user: any) {
+        const whereClause = this.buildWhereClause(user);
 
         return this.prisma.client.findMany({
             where: whereClause,
@@ -34,9 +36,15 @@ export class ClientsService {
         });
     }
 
-    async findOne(id: string) {
-        const client = await this.prisma.client.findUnique({
-            where: { id },
+    async findOne(id: string, user: any) {
+        const whereClause = this.buildWhereClause(user);
+        const client = await this.prisma.client.findFirst({
+            where: {
+                AND: [
+                    { id },
+                    whereClause,
+                ],
+            },
             include: { projects: true },
         });
         if (!client) throw new NotFoundException('Client not found');
@@ -54,14 +62,16 @@ export class ClientsService {
         }
     }
 
-    async update(id: string, data: Prisma.ClientUpdateInput) {
+    async update(id: string, data: Prisma.ClientUpdateInput, user: any) {
+        await this.findOne(id, user);
         return this.prisma.client.update({
             where: { id },
             data,
         });
     }
 
-    async remove(id: string) {
+    async remove(id: string, user: any) {
+        await this.findOne(id, user);
         return this.prisma.client.delete({ where: { id } });
     }
 }

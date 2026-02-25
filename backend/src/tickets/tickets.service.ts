@@ -6,20 +6,29 @@ import { TicketStatus } from '@prisma/client';
 export class TicketsService {
     constructor(private prisma: PrismaService) { }
 
-    async findAll(user: any) {
-        let whereClause: any = {};
+    private buildWhereClause(user: any) {
+        if (user.role === 'ADMIN' || user.role === 'SUPER_ADMIN') {
+            return {};
+        }
 
         if (user.role === 'CLIENT') {
-            whereClause = { reporterId: user.id };
-        } else if (user.role === 'WORKER') {
-            whereClause = {
+            return { reporterId: user.id };
+        }
+
+        if (user.role === 'WORKER') {
+            return {
                 OR: [
                     { assignedToId: user.id },
                     { reporterId: user.id },
                 ],
             };
         }
-        // ADMIN and SUPER_ADMIN see all tickets
+
+        return { id: '__forbidden__' };
+    }
+
+    async findAll(user: any) {
+        const whereClause = this.buildWhereClause(user);
 
         return this.prisma.ticket.findMany({
             where: whereClause,
@@ -31,9 +40,15 @@ export class TicketsService {
         });
     }
 
-    async findOne(id: string) {
-        const ticket = await this.prisma.ticket.findUnique({
-            where: { id },
+    async findOne(id: string, user: any) {
+        const whereClause = this.buildWhereClause(user);
+        const ticket = await this.prisma.ticket.findFirst({
+            where: {
+                AND: [
+                    { id },
+                    whereClause,
+                ],
+            },
             include: {
                 reporter: { select: { id: true, name: true, email: true, avatar: true } },
                 assignedTo: { select: { id: true, name: true, avatar: true } },
@@ -59,7 +74,8 @@ export class TicketsService {
         });
     }
 
-    async update(id: string, data: any) {
+    async update(id: string, data: any, user: any) {
+        await this.findOne(id, user);
         return this.prisma.ticket.update({
             where: { id },
             data,
@@ -70,7 +86,8 @@ export class TicketsService {
         });
     }
 
-    async updateStatus(id: string, status: string) {
+    async updateStatus(id: string, status: string, user: any) {
+        await this.findOne(id, user);
         const resolvedAt = status === 'RESOLVED' ? new Date() : null;
         return this.prisma.ticket.update({
             where: { id },
@@ -85,7 +102,8 @@ export class TicketsService {
         });
     }
 
-    async assignTo(id: string, assignedToId: string) {
+    async assignTo(id: string, assignedToId: string, user: any) {
+        await this.findOne(id, user);
         return this.prisma.ticket.update({
             where: { id },
             data: { assignedToId },
@@ -95,16 +113,19 @@ export class TicketsService {
         });
     }
 
-    async delete(id: string) {
+    async delete(id: string, user: any) {
+        await this.findOne(id, user);
         return this.prisma.ticket.delete({ where: { id } });
     }
 
-    async getStats() {
+    async getStats(user: any) {
+        const whereClause = this.buildWhereClause(user);
+
         const [total, open, inProgress, resolved] = await Promise.all([
-            this.prisma.ticket.count(),
-            this.prisma.ticket.count({ where: { status: 'OPEN' } }),
-            this.prisma.ticket.count({ where: { status: 'IN_PROGRESS' } }),
-            this.prisma.ticket.count({ where: { status: 'RESOLVED' } }),
+            this.prisma.ticket.count({ where: whereClause }),
+            this.prisma.ticket.count({ where: { AND: [whereClause, { status: 'OPEN' }] } }),
+            this.prisma.ticket.count({ where: { AND: [whereClause, { status: 'IN_PROGRESS' }] } }),
+            this.prisma.ticket.count({ where: { AND: [whereClause, { status: 'RESOLVED' }] } }),
         ]);
 
         return {

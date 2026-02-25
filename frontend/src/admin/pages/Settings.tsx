@@ -76,10 +76,9 @@ const SettingsPage: React.FC = () => {
     // Check for Google OAuth callback
     useEffect(() => {
         const params = new URLSearchParams(window.location.search);
-        const googleCallback = params.get('google');
         const code = params.get('code');
 
-        if (googleCallback === 'callback' && code) {
+        if (code) {
             handleGoogleCallback(code);
             // Clean URL
             window.history.replaceState({}, '', window.location.pathname);
@@ -103,7 +102,7 @@ const SettingsPage: React.FC = () => {
     const handleConnectGoogle = async () => {
         setLoadingGoogle(true);
         try {
-            const redirectUri = `${window.location.origin}${window.location.pathname}?google=callback`;
+            const redirectUri = `${window.location.origin}${window.location.pathname}`;
             const response = await authFetch(`/api/google/auth/url?redirectUri=${encodeURIComponent(redirectUri)}`);
             if (response.ok) {
                 const { url } = await response.json();
@@ -119,7 +118,7 @@ const SettingsPage: React.FC = () => {
         setLoadingGoogle(true);
         try {
             // Must match the URI used in handleConnectGoogle EXACTLY
-            const redirectUri = `${window.location.origin}${window.location.pathname}?google=callback`;
+            const redirectUri = `${window.location.origin}${window.location.pathname}`;
             const response = await authFetch('/api/google/auth/callback', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
@@ -170,9 +169,9 @@ const SettingsPage: React.FC = () => {
                 <p className="admin-page-subtitle">Manage your account, integrations, and preferences.</p>
             </div>
 
-            <div style={{ display: 'flex', gap: '2rem' }}>
+            <div className="settings-layout">
                 {/* Sidebar */}
-                <div style={{ width: '200px', flexShrink: 0 }}>
+                <div className="settings-nav">
                     {sections.map(section => (
                         <button
                             key={section.id}
@@ -199,7 +198,7 @@ const SettingsPage: React.FC = () => {
                 </div>
 
                 {/* Content */}
-                <div style={{ flex: 1 }}>
+                <div className="settings-content">
                     {activeSection === 'profile' && (
                         <div className="admin-card">
                             <h3 style={{ fontSize: '1.1rem', fontWeight: 700, color: '#fff', marginBottom: '1.5rem' }}>Profile Settings</h3>
@@ -212,7 +211,7 @@ const SettingsPage: React.FC = () => {
                                     <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: 600, color: '#888', marginBottom: '0.5rem' }}>Email</label>
                                     <input type="email" value={profile.email} onChange={(e) => setProfile({ ...profile, email: e.target.value })} style={inputStyle} />
                                 </div>
-                                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
+                                <div className="settings-two-col">
                                     <div>
                                         <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: 600, color: '#888', marginBottom: '0.5rem' }}>Timezone</label>
                                         <select value={profile.timezone} onChange={(e) => setProfile({ ...profile, timezone: e.target.value })} style={inputStyle}>
@@ -408,7 +407,7 @@ const SettingsPage: React.FC = () => {
                     {activeSection === 'integrations' && (
                         <div className="admin-grid admin-grid-2">
                             {integrations.map(integration => (
-                                <div key={integration.id} className="admin-card" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                                <div key={integration.id} className="admin-card" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '1rem', flexWrap: 'wrap' }}>
                                     <div style={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>
                                         <span style={{ fontSize: '2rem' }}>{integration.icon}</span>
                                         <div>
@@ -432,14 +431,14 @@ const SettingsPage: React.FC = () => {
                             <h3 style={{ fontSize: '1.1rem', fontWeight: 700, color: '#fff', marginBottom: '1.5rem' }}>API Keys</h3>
                             <div style={{ background: 'var(--admin-bg)', padding: '1rem', borderRadius: '10px', marginBottom: '1rem' }}>
                                 <label style={{ display: 'block', fontSize: '0.8rem', color: '#666', marginBottom: '0.5rem' }}>Production API Key</label>
-                                <div style={{ display: 'flex', gap: '0.5rem' }}>
+                                <div className="settings-api-row">
                                     <input type="password" value="sk_live_xxxxxxxxxxxxxxxxxxxxx" readOnly style={{ flex: 1, padding: '0.75rem', background: 'transparent', border: '1px solid var(--admin-border-color)', borderRadius: '8px', color: '#fff', fontFamily: 'monospace' }} />
                                     <button className="admin-btn admin-btn-secondary">Copy</button>
                                 </div>
                             </div>
                             <div style={{ background: 'var(--admin-bg)', padding: '1rem', borderRadius: '10px' }}>
                                 <label style={{ display: 'block', fontSize: '0.8rem', color: '#666', marginBottom: '0.5rem' }}>Test API Key</label>
-                                <div style={{ display: 'flex', gap: '0.5rem' }}>
+                                <div className="settings-api-row">
                                     <input type="password" value="sk_test_xxxxxxxxxxxxxxxxxxxxx" readOnly style={{ flex: 1, padding: '0.75rem', background: 'transparent', border: '1px solid var(--admin-border-color)', borderRadius: '8px', color: '#fff', fontFamily: 'monospace' }} />
                                     <button className="admin-btn admin-btn-secondary">Copy</button>
                                 </div>

@@ -1,6 +1,7 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { GoogleDriveService } from '../google/google-drive.service';
+import { Prisma } from '@prisma/client';
 
 @Injectable()
 export class AssetsService {
@@ -8,6 +9,46 @@ export class AssetsService {
         private prisma: PrismaService,
         private googleDrive: GoogleDriveService
     ) { }
+
+    private buildWhereClause(
+        user: any,
+        filters: { projectId?: string; type?: string; status?: string }
+    ): Prisma.AssetWhereInput {
+        const baseWhere: Prisma.AssetWhereInput = {};
+
+        if (filters.projectId) baseWhere.projectId = filters.projectId;
+        if (filters.type && filters.type !== 'all') baseWhere.type = filters.type;
+        if (filters.status && filters.status !== 'all') baseWhere.status = filters.status;
+
+        if (user.role === 'ADMIN' || user.role === 'SUPER_ADMIN') {
+            return baseWhere;
+        }
+
+        const visibilityScope: Prisma.AssetWhereInput =
+            user.role === 'WORKER'
+                ? {
+                    OR: [
+                        { uploadedBy: user.id },
+                        { project: { managerId: user.id } },
+                        { project: { team: { some: { id: user.id } } } },
+                    ],
+                }
+                : user.role === 'CLIENT'
+                    ? {
+                        OR: [
+                            { uploadedBy: user.id },
+                            { project: { client: { email: user.email } } },
+                        ],
+                    }
+                    : { id: '__forbidden__' };
+
+        return {
+            AND: [
+                baseWhere,
+                visibilityScope,
+            ],
+        };
+    }
 
     async create(data: any, userId: string, file?: any) {
         // 1. Upload to Google Drive if file is present
@@ -38,12 +79,8 @@ export class AssetsService {
         });
     }
 
-    async findAll(filters: { projectId?: string; type?: string; status?: string }) {
-        const where: any = {};
-        if (filters.projectId) where.projectId = filters.projectId;
-        if (filters.type && filters.type !== 'all') where.type = filters.type;
-        if (filters.status && filters.status !== 'all') where.status = filters.status;
-
+    async findAll(user: any, filters: { projectId?: string; type?: string; status?: string }) {
+        const where = this.buildWhereClause(user, filters);
         return this.prisma.asset.findMany({
             where,
             orderBy: { createdAt: 'desc' },
@@ -55,29 +92,36 @@ export class AssetsService {
         });
     }
 
-    async findOne(id: string) {
-        const asset = await this.prisma.asset.findUnique({
-            where: { id },
+    async findOne(id: string, user: any) {
+        const where = this.buildWhereClause(user, {});
+        const asset = await this.prisma.asset.findFirst({
+            where: {
+                AND: [
+                    { id },
+                    where,
+                ],
+            },
             include: { project: true }
         });
         if (!asset) throw new NotFoundException('Asset not found');
         return asset;
     }
 
-    async update(id: string, data: any) {
+    async update(id: string, data: any, user: any) {
+        await this.findOne(id, user);
         return this.prisma.asset.update({
             where: { id },
             data
         });
     }
 
-    async remove(id: string, userId: string) {
-        const asset = await this.findOne(id);
+    async remove(id: string, user: any) {
+        const asset = await this.findOne(id, user);
 
         // Delete from Drive if linked
         if (asset.driveId) {
             try {
-                await this.googleDrive.deleteFile(userId, asset.driveId);
+                await this.googleDrive.deleteFile(user.id, asset.driveId);
             } catch (e) {
                 console.error(`Failed to delete file from Drive: ${asset.driveId}`, e);
             }
