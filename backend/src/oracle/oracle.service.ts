@@ -231,11 +231,11 @@ export class OracleService {
         // Fetch Task load for burnout risk
         const tasks = await this.prisma.task.findMany({
             where: { status: { not: 'COMPLETED' } },
-            select: { assignedToId: true }
+            select: { assigneeId: true }
         });
 
         const resources = workers.map(u => {
-            const assignedTasks = tasks.filter(t => t.assignedToId === u.id).length;
+            const assignedTasks = tasks.filter(t => t.assigneeId === u.id).length;
             // Simplified risk: > 5 tasks is high risk
             const riskValue = Math.min(100, (assignedTasks / 8) * 100);
 
@@ -289,8 +289,7 @@ export class OracleService {
 
         const projectStats = await this.prisma.project.groupBy({
             by: ['status'],
-            _count: true,
-            _sum: { budget: true }
+            _count: true
         });
 
         const taskStats = await this.prisma.task.groupBy({

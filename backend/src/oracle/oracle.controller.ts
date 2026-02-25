@@ -1,7 +1,7 @@
 
 import { Controller, Post, Body, UseGuards, Req, Get } from '@nestjs/common';
 import { OracleService } from './oracle.service';
-import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
+import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 import { AdminGuard } from '../auth/admin.guard';
 
 @Controller('oracle')
