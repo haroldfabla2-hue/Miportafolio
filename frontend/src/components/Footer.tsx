@@ -17,7 +17,7 @@ const Footer: React.FC = () => {
             position: 'relative',
             zIndex: 10
         }}>
-            <div style={{
+            <div className="footer-content" style={{
                 maxWidth: 'var(--spacing-container)',
                 margin: '0 auto',
                 padding: '0 var(--spacing-lg)',
@@ -27,11 +27,11 @@ const Footer: React.FC = () => {
                 gap: '2rem'
             }}>
                 <div>
-                    <img src="/logo.png" alt="Alberto Farah" style={{ height: '120px', marginBottom: '1rem' }} />
+                    <img src="/logo.png" alt="Alberto Farah" className="footer-logo" style={{ height: '120px', marginBottom: '1rem' }} />
                     <p style={{ color: '#666' }}>© {currentYear} {t('footer.rights')}.</p>
                 </div>
 
-                <div style={{ display: 'flex', gap: '2rem' }}>
+                <div className="footer-links" style={{ display: 'flex', gap: '2rem' }}>
                     <a href="https://linkedin.com/in/alberto-farah-blair" target="_blank" rel="noopener noreferrer" style={{ color: '#fff', fontWeight: 600 }}>{t('footer.linkedin')}</a>
                     <a href="https://instagram.com" target="_blank" rel="noopener noreferrer" style={{ color: '#fff', fontWeight: 600 }}>{t('footer.instagram')}</a>
                     <a href={`mailto:${contactEmail}`} style={{ color: '#fff', fontWeight: 600 }}>{t('footer.email')}</a>

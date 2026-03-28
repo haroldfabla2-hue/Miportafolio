@@ -23,20 +23,16 @@ const Projects: React.FC = () => {
                 }}>
                     {t('projects.selectedWork')}
                 </h2>
-                <div style={{
-                    display: 'grid',
-                    gridTemplateColumns: '1fr 1fr',
-                    gap: '4rem',
-                    rowGap: '8rem'
-                }}>
+                <div className="selected-work-grid">
                     {[1, 2, 3, 4].map((i) => (
-                        <div key={i} style={{
-                            aspectRatio: '16/10',
-                            backgroundColor: '#1a1a1a',
-                            borderRadius: '16px',
-                            animation: 'pulse 1.5s ease-in-out infinite',
-                            marginTop: i % 2 !== 0 ? '150px' : '0'
-                        }} />
+                        <div key={i} className={i % 2 !== 0 ? 'project-card-offset' : ''}>
+                            <div style={{
+                                aspectRatio: '16/10',
+                                backgroundColor: '#1a1a1a',
+                                borderRadius: '16px',
+                                animation: 'pulse 1.5s ease-in-out infinite'
+                            }} />
+                        </div>
                     ))}
                 </div>
             </section>
@@ -65,15 +61,9 @@ const Projects: React.FC = () => {
             }}>
                 {t('projects.selectedWork')}
             </h2>
-            <div style={{
-                display: 'grid',
-                gridTemplateColumns: '1fr 1fr',
-                gap: '4rem',
-                rowGap: '8rem',
-                marginBottom: 'var(--spacing-xl)'
-            }}>
+            <div className="selected-work-grid">
                 {projects.slice(0, 4).map((project, index) => (
-                    <div key={project.title} style={{ marginTop: index % 2 !== 0 ? '150px' : '0' }}>
+                    <div key={project.title} className={index % 2 !== 0 ? 'project-card-offset' : ''}>
                         <ProjectCard project={project} index={index} />
                     </div>
                 ))}

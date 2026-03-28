@@ -130,18 +130,11 @@ const ProjectsPage: React.FC = () => {
                     {projects.map((project, index) => (
                         <motion.div
                             key={project.title}
-                            className="project-item"
+                            className={`project-item ${index % 2 === 0 ? 'project-item-normal' : 'project-item-reversed'}`}
                             initial={{ opacity: 0, y: 50 }}
                             whileInView={{ opacity: 1, y: 0 }}
                             viewport={{ once: true, margin: "-10%" }}
                             transition={{ duration: 0.8 }}
-                            style={{
-                                display: 'grid',
-                                gridTemplateColumns: index % 2 === 0 ? '1fr 1.5fr' : '1.5fr 1fr',
-                                gap: '4rem',
-                                alignItems: 'center',
-                                direction: index % 2 === 0 ? 'ltr' : 'rtl'
-                            }}
                         >
                             {/* Text Content */}
                             <div className="project-text" style={{ direction: 'ltr', textAlign: 'left' }}>

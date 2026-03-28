@@ -80,10 +80,11 @@ const ContactPage: React.FC = () => {
                 maxWidth: 'var(--spacing-container)',
                 margin: '0 auto'
             }}>
-                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '4rem' }}>
+                <div className="contact-grid" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '4rem' }}>
 
                     {/* Left: Contact Info */}
                     <motion.div
+                        className="contact-info"
                         initial={{ opacity: 0, x: -20 }}
                         animate={{ opacity: 1, x: 0 }}
                         transition={{ duration: 0.8, delay: 0.4 }}
