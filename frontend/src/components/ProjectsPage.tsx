@@ -126,10 +126,11 @@ const ProjectsPage: React.FC = () => {
                 maxWidth: 'var(--spacing-container)',
                 margin: '0 auto'
             }}>
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '150px' }}>
+                <div className="projects-container" style={{ display: 'flex', flexDirection: 'column', gap: '150px' }}>
                     {projects.map((project, index) => (
                         <motion.div
                             key={project.title}
+                            className="project-item"
                             initial={{ opacity: 0, y: 50 }}
                             whileInView={{ opacity: 1, y: 0 }}
                             viewport={{ once: true, margin: "-10%" }}
@@ -143,20 +144,22 @@ const ProjectsPage: React.FC = () => {
                             }}
                         >
                             {/* Text Content */}
-                            <div style={{ direction: 'ltr', textAlign: 'left' }}>
+                            <div className="project-text" style={{ direction: 'ltr', textAlign: 'left' }}>
                                 <div style={{
                                     borderBottom: '1px solid #333',
                                     paddingBottom: '20px',
                                     marginBottom: '20px',
                                     display: 'flex',
                                     justifyContent: 'space-between',
-                                    alignItems: 'baseline'
+                                    alignItems: 'baseline',
+                                    flexWrap: 'wrap',
+                                    gap: '0.5rem'
                                 }}>
                                     <h2 style={{ fontSize: '2.5rem', fontWeight: 800, textTransform: 'uppercase', margin: 0 }}>{project.title}</h2>
-                                    <span style={{ fontSize: '1rem', color: '#666', fontFamily: 'monospace' }}>{project.year}</span>
+                                    <span className="project-year" style={{ fontSize: '1rem', color: '#666', fontFamily: 'monospace' }}>{project.year}</span>
                                 </div>
 
-                                <p style={{
+                                <p className="description" style={{
                                     fontSize: '1.2rem',
                                     color: '#ccc',
                                     lineHeight: 1.6,
@@ -166,7 +169,7 @@ const ProjectsPage: React.FC = () => {
                                     {project.description}
                                 </p>
 
-                                <div style={{ display: 'flex', gap: '20px', marginBottom: '40px', flexWrap: 'wrap' }}>
+                                <div className="project-services" style={{ display: 'flex', gap: '20px', marginBottom: '40px', flexWrap: 'wrap' }}>
                                     {project.services.map(service => (
                                         <span key={service} style={{
                                             border: '1px solid #333',
