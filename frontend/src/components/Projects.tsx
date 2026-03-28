@@ -13,14 +13,7 @@ const Projects: React.FC = () => {
     if (loading) {
         return (
             <section id="work" style={{ padding: 'var(--spacing-xl) 0', maxWidth: 'var(--spacing-container)', margin: '0 auto', paddingLeft: 'var(--spacing-lg)', paddingRight: 'var(--spacing-lg)' }}>
-                <h2 style={{
-                    fontSize: '4rem',
-                    marginBottom: 'var(--spacing-xl)',
-                    borderBottom: '1px solid #333',
-                    paddingBottom: '2rem',
-                    textTransform: 'uppercase',
-                    fontWeight: 800
-                }}>
+                <h2 className="selected-work-title">
                     {t('projects.selectedWork')}
                 </h2>
                 <div className="selected-work-grid">
@@ -51,14 +44,7 @@ const Projects: React.FC = () => {
 
     return (
         <section id="work" style={{ padding: 'var(--spacing-xl) 0', maxWidth: 'var(--spacing-container)', margin: '0 auto', paddingLeft: 'var(--spacing-lg)', paddingRight: 'var(--spacing-lg)' }}>
-            <h2 style={{
-                fontSize: '4rem',
-                marginBottom: 'var(--spacing-xl)',
-                borderBottom: '1px solid #333',
-                paddingBottom: '2rem',
-                textTransform: 'uppercase',
-                fontWeight: 800
-            }}>
+            <h2 className="selected-work-title">
                 {t('projects.selectedWork')}
             </h2>
             <div className="selected-work-grid">

@@ -71,5 +71,14 @@ export const projects: Project[] = [
         description: "Portfolio site for a digital branding agency. The site itself is a testament to modern web trends, featuring bold typography and interactive micro-animations.",
         role: "Web Designer",
         services: ["Motion Design", "Branding"]
+    },
+    {
+        title: "Santo Huevo",
+        year: "2025",
+        url: "https://santohuevo.com",
+        image: "/projects/santo-huevo.png",
+        description: "E-commerce platform for Santo Huevo, an egg farm brand. Features include a promotional campaign system with QR codes, WhatsApp integration, and a full online ordering experience for premium eggs and poultry products.",
+        role: "Lead Developer",
+        services: ["E-commerce", "WhatsApp Integration", "Campaign System"]
     }
 ];

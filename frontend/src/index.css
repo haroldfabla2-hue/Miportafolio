@@ -191,6 +191,35 @@ button {
 }
 
 /* ============================
+   SELECTED WORK (Home)
+   ============================ */
+
+.selected-work-title {
+  font-size: 4rem;
+  margin-bottom: var(--spacing-xl);
+  border-bottom: 1px solid #333;
+  padding-bottom: 2rem;
+  text-transform: uppercase;
+  font-weight: 800;
+}
+
+@media (max-width: 1024px) {
+  .selected-work-title {
+    font-size: 2.5rem;
+    margin-bottom: 2rem;
+    padding-bottom: 1.5rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .selected-work-title {
+    font-size: clamp(1.8rem, 8vw, 2.5rem);
+    margin-bottom: 1.5rem;
+    padding-bottom: 1rem;
+  }
+}
+
+/* ============================
    SELECTED WORK GRID (Home)
    ============================ */
 
