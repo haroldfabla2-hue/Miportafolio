@@ -73,15 +73,6 @@ export const projects: Project[] = [
         services: ["Motion Design", "Branding"]
     },
     {
-        title: "Trophy Club Frenchies",
-        year: "2025",
-        url: "https://trophyclubfrenchies.com/",
-        image: "/projects/project-8.png",
-        description: "A showcase site for a premium French Bulldog breeder. The design emphasizes trust and pedigree through a clean, gallery-focused layout.",
-        role: "Web Developer",
-        services: ["Gallery Design", "Mobile Optimization"]
-    },
-    {
         title: "Santo Huevo",
         year: "2025",
         url: "https://santohuevo.com",
