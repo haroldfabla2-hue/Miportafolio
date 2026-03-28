@@ -95,3 +95,104 @@ button {
     opacity: 0.8;
   }
 }
+
+/* ============================
+   RESPONSIVE BREAKPOINTS
+   ============================ */
+
+/* Tablet */
+@media (max-width: 1024px) {
+  :root {
+    --spacing-container: 900px;
+    --spacing-xl: 3rem;
+    --spacing-huge: 5rem;
+  }
+}
+
+/* Mobile */
+@media (max-width: 768px) {
+  :root {
+    --spacing-container: 100%;
+    --spacing-lg: 1rem;
+    --spacing-xl: 2rem;
+    --spacing-huge: 3rem;
+  }
+}
+
+/* ============================
+   PROJECTS PAGE RESPONSIVE
+   ============================ */
+
+@media (max-width: 1024px) {
+  section[style*="gridTemplateColumns"] > div {
+    grid-template-columns: 1fr 1fr !important;
+    gap: 2rem !important;
+  }
+}
+
+@media (max-width: 768px) {
+  /* Project list - stack vertically on mobile */
+  section[style*="flexDirection: 'column'"] > div[style*="gap: 150px"] {
+    gap: 4rem !important;
+  }
+  
+  section[style*="gridTemplateColumns: '1fr 1.5fr'"],
+  section[style*="gridTemplateColumns: index % 2"] {
+    grid-template-columns: 1fr !important;
+    gap: 2rem !important;
+    direction: ltr !important;
+  }
+  
+  section[style*="gridTemplateColumns"] h2 {
+    font-size: 1.8rem !important;
+  }
+  
+  section[style*="gridTemplateColumns"] p {
+    font-size: 1rem !important;
+  }
+  
+  /* Loading skeleton */
+  section[style*="gridTemplateColumns: '1fr 1.5fr'"] > div > div {
+    height: 120px !important;
+  }
+}
+
+/* ============================
+   HERO & NAV RESPONSIVE
+   ============================ */
+
+@media (max-width: 768px) {
+  /* Nav */
+  nav[style*="padding: 1.5rem 4rem"] {
+    padding: 1rem 1.5rem !important;
+  }
+  
+  nav img[style*="height: 80px"] {
+    height: 50px !important;
+  }
+  
+  /* Hero */
+  h1[style*="fontSize: clamp(3rem, 8vw, 6rem)"],
+  h1[style*="clamp(3rem"] {
+    font-size: clamp(2.5rem, 10vw, 4rem) !important;
+    line-height: 1.1 !important;
+  }
+  
+  p[style*="fontSize: 1.5rem"][style*="color: #999"] {
+    font-size: 1.1rem !important;
+  }
+}
+
+/* ============================
+   CONTACT & FORMS RESPONSIVE
+   ============================ */
+
+@media (max-width: 768px) {
+  form[style*="flexDirection: 'column'"] {
+    gap: 1.5rem !important;
+  }
+  
+  input, textarea, select {
+    font-size: 16px !important; /* Prevent zoom on iOS */
+  }
+}
