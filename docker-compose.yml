@@ -12,9 +12,11 @@ services:
     ports:
       - "${PORT:-3000}:3000"
     environment:
-      - DATABASE_URL=postgresql://miweb_admin:secure_miweb_password_2026@postgres:5432/miweb_db?schema=public
+      - DATABASE_URL=${DATABASE_URL}
       - REDIS_HOST=redis
       - REDIS_PORT=6379
+    env_file:
+      - .env
     depends_on:
       - postgres
       - redis
@@ -27,9 +29,9 @@ services:
     ports:
       - "${DB_PORT:-5436}:5432"
     environment:
-      POSTGRES_USER: miweb_admin
-      POSTGRES_PASSWORD: secure_miweb_password_2026
-      POSTGRES_DB: miweb_db
+      POSTGRES_USER: ${DB_USER:-miweb_admin}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_DB: ${DB_NAME:-miweb_db}
     volumes:
       - postgres_data:/var/lib/postgresql/data
     networks:
