@@ -5,11 +5,41 @@ import { FileInterceptor } from '@nestjs/platform-express';
 import { Readable } from 'stream';
 import { PermissionGuard } from '../guards/permission.guard';
 import { RequiresPermission } from '../decorators/requires-permission.decorator';
+import { Public } from '../auth/public.decorator';
+import * as crypto from 'crypto';
+import { ConfigService } from '@nestjs/config';
 
 @Controller('google/drive')
 @UseGuards(JwtAuthGuard, PermissionGuard)
 export class DriveController {
-    constructor(private readonly googleService: GoogleService) { }
+    constructor(
+        private readonly googleService: GoogleService,
+        private readonly configService: ConfigService
+    ) { }
+
+    @Post('webhook')
+    @Public()
+    async handleDriveWebhook(@Req() req) {
+        // Validación HMAC de Webhooks de Google
+        const channelToken = req.headers['x-goog-channel-token'];
+        const channelId = req.headers['x-goog-channel-id'];
+        
+        if (!channelToken) {
+            return { success: false, reason: 'Missing token' };
+        }
+
+        const secret = this.configService.get<string>('WEBHOOK_SECRET') || 'default_webhook_secret';
+        const expectedToken = crypto.createHmac('sha256', secret).update(channelId || '').digest('hex');
+
+        if (channelToken !== expectedToken) {
+            console.error('[Drive Webhook] HMAC Validation Failed');
+            return { success: false, reason: 'HMAC signature invalid' };
+        }
+
+        console.log('[Drive Webhook] HMAC validated successfully for channel:', channelId);
+        // Process webhook payload here
+        return { success: true };
+    }
 
     @Get('files')
     @RequiresPermission('files:access')

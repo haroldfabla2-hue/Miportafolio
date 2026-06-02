@@ -7,6 +7,8 @@ import { UsersService } from '../users/users.service';
 import { PermissionsService } from '../permissions/permissions.service';
 import { JwtAuthGuard } from './jwt-auth.guard';
 import { Public } from './public.decorator';
+import { PermissionGuard } from '../guards/permission.guard';
+import { RequiresPermission } from '../decorators/requires-permission.decorator';
 
 @Controller('auth')
 export class AuthController {
@@ -88,10 +90,10 @@ export class AuthController {
         return this.authService.register(body.email, body.password, body.name);
     }
 
-    @UseGuards(JwtAuthGuard)
+    @UseGuards(JwtAuthGuard, PermissionGuard)
+    @RequiresPermission('users:manage')
     @Post('invite')
     async createInvitation(@Req() req: any, @Body() body: { email: string; role: any }) {
-        // TODO: Check if user is ADMIN
         return this.invitationService.createInvitation(req.user.id, body.email, body.role);
     }
 

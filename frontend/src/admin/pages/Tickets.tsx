@@ -4,12 +4,12 @@ import { authFetch } from '../../services/api';
 // Types
 interface Ticket {
     id: string;
-    title: string;
+    subject: string;
     description: string;
     status: 'OPEN' | 'IN_PROGRESS' | 'RESOLVED' | 'CLOSED';
     priority: 'LOW' | 'MEDIUM' | 'HIGH' | 'CRITICAL';
     category?: string;
-    createdBy: { id: string; name: string; email: string; avatar: string | null };
+    reporter: { id: string; name: string; email: string; avatar: string | null };
     assignedTo?: { id: string; name: string; avatar: string | null };
     createdAt: string;
     resolvedAt?: string;
@@ -47,7 +47,7 @@ const TicketCard: React.FC<{ ticket: Ticket; onUpdateStatus: (id: string, status
         </div>
 
         <h3 style={{ fontSize: '1rem', fontWeight: 600, color: '#fff', marginBottom: '0.5rem' }}>
-            {ticket.title}
+            {ticket.subject}
         </h3>
         <p style={{ fontSize: '0.85rem', color: '#888', lineHeight: 1.5, marginBottom: '1rem' }}>
             {ticket.description}
@@ -56,11 +56,11 @@ const TicketCard: React.FC<{ ticket: Ticket; onUpdateStatus: (id: string, status
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', paddingTop: '0.75rem', borderTop: '1px solid var(--admin-border-color)' }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
                 <img
-                    src={ticket.createdBy.avatar || `https://api.dicebear.com/7.x/avataaars/svg?seed=${ticket.createdBy.email}`}
-                    alt={ticket.createdBy.name}
+                    src={ticket.reporter.avatar || `https://api.dicebear.com/7.x/avataaars/svg?seed=${ticket.reporter.email}`}
+                    alt={ticket.reporter.name}
                     style={{ width: '24px', height: '24px', borderRadius: '50%' }}
                 />
-                <span style={{ fontSize: '0.8rem', color: '#888' }}>{ticket.createdBy.name}</span>
+                <span style={{ fontSize: '0.8rem', color: '#888' }}>{ticket.reporter.name}</span>
             </div>
             <div style={{ display: 'flex', gap: '0.5rem' }}>
                 {ticket.status === 'OPEN' && (
@@ -96,7 +96,7 @@ const CreateTicketModal: React.FC<{ onClose: () => void; onCreate: (data: any) =
                 </div>
                 <div style={{ padding: '1.5rem', display: 'grid', gap: '1rem' }}>
                     <div>
-                        <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: 600, color: '#888', marginBottom: '0.5rem' }}>Title</label>
+                        <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: 600, color: '#888', marginBottom: '0.5rem' }}>Subject</label>
                         <input type="text" value={formData.title} onChange={(e) => setFormData({ ...formData, title: e.target.value })}
                             style={{ width: '100%', padding: '0.875rem', background: 'var(--admin-bg)', border: '1px solid var(--admin-border-color)', borderRadius: '10px', color: '#fff' }} />
                     </div>
@@ -187,10 +187,10 @@ const TicketsPage: React.FC = () => {
 
     // Demo data
     const demoTickets: Ticket[] = [
-        { id: '1', title: 'Login button not responding on mobile', description: 'The login button on the mobile version of the site does not respond to taps. Tested on iPhone 14 and Samsung Galaxy S23.', status: 'OPEN', priority: 'HIGH', category: 'Bug', createdBy: { id: 'u1', name: 'Ana García', email: 'ana@example.com', avatar: null }, createdAt: '2024-01-17T10:00:00Z' },
-        { id: '2', title: 'Feature request: Dark mode toggle', description: 'It would be great to have a dark mode toggle in the settings for users who prefer the dark theme.', status: 'IN_PROGRESS', priority: 'MEDIUM', category: 'Feature', createdBy: { id: 'u2', name: 'Luis Torres', email: 'luis@example.com', avatar: null }, assignedTo: { id: 'u3', name: 'Carlos Smith', avatar: null }, createdAt: '2024-01-15T14:30:00Z' },
-        { id: '3', title: 'Dashboard loading slowly', description: 'The dashboard takes more than 5 seconds to load. This started happening after the last update.', status: 'RESOLVED', priority: 'HIGH', category: 'Performance', createdBy: { id: 'u4', name: 'María López', email: 'maria@example.com', avatar: null }, resolvedAt: '2024-01-16T11:00:00Z', createdAt: '2024-01-14T09:00:00Z' },
-        { id: '4', title: 'Add export to CSV functionality', description: 'Need the ability to export reports and data tables to CSV format for further analysis.', status: 'OPEN', priority: 'LOW', category: 'Feature', createdBy: { id: 'u5', name: 'Pedro Sánchez', email: 'pedro@example.com', avatar: null }, createdAt: '2024-01-13T16:45:00Z' },
+        { id: '1', subject: 'Login button not responding on mobile', description: 'The login button on the mobile version of the site does not respond to taps. Tested on iPhone 14 and Samsung Galaxy S23.', status: 'OPEN', priority: 'HIGH', category: 'Bug', reporter: { id: 'u1', name: 'Ana García', email: 'ana@example.com', avatar: null }, createdAt: '2024-01-17T10:00:00Z' },
+        { id: '2', subject: 'Feature request: Dark mode toggle', description: 'It would be great to have a dark mode toggle in the settings for users who prefer the dark theme.', status: 'IN_PROGRESS', priority: 'MEDIUM', category: 'Feature', reporter: { id: 'u2', name: 'Luis Torres', email: 'luis@example.com', avatar: null }, assignedTo: { id: 'u3', name: 'Carlos Smith', avatar: null }, createdAt: '2024-01-15T14:30:00Z' },
+        { id: '3', subject: 'Dashboard loading slowly', description: 'The dashboard takes more than 5 seconds to load. This started happening after the last update.', status: 'RESOLVED', priority: 'HIGH', category: 'Performance', reporter: { id: 'u4', name: 'María López', email: 'maria@example.com', avatar: null }, resolvedAt: '2024-01-16T11:00:00Z', createdAt: '2024-01-14T09:00:00Z' },
+        { id: '4', subject: 'Add export to CSV functionality', description: 'Need the ability to export reports and data tables to CSV format for further analysis.', status: 'OPEN', priority: 'LOW', category: 'Feature', reporter: { id: 'u5', name: 'Pedro Sánchez', email: 'pedro@example.com', avatar: null }, createdAt: '2024-01-13T16:45:00Z' },
     ];
 
     const demoStats = { total: 4, byStatus: { open: 2, inProgress: 1, resolved: 1 } };

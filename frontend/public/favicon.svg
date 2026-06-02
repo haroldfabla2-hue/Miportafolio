@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <!-- Fondo Oscuro -->
+  <rect width="512" height="512" rx="128" fill="#0A0A0A" />
+  
+  <!-- Letra 'A' minimalista y geométrica -->
+  <path d="M256 120 L140 380 L195 380 L225 300 L287 300 L317 380 L372 380 Z M240 250 L272 250 L256 195 Z" fill="#FFFFFF" />
+  
+  <!-- Acento visual (punto brillante o decoración tecnológica) -->
+  <circle cx="340" cy="180" r="24" fill="#A3FF00" />
+</svg>

@@ -39,7 +39,7 @@ export class GoogleController {
             hasCalendar: scopes.some(s => s.includes('calendar')),
             hasTasks: false,
             hasContacts: false,
-            assignedFolder: null // TODO: Implement folder assignment logic
+            assignedFolder: req.user.assignedDriveFolderName ? { id: req.user.assignedDriveFolderName, name: 'Assigned Folder' } : null
         };
     }
 

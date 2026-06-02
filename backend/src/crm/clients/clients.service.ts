@@ -70,6 +70,21 @@ export class ClientsService {
         });
     }
 
+    async linkEmail(id: string, email: string, user: any) {
+        await this.findOne(id, user);
+        try {
+            return await this.prisma.client.update({
+                where: { id },
+                data: { email },
+            });
+        } catch (error) {
+            if (error.code === 'P2002') {
+                throw new ConflictException('Email already assigned to another client');
+            }
+            throw error;
+        }
+    }
+
     async remove(id: string, user: any) {
         await this.findOne(id, user);
         return this.prisma.client.delete({ where: { id } });

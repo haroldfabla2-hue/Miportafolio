@@ -6,8 +6,21 @@ import { AllExceptionsFilter } from './all-exceptions.filter';
 import { RedisIoAdapter } from './adapters/redis-io.adapter';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import helmet from 'helmet';
+import * as Sentry from '@sentry/node';
+import { nodeProfilingIntegration } from '@sentry/profiling-node';
 
 async function bootstrap() {
+    // Inicializar Sentry APM antes que todo
+    Sentry.init({
+        dsn: process.env.SENTRY_DSN || '', // Rellenar DSN real en producción
+        integrations: [
+            nodeProfilingIntegration(),
+        ],
+        tracesSampleRate: process.env.NODE_ENV === 'production' ? 0.2 : 1.0, 
+        profilesSampleRate: process.env.NODE_ENV === 'production' ? 0.2 : 1.0, 
+        environment: process.env.NODE_ENV || 'development'
+    });
+
     const app = await NestFactory.create(AppModule);
 
     const configService = app.get(ConfigService);

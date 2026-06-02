@@ -126,50 +126,84 @@ const ProjectsPage: React.FC = () => {
                 maxWidth: 'var(--spacing-container)',
                 margin: '0 auto'
             }}>
-                <div className="projects-container" style={{ display: 'flex', flexDirection: 'column', gap: '150px' }}>
+                <div className="projects-container" style={{ display: 'flex', flexDirection: 'column', gap: '100px' }}>
                     {projects.map((project, index) => (
                         <motion.div
                             key={project.title}
-                            className={`project-item ${index % 2 === 0 ? 'project-item-normal' : 'project-item-reversed'}`}
-                            initial={{ opacity: 0, y: 50 }}
+                            initial={{ opacity: 0, y: 100 }}
                             whileInView={{ opacity: 1, y: 0 }}
                             viewport={{ once: true, margin: "-10%" }}
-                            transition={{ duration: 0.8 }}
+                            transition={{ duration: 1, type: "spring", bounce: 0.2 }}
+                            style={{
+                                display: 'grid',
+                                gridTemplateColumns: 'repeat(auto-fit, minmax(400px, 1fr))',
+                                gap: '4rem',
+                                alignItems: 'center',
+                                backgroundColor: 'rgba(20,20,20,0.6)',
+                                padding: 'clamp(2rem, 5vw, 4rem)',
+                                borderRadius: '40px',
+                                border: '1px solid rgba(255,255,255,0.05)',
+                                backdropFilter: 'blur(20px)',
+                                position: 'relative',
+                                overflow: 'hidden'
+                            }}
                         >
+                            {/* Ambient Glow */}
+                            <div style={{
+                                position: 'absolute',
+                                top: index % 2 === 0 ? '-20%' : 'auto',
+                                bottom: index % 2 !== 0 ? '-20%' : 'auto',
+                                left: index % 2 === 0 ? '-10%' : 'auto',
+                                right: index % 2 !== 0 ? '-10%' : 'auto',
+                                width: '50%',
+                                height: '50%',
+                                background: 'radial-gradient(circle, rgba(163, 255, 0, 0.1) 0%, transparent 70%)',
+                                filter: 'blur(60px)',
+                                zIndex: 0,
+                                pointerEvents: 'none'
+                            }} />
+
                             {/* Text Content */}
-                            <div className="project-text" style={{ direction: 'ltr', textAlign: 'left' }}>
+                            <div className="project-text" style={{ 
+                                direction: 'ltr', 
+                                textAlign: 'left', 
+                                zIndex: 1,
+                                order: index % 2 === 0 ? 1 : 2
+                            }}>
                                 <div style={{
-                                    borderBottom: '1px solid #333',
+                                    borderBottom: '1px solid rgba(255,255,255,0.1)',
                                     paddingBottom: '20px',
-                                    marginBottom: '20px',
+                                    marginBottom: '30px',
                                     display: 'flex',
                                     justifyContent: 'space-between',
                                     alignItems: 'baseline',
                                     flexWrap: 'wrap',
                                     gap: '0.5rem'
                                 }}>
-                                    <h2 style={{ fontSize: '2.5rem', fontWeight: 800, textTransform: 'uppercase', margin: 0 }}>{project.title}</h2>
-                                    <span className="project-year" style={{ fontSize: '1rem', color: '#666', fontFamily: 'monospace' }}>{project.year}</span>
+                                    <h2 style={{ fontSize: 'clamp(2rem, 4vw, 3rem)', fontWeight: 800, textTransform: 'uppercase', margin: 0 }}>{project.title}</h2>
+                                    <span style={{ fontSize: '1.2rem', color: 'var(--color-accent)', fontFamily: 'monospace' }}>{project.year}</span>
                                 </div>
 
                                 <p className="description" style={{
                                     fontSize: '1.2rem',
                                     color: '#ccc',
                                     lineHeight: 1.6,
-                                    marginBottom: '30px',
+                                    marginBottom: '40px',
                                     fontWeight: 300
                                 }}>
                                     {project.description}
                                 </p>
 
-                                <div className="project-services" style={{ display: 'flex', gap: '20px', marginBottom: '40px', flexWrap: 'wrap' }}>
+                                <div className="project-services" style={{ display: 'flex', gap: '15px', marginBottom: '40px', flexWrap: 'wrap' }}>
                                     {project.services.map(service => (
                                         <span key={service} style={{
-                                            border: '1px solid #333',
-                                            padding: '8px 16px',
-                                            borderRadius: '20px',
+                                            border: '1px solid rgba(255,255,255,0.1)',
+                                            backgroundColor: 'rgba(0,0,0,0.5)',
+                                            padding: '8px 20px',
+                                            borderRadius: '30px',
                                             fontSize: '0.9rem',
-                                            color: '#888'
+                                            color: '#fff',
+                                            backdropFilter: 'blur(5px)'
                                         }}>
                                             {service}
                                         </span>
@@ -182,7 +216,7 @@ const ProjectsPage: React.FC = () => {
                             </div>
 
                             {/* Enhanced Preview Card */}
-                            <div style={{ direction: 'ltr' }}>
+                            <div style={{ direction: 'ltr', zIndex: 1, order: index % 2 === 0 ? 2 : 1 }}>
                                 <ProjectCard project={project} index={index} />
                             </div>
                         </motion.div>

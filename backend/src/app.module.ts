@@ -1,7 +1,9 @@
 import { Module, NestModule, MiddlewareConsumer } from '@nestjs/common';
 import { APP_GUARD, APP_INTERCEPTOR } from '@nestjs/core';
 import { JwtAuthGuard } from './auth/jwt-auth.guard';
+import { SecurityGuard } from './guards/security.guard';
 import { AuditInterceptor } from './common/interceptors/audit.interceptor';
+import { SentryInterceptor } from './common/interceptors/sentry.interceptor';
 import { ConfigModule } from '@nestjs/config';
 import { PrismaModule } from './prisma/prisma.module';
 import { AuthModule } from './auth/auth.module';
@@ -24,17 +26,30 @@ import { HealthModule } from './health/health.module';
 import { OracleModule } from './oracle/oracle.module';
 import { RequestLoggerMiddleware } from './middleware/request-logger.middleware';
 import { EventsModule } from './events/events.module';
+import { CronModule } from './cron/cron.module';
+import { PaymentsModule } from './payments/payments.module';
 
 import { ThrottlerModule, ThrottlerGuard } from '@nestjs/throttler';
+import { ScheduleModule } from '@nestjs/schedule';
 
 @Module({
     imports: [
+        ScheduleModule.forRoot(),
         ConfigModule.forRoot({
             isGlobal: true,
         }),
         ThrottlerModule.forRoot([{
+            name: 'short',
+            ttl: 1000,
+            limit: 5,
+        }, {
+            name: 'medium',
+            ttl: 10000,
+            limit: 30,
+        }, {
+            name: 'long',
             ttl: 60000,
-            limit: 100,
+            limit: 150,
         }]),
         PrismaModule,
         AuthModule,
@@ -56,6 +71,8 @@ import { ThrottlerModule, ThrottlerGuard } from '@nestjs/throttler';
         HealthModule,
         OracleModule,
         EventsModule,
+        CronModule,
+        PaymentsModule,
     ],
     controllers: [],
     providers: [
@@ -66,6 +83,14 @@ import { ThrottlerModule, ThrottlerGuard } from '@nestjs/throttler';
         {
             provide: APP_GUARD,
             useClass: JwtAuthGuard,
+        },
+        {
+            provide: APP_GUARD,
+            useClass: SecurityGuard,
+        },
+        {
+            provide: APP_INTERCEPTOR,
+            useClass: SentryInterceptor,
         },
         {
             provide: APP_INTERCEPTOR,

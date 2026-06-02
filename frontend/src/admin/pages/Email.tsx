@@ -424,8 +424,13 @@ const EmailPage: React.FC = () => {
 
     const handleArchive = async () => {
         if (!selectedEmail) return;
-        // TODO: Implement archive via Gmail API
-        setSelectedEmail(null);
+        try {
+            await authFetch(`/api/google/gmail/messages/${selectedEmail.id}/archive`, { method: 'POST' });
+            setEmails(prev => prev.filter(e => e.id !== selectedEmail.id));
+            setSelectedEmail(null);
+        } catch (error) {
+            console.error('Failed to archive email:', error);
+        }
     };
 
     const handleDelete = async () => {
@@ -473,8 +478,17 @@ const EmailPage: React.FC = () => {
 
     const handleClientAssigned = async (clientId: string) => {
         console.log('Assigning email', selectedEmail?.from.email, 'to client', clientId);
-        // TODO: Call backend to link email to client (e.g., update client email or add alias)
-        // For now just log and close
+        if (!selectedEmail) return;
+        try {
+            await authFetch(`/api/crm/clients/${clientId}/link-email`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ email: selectedEmail.from.email })
+            });
+            await fetchEmails(); // Refresh emails to show client badge
+        } catch (error) {
+            console.error('Failed to link email to client:', error);
+        }
         setIsAssignClientOpen(false);
     };
 

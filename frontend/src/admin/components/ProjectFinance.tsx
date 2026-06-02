@@ -1,4 +1,5 @@
 import React from 'react';
+import RequirePermission from './RequirePermission';
 
 interface Invoice {
     id: string;
@@ -62,7 +63,9 @@ const ProjectFinance: React.FC<ProjectFinanceProps> = ({ budget = 0, spent = 0, 
             {/* Invoices List */}
             <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '1rem', alignItems: 'center' }}>
                 <h3>Project Invoices</h3>
-                <button className="admin-btn admin-btn-secondary">+ Create Invoice</button>
+                <RequirePermission permission="finance:manage">
+                    <button className="admin-btn admin-btn-secondary">+ Create Invoice</button>
+                </RequirePermission>
             </div>
 
             {invoices.length === 0 ? (

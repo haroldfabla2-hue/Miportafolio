@@ -41,6 +41,13 @@ export class ClientsController {
         return this.clientsService.update(id, updateClientDto, req.user);
     }
 
+    @Post(':id/link-email')
+    @RequiresPermission('clients:manage')
+    @ApiOperation({ summary: 'Link an email to a client' })
+    linkEmail(@Param('id') id: string, @Body() body: { email: string }, @Request() req: any) {
+        return this.clientsService.linkEmail(id, body.email, req.user);
+    }
+
     @Delete(':id')
     @RequiresPermission('clients:manage')
     @ApiOperation({ summary: 'Delete a client' })

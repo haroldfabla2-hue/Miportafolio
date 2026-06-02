@@ -1,25 +1,26 @@
 import { useState, useEffect, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { contentApi, localizeProject, type Project } from '../services/api';
-import { projects as staticProjects } from '../data/projects';
+import { projects as fallbackCache } from '../data/projects';
 
 interface UsePortfolioResult {
     projects: Project[];
     loading: boolean;
     error: string | null;
+    isFallback: boolean;
 }
 
 /**
- * Custom hook to fetch portfolio projects.
- * Uses a HYBRID approach: static hardcoded projects are always shown,
- * CMS portfolio items are merged in when the backend is available.
- * This ensures the public website always displays content.
+ * Custom hook to fetch portfolio projects with Enterprise-grade Zero-Downtime Pipeline.
+ * Attempts to fetch from the CMS API with a 2000ms timeout (Circuit Breaker).
+ * If it fails, falls back to the in-memory cache to guarantee High Availability.
  */
 export function usePortfolio(): UsePortfolioResult {
     const { i18n } = useTranslation();
-    const [projects, setProjects] = useState<Project[]>(staticProjects);
+    const [projects, setProjects] = useState<Project[]>([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
+    const [isFallback, setIsFallback] = useState(false);
 
     useEffect(() => {
         let isMounted = true;
@@ -28,20 +29,29 @@ export function usePortfolio(): UsePortfolioResult {
             try {
                 setLoading(true);
                 setError(null);
-                const cmsProjects = await contentApi.getPortfolio();
+                setIsFallback(false);
+
+                // Enterprise Practice: Circuit Breaker with 2000ms Timeout
+                const fetchPromise = contentApi.getPortfolio();
+                const timeoutPromise = new Promise<Project[]>((_, reject) =>
+                    setTimeout(() => reject(new Error('API Timeout')), 2000)
+                );
+
+                const cmsProjects = await Promise.race([fetchPromise, timeoutPromise]);
+                
                 if (isMounted) {
-                    // Merge: static projects first, then CMS projects (avoiding duplicates by title)
-                    const staticTitles = new Set(staticProjects.map(p => p.title.toLowerCase()));
-                    const uniqueCmsProjects = cmsProjects.filter(
-                        p => !staticTitles.has(p.title.toLowerCase())
-                    );
-                    setProjects([...staticProjects, ...uniqueCmsProjects]);
+                    if (cmsProjects && cmsProjects.length > 0) {
+                        setProjects(cmsProjects);
+                    } else {
+                        // Empty response (backend up but no data)
+                        setProjects([]);
+                    }
                 }
             } catch (err) {
                 if (isMounted) {
-                    // On error, keep static projects (already set as default)
-                    setError(null); // Don't show error since static data is available
-                    console.warn('CMS fetch failed, using static projects only:', err);
+                    console.warn('[Enterprise Fallback] CMS fetch failed or timed out. Serving emergency cache.', err);
+                    setProjects(fallbackCache);
+                    setIsFallback(true);
                 }
             } finally {
                 if (isMounted) {
@@ -62,7 +72,7 @@ export function usePortfolio(): UsePortfolioResult {
         [projects, i18n.language]
     );
 
-    return { projects: localizedProjects, loading, error };
+    return { projects: localizedProjects, loading, error, isFallback };
 }
 
 export default usePortfolio;

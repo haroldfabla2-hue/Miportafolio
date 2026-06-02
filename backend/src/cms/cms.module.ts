@@ -5,11 +5,12 @@ import { ReportsService } from './reports.service';
 import { ReportsController } from './reports.controller';
 import { PermissionsModule } from '../permissions/permissions.module';
 import { IrisModule } from '../iris/iris.module';
+import { CmsSeedService } from './cms.seed.service';
 
 @Module({
     imports: [PermissionsModule, IrisModule],
     controllers: [CmsController, ReportsController],
-    providers: [CmsService, ReportsService],
-    exports: [CmsService, ReportsService],
+    providers: [CmsService, ReportsService, CmsSeedService],
+    exports: [CmsService, ReportsService, CmsSeedService],
 })
 export class CmsModule { }

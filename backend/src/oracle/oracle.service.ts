@@ -42,7 +42,7 @@ export class OracleService {
 
         // C. Leads
         const leads = await this.prisma.client.findMany({ where: { status: 'LEAD' } }); // Enums are uppercase usually, verify schema
-        const pipelineValue = leads.reduce((sum, c) => sum + (c.budgetAllocated || 0), 0);
+        const pipelineValue = leads.reduce((sum, c: any) => sum + (c.budgetAllocated || 0), 0);
         const weightedPipelineRevenue = pipelineValue * 0.3;
 
         // D. Accounts Receivable

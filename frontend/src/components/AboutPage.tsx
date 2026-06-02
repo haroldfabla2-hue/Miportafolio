@@ -1,8 +1,22 @@
-import React from 'react';
-import { motion } from 'framer-motion';
+import React, { useRef } from 'react';
+import { motion, useScroll } from 'framer-motion';
 import SEO from './SEO';
+import PremiumStackingLayer from './PremiumStackingLayer';
 
 const AboutPage: React.FC = () => {
+    const whyMeContainer = useRef<HTMLDivElement>(null);
+    const { scrollYProgress } = useScroll({
+        target: whyMeContainer,
+        offset: ['start start', 'end end']
+    });
+
+    const whyMeCards = [
+        { title: "Collaborative", text: "I view every project as a partnership. Your vision + my expertise." },
+        { title: "Detail Oriented", text: "Obsessed with the micro-interactions that make a site feel alive." },
+        { title: "Transparent", text: "Clear communication, no tech-jargon, and honest timelines." },
+        { title: "Forward Thinking", text: "Always using the latest stable technologies for future-proof solutions." }
+    ];
+
     return (
         <div style={{ paddingTop: '150px', minHeight: '100vh', paddingBottom: '100px' }}>
             <SEO title="About Us" description="Learn more about our journey, philosophy, and the impact we create through digital craftsmanship." />
@@ -59,7 +73,7 @@ const AboutPage: React.FC = () => {
                 backgroundColor: '#fff',
                 color: '#111',
                 borderRadius: '40px',
-                margin: '0 var(--spacing-lg) 150px var(--spacing-lg)' // Add margin to float it
+                margin: '0 var(--spacing-lg) 150px var(--spacing-lg)' 
             }}>
                 <div style={{ maxWidth: 'var(--spacing-container)', margin: '0 auto' }}>
                     <h2 style={{ fontSize: 'clamp(2rem, 5vw, 4rem)', fontWeight: 900, marginBottom: '80px', textAlign: 'center' }}>
@@ -84,8 +98,6 @@ const AboutPage: React.FC = () => {
                                     fontWeight: 900,
                                     lineHeight: 1,
                                     marginBottom: '1rem',
-                                    // Override accent color to fit white background if needed. Neon green on white might be hard to read.
-                                    // Let's use black for high contrast + stroke or just black.
                                     color: '#111'
                                 }}>
                                     {stat.value}
@@ -99,38 +111,36 @@ const AboutPage: React.FC = () => {
                 </div>
             </section>
 
-            {/* Why Me / Soft Skills */}
-            <section style={{
-                padding: '0 var(--spacing-lg)',
-                maxWidth: 'var(--spacing-container)',
-                margin: '0 auto'
+            {/* Why Me / Soft Skills - Premium Stacking */}
+            <section ref={whyMeContainer} style={{
+                marginBottom: '20vh', 
+                padding: '0 var(--spacing-lg)'
             }}>
-                <h2 style={{ fontSize: '3rem', fontWeight: 800, marginBottom: '50px' }}>WHY WORK WITH ME?</h2>
-                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '2rem' }}>
-                    {[
-                        { title: "Collaborative", text: "I view every project as a partnership. Your vision + my expertise." },
-                        { title: "Detail Oriented", text: "Obsessed with the micro-interactions that make a site feel alive." },
-                        { title: "Transparent", text: "Clear communication, no tech-jargon, and honest timelines." },
-                        { title: "Forward Thinking", text: "Always using the latest stable technologies for future-proof solutions." }
-                    ].map((item, i) => (
-                        <motion.div
-                            key={item.title}
-                            initial={{ opacity: 0, y: 20 }}
-                            whileInView={{ opacity: 1, y: 0 }}
-                            viewport={{ once: true }}
-                            transition={{ delay: i * 0.1 }}
-                            style={{
-                                padding: '2rem',
-                                backgroundColor: 'rgba(255,255,255,0.03)',
-                                borderRadius: '20px',
-                                border: '1px solid rgba(255,255,255,0.05)'
-                            }}
-                        >
-                            <h4 style={{ fontSize: '1.2rem', fontWeight: 700, marginBottom: '1rem', color: 'var(--color-accent)' }}>{item.title}</h4>
-                            <p style={{ color: '#ccc', lineHeight: 1.5 }}>{item.text}</p>
-                        </motion.div>
-                    ))}
+                <div style={{ maxWidth: '1000px', margin: '0 auto 100px auto' }}>
+                    <h2 style={{ fontSize: '3rem', fontWeight: 800, marginBottom: '20px' }}>WHY WORK WITH ME?</h2>
+                    <p style={{ color: '#999', fontSize: '1.2rem' }}>A unique blend of skills that sets projects apart.</p>
                 </div>
+                
+                {whyMeCards.map((item, i) => (
+                    <PremiumStackingLayer key={item.title} index={i} totalCards={whyMeCards.length} progress={scrollYProgress}>
+                        <div style={{
+                            padding: 'clamp(2rem, 5vw, 4rem)',
+                            backgroundColor: 'rgba(20,20,20,0.95)',
+                            borderRadius: '25px',
+                            border: '1px solid rgba(255,255,255,0.05)',
+                            width: 'clamp(300px, 90vw, 900px)',
+                            height: 'clamp(250px, 40vh, 400px)',
+                            boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.5)',
+                            display: 'flex',
+                            flexDirection: 'column',
+                            justifyContent: 'center',
+                            backdropFilter: 'blur(10px)'
+                        }}>
+                            <h4 style={{ fontSize: 'clamp(1.5rem, 3vw, 2.5rem)', fontWeight: 700, marginBottom: '1rem', color: 'var(--color-accent)' }}>{item.title}</h4>
+                            <p style={{ color: '#ccc', lineHeight: 1.6, fontSize: 'clamp(1rem, 2vw, 1.2rem)' }}>{item.text}</p>
+                        </div>
+                    </PremiumStackingLayer>
+                ))}
             </section>
         </div>
     );

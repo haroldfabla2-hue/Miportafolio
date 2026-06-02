@@ -1,6 +1,7 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import type { Project } from '../services/api';
+import MagneticButton from './MagneticButton';
 
 interface ProjectCardProps {
     project: Project;
@@ -10,10 +11,6 @@ interface ProjectCardProps {
 const ProjectCard: React.FC<ProjectCardProps> = ({ project, index }) => {
     return (
         <motion.div
-            initial={{ opacity: 0, y: 50 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ delay: index * 0.1, duration: 0.5 }}
             style={{
                 display: 'block',
                 position: 'relative'
@@ -25,37 +22,34 @@ const ProjectCard: React.FC<ProjectCardProps> = ({ project, index }) => {
                 <a href={project.url} target="_blank" rel="noopener noreferrer" style={{ textDecoration: 'none', color: '#fff' }}>
                     <motion.h3 style={{ fontSize: '1.5rem', fontWeight: 700, display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
                         <motion.span
-                            variants={{ hover: { x: 5 } }}
-                            style={{ color: 'var(--color-accent)', fontSize: '1.2rem' }}
+                            variants={{ hover: { x: 10, color: '#fff' } }}
+                            style={{ color: 'var(--color-accent)', fontSize: '1.2rem', transition: 'color 0.3s' }}
                         >
                             ➔
                         </motion.span>
                         {project.title}
                     </motion.h3>
                 </a>
-                <span style={{
-                    padding: '0.2rem 0.8rem',
-                    border: '1px solid #333',
-                    borderRadius: '20px',
-                    fontSize: '0.8rem',
-                    color: '#888'
-                }}>
-                    {project.year}
-                </span>
             </div>
 
             {/* Browser Window Frame */}
             <motion.div
                 className="window-frame"
-                variants={{ hover: { scale: 0.99 } }} // Subtle scale instead of 0.98 to keep iframe usable
-                transition={{ duration: 0.3 }}
+                variants={{ 
+                    hover: { 
+                        scale: 0.98,
+                        boxShadow: '0 30px 60px -12px rgba(0,0,0,0.8)'
+                    } 
+                }}
+                transition={{ duration: 0.5, type: 'spring' }}
                 style={{
-                    backgroundColor: '#1a1a1a', // Window chrome color
+                    backgroundColor: '#1a1a1a', 
                     borderRadius: '16px',
                     overflow: 'hidden',
                     aspectRatio: '16/10',
                     position: 'relative',
-                    border: '1px solid #333'
+                    border: '1px solid #333',
+                    transformOrigin: 'center'
                 }}
             >
                 {/* Window Controls */}
@@ -72,17 +66,15 @@ const ProjectCard: React.FC<ProjectCardProps> = ({ project, index }) => {
                     <div style={{ width: '10px', height: '10px', borderRadius: '50%', backgroundColor: '#ffbd2e' }} />
                     <div style={{ width: '10px', height: '10px', borderRadius: '50%', backgroundColor: '#27c93f' }} />
 
-                    {/* Reload Button - Pushed to right */}
+                    {/* Reload Button */}
                     <div
                         title="Reload Preview"
                         onClick={(e) => {
                             e.stopPropagation();
                             e.preventDefault();
-                            // Find the iframe in the next sibling container
                             const parent = e.currentTarget.closest('.window-frame');
                             const iframe = parent?.querySelector('iframe');
                             if (iframe) {
-                                // Force reload by resetting src
                                 const currentSrc = iframe.src;
                                 iframe.src = '';
                                 setTimeout(() => { iframe.src = currentSrc; }, 10);
@@ -116,11 +108,10 @@ const ProjectCard: React.FC<ProjectCardProps> = ({ project, index }) => {
                         overflow: 'hidden'
                     }}
                 >
-                    {/* Interactive Iframe with Scaling for "Desktop" feel */}
                     <div style={{
-                        width: '200%', // Double width
-                        height: '200%', // Double height
-                        transform: 'scale(0.5)', // Scale down to fit
+                        width: '200%',
+                        height: '200%',
+                        transform: 'scale(0.5)',
                         transformOrigin: 'top left',
                     }}>
                         <iframe
@@ -131,7 +122,7 @@ const ProjectCard: React.FC<ProjectCardProps> = ({ project, index }) => {
                                 width: '100%',
                                 height: '100%',
                                 border: 'none',
-                                pointerEvents: 'auto', // Enable interaction
+                                pointerEvents: 'auto',
                                 backgroundColor: '#fff'
                             }}
                         />
@@ -139,26 +130,35 @@ const ProjectCard: React.FC<ProjectCardProps> = ({ project, index }) => {
                 </div>
             </motion.div>
 
-            {/* Live Preview Badge */}
+            {/* Magnetic Live Preview Badge */}
             <a href={project.url} target="_blank" rel="noopener noreferrer" style={{ textDecoration: 'none' }}>
                 <motion.div
-                    variants={{ hover: { opacity: 1, scale: 1 } }}
-                    initial={{ opacity: 0, scale: 0.9 }}
+                    variants={{ hover: { opacity: 1, y: 0 } }}
+                    initial={{ opacity: 0, y: 20 }}
                     style={{
                         position: 'absolute',
                         bottom: '20px',
                         right: '20px',
-                        backgroundColor: '#fff',
-                        color: '#000',
-                        padding: '10px 20px',
-                        borderRadius: '30px',
-                        fontWeight: 700,
-                        fontSize: '0.9rem',
-                        boxShadow: '0 10px 20px rgba(0,0,0,0.3)',
-                        cursor: 'pointer'
+                        zIndex: 10
                     }}
                 >
-                    View Live Site ↗
+                    <MagneticButton pullStrength={0.5}>
+                        <div style={{
+                            backgroundColor: '#fff',
+                            color: '#000',
+                            padding: '12px 24px',
+                            borderRadius: '30px',
+                            fontWeight: 700,
+                            fontSize: '0.9rem',
+                            boxShadow: '0 10px 25px rgba(0,0,0,0.4)',
+                            cursor: 'pointer',
+                            display: 'flex',
+                            alignItems: 'center',
+                            gap: '8px'
+                        }}>
+                            View Live Site ↗
+                        </div>
+                    </MagneticButton>
                 </motion.div>
             </a>
         </motion.div>
