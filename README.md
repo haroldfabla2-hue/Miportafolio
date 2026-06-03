@@ -25,11 +25,31 @@ MiWeb is a premium agency management system designed for creative studios and di
 4. Run migrations: `npx prisma migrate dev`.
 5. Start development servers: `npm run dev`.
 
-## 🐳 Docker Deployment
+## 🐳 Production Deployment (High-Performance VPS)
+
+This repository is optimized for an **Enterprise-Grade VPS (4 CPUs, 8GB RAM)**. The `docker-compose.prod.yml` is tuned to allocate maximum memory to the backend and the pgvector database for optimal performance.
+
+### Rolling Update (Zero-Downtime Deployment)
+If the system is already deployed and you want to update it to the latest version on the server, execute these commands inside your VPS via SSH:
 
 ```bash
-docker-compose up --build
+# 1. Go to your project directory
+cd /path/to/your/project/MiWeb
+
+# 2. Pull the latest code
+git pull origin main
+
+# 3. Rebuild the optimized Docker images
+docker-compose -f docker-compose.prod.yml build
+
+# 4. Bring up the containers (replaces the old ones)
+docker-compose -f docker-compose.prod.yml up -d
+
+# 5. Apply the latest Prisma database migrations safely
+docker exec -it miweb-backend-1 npx prisma migrate deploy
 ```
+
+> **Security Warning**: Because this code contains business-critical simulations and financial configurations, ensure this GitHub repository is set to **Private**.
 
 ## 📄 License
 
