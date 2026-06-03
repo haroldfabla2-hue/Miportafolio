@@ -50,8 +50,8 @@ services:
     deploy:
       resources:
         limits:
-          memory: 1G
-          cpus: '1'
+          memory: 2G
+          cpus: '2'
 
   # PostgreSQL Database with pgvector
   postgres:
@@ -73,7 +73,7 @@ services:
     deploy:
       resources:
         limits:
-          memory: 512M
+          memory: 2G
 
   # Redis Cache
   redis:
@@ -87,7 +87,7 @@ services:
     deploy:
       resources:
         limits:
-          memory: 256M
+          memory: 512M
 
 networks:
   silhouette-network:
