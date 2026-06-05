@@ -124,19 +124,19 @@ const ServicesPage: React.FC = () => {
 
     const services = [
         {
-            title: t('services.webDesign.title'),
-            description: t('services.webDesign.description'),
-            tags: ["UI/UX", "Art Direction", "Prototyping", "Design Systems"]
+            title: "Desarrollo SaaS Custom",
+            description: "Construyo plataformas B2B escalables a medida. Desde sistemas de gestión y CRMs hasta marketplaces con infraestructuras robustas.",
+            tags: ["React/Node", "Arquitectura Cloud", "Sistemas Core", "Escalabilidad"]
         },
         {
-            title: t('services.webDev.title'),
-            description: t('services.webDev.description'),
-            tags: ["React/Vite", "TypeScript", "GSAP/Framer Motion", "WebGL"]
+            title: "Agentes IA (Atención 24/7)",
+            description: "Implemento agentes de inteligencia artificial que atienden por WhatsApp y Web. Califican leads, agendan citas y reducen el trabajo manual.",
+            tags: ["Automatización", "NLP", "WhatsApp API", "Reducción de Costos"]
         },
         {
-            title: t('services.branding.title'),
-            description: t('services.branding.description'),
-            tags: ["Logo Design", "Brand Identity", "Strategy", "Visual Language"]
+            title: "Websites + Reservas",
+            description: "Diseño sitios web premium integrados con motores de reservas y calendarios sincronizados. Interfaz de alto nivel y cero fricción.",
+            tags: ["UX/UI Premium", "Sistemas de Booking", "Conversión", "Pagos"]
         }
     ];
 
@@ -280,6 +280,104 @@ const ServicesPage: React.FC = () => {
                     );
                 })}
             </section>
+
+            {/* AI Solutions Section (Added from 30-Day Strategy) */}
+            <section style={{ marginBottom: '20vh', padding: '0 var(--spacing-lg)' }}>
+                <div style={{ maxWidth: '1000px', margin: '0 auto', backgroundColor: 'rgba(20,20,20,0.6)', border: '1px solid rgba(163,255,0,0.2)', borderRadius: '25px', padding: 'clamp(2rem, 5vw, 4rem)', backdropFilter: 'blur(10px)' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', marginBottom: '2rem' }}>
+                        <div style={{ width: '40px', height: '40px', backgroundColor: 'rgba(163,255,0,0.1)', borderRadius: '10px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                            <span style={{ fontSize: '1.5rem' }}>🤖</span>
+                        </div>
+                        <h2 style={{ fontSize: 'clamp(2rem, 4vw, 3rem)', margin: 0, color: '#fff' }}>Soluciones de IA y Automatización</h2>
+                    </div>
+                    
+                    <p style={{ fontSize: '1.2rem', color: '#ccc', marginBottom: '3rem', maxWidth: '800px', lineHeight: 1.6 }}>
+                        Ayudo a freelancers, agencias y negocios digitales a hacer en horas lo que antes tomaba semanas. Construyo sistemas cognitivos, flujos automatizados (no-code/low-code) y micro-SaaS a medida.
+                    </p>
+
+                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '3rem', marginBottom: '3rem' }}>
+                        <div>
+                            <h3 style={{ color: 'var(--color-accent)', marginBottom: '1rem', fontSize: '1.2rem' }}>Problemas Típicos</h3>
+                            <ul style={{ listStyle: 'none', padding: 0, margin: 0, color: '#aaa', display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+                                <li style={{ display: 'flex', gap: '10px' }}><span>❌</span> Procesos manuales repetitivos que roban horas vitales a tu equipo.</li>
+                                <li style={{ display: 'flex', gap: '10px' }}><span>❌</span> Uso de documentos y contratos improvisados que exponen a tu negocio.</li>
+                                <li style={{ display: 'flex', gap: '10px' }}><span>❌</span> Cuellos de botella graves en el onboarding o soporte de clientes.</li>
+                            </ul>
+                        </div>
+                        <div>
+                            <h3 style={{ color: '#fff', marginBottom: '1rem', fontSize: '1.2rem' }}>Resultados Obtenidos</h3>
+                            <ul style={{ listStyle: 'none', padding: 0, margin: 0, color: '#aaa', display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+                                <li style={{ display: 'flex', gap: '10px' }}><span>✅</span> Flujos de trabajo invisibles que operan 24/7 sin intervención humana.</li>
+                                <li style={{ display: 'flex', gap: '10px' }}><span>✅</span> Infraestructura cognitiva (Agentes IA) conectada a tus propios datos.</li>
+                                <li style={{ display: 'flex', gap: '10px' }}><span>✅</span> Capacidad de escalar el volumen de clientes sin multiplicar tus costos.</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div style={{ borderTop: '1px solid rgba(255,255,255,0.1)', paddingTop: '2rem' }}>
+                        <h3 style={{ color: '#fff', marginBottom: '1.5rem', fontSize: '1.1rem' }}>Proyectos Destacados</h3>
+                        <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap' }}>
+                            <a href="https://github.com/AlbertoFarah/contract-generator-svc" target="_blank" rel="noreferrer" style={{ padding: '10px 20px', backgroundColor: 'rgba(255,255,255,0.05)', borderRadius: '8px', color: '#fff', textDecoration: 'none', border: '1px solid rgba(255,255,255,0.1)', display: 'flex', alignItems: 'center', gap: '8px', transition: 'all 0.3s ease' }} onMouseOver={(e) => e.currentTarget.style.borderColor = 'var(--color-accent)'} onMouseOut={(e) => e.currentTarget.style.borderColor = 'rgba(255,255,255,0.1)'}>
+                                📄 Contract Generator SaaS
+                            </a>
+                            <a href="https://github.com/AlbertoFarah/Silhouette-Agency-OS-OpenSource" target="_blank" rel="noreferrer" style={{ padding: '10px 20px', backgroundColor: 'rgba(255,255,255,0.05)', borderRadius: '8px', color: '#fff', textDecoration: 'none', border: '1px solid rgba(255,255,255,0.1)', display: 'flex', alignItems: 'center', gap: '8px', transition: 'all 0.3s ease' }} onMouseOver={(e) => e.currentTarget.style.borderColor = 'var(--color-accent)'} onMouseOut={(e) => e.currentTarget.style.borderColor = 'rgba(255,255,255,0.1)'}>
+                                🧠 Silhouette Agency OS
+                            </a>
+                        </div>
+                        
+                        <div style={{ marginTop: '3rem', textAlign: 'center' }}>
+                            <a href="/contact" style={{ display: 'inline-block', padding: '15px 30px', backgroundColor: 'var(--color-accent)', color: '#000', fontWeight: 'bold', borderRadius: '30px', textDecoration: 'none', textTransform: 'uppercase', letterSpacing: '1px' }}>
+                                Hablemos de tu automatización
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            {/* Impact & Case Studies Section */}
+            <section style={{ marginBottom: '20vh', padding: '0 var(--spacing-lg)' }}>
+                <div style={{ maxWidth: '1000px', margin: '0 auto' }}>
+                    <div style={{ textAlign: 'center', marginBottom: '4rem' }}>
+                        <h2 style={{ fontSize: 'clamp(2rem, 4vw, 3rem)', margin: 0, color: '#fff', fontWeight: 900 }}>Impacto Real <span style={{ color: 'var(--color-accent)' }}>B2B</span></h2>
+                        <p style={{ color: '#999', fontSize: '1.2rem', marginTop: '1rem' }}>Sistemas implementados operando en producción.</p>
+                    </div>
+
+                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '2rem' }}>
+                        {/* Case 1 */}
+                        <div style={{ backgroundColor: 'rgba(20,20,20,0.6)', border: '1px solid rgba(255,255,255,0.05)', borderRadius: '20px', padding: '2rem', backdropFilter: 'blur(10px)' }}>
+                            <h3 style={{ color: '#fff', fontSize: '1.3rem', marginBottom: '0.5rem' }}>Clínica (Healthcare)</h3>
+                            <div style={{ color: 'var(--color-accent)', fontSize: '2rem', fontWeight: 900, marginBottom: '1rem' }}>-7% No-shows</div>
+                            <p style={{ color: '#aaa', fontSize: '0.9rem', lineHeight: 1.6 }}>
+                                <strong>Problema:</strong> El equipo colapsaba respondiendo leads (+42 horas de retraso).<br/><br/>
+                                <strong>Solución:</strong> Despliegue de Agente IA por WhatsApp con sincronización de calendarios.<br/><br/>
+                                <strong>Resultado:</strong> Tiempo de respuesta reducido a 2 minutos. +34% en nuevas reservas automáticas y 14 horas semanales liberadas para el equipo médico.
+                            </p>
+                        </div>
+
+                        {/* Case 2 */}
+                        <div style={{ backgroundColor: 'rgba(20,20,20,0.6)', border: '1px solid rgba(255,255,255,0.05)', borderRadius: '20px', padding: '2rem', backdropFilter: 'blur(10px)' }}>
+                            <h3 style={{ color: '#fff', fontSize: '1.3rem', marginBottom: '0.5rem' }}>Red Inmobiliaria (Real Estate)</h3>
+                            <div style={{ color: 'var(--color-accent)', fontSize: '2rem', fontWeight: 900, marginBottom: '1rem' }}>+47% Cierres</div>
+                            <p style={{ color: '#aaa', fontSize: '0.9rem', lineHeight: 1.6 }}>
+                                <strong>Problema:</strong> 80% de leads de portales no calificados, desperdiciando 12h/día de los brokers.<br/><br/>
+                                <strong>Solución:</strong> Sistema de Pre-screening IA e integración profunda con CRM.<br/><br/>
+                                <strong>Resultado:</strong> Calificación de leads en 3 minutos (61% de tasa de calificación). Eficiencia del equipo mejorada de 8h a 2h al día filtrando leads.
+                            </p>
+                        </div>
+
+                        {/* Case 3 */}
+                        <div style={{ backgroundColor: 'rgba(20,20,20,0.6)', border: '1px solid rgba(255,255,255,0.05)', borderRadius: '20px', padding: '2rem', backdropFilter: 'blur(10px)' }}>
+                            <h3 style={{ color: '#fff', fontSize: '1.3rem', marginBottom: '0.5rem' }}>Agencia de Marketing (B2B)</h3>
+                            <div style={{ color: 'var(--color-accent)', fontSize: '2rem', fontWeight: 900, marginBottom: '1rem' }}>$12K/mes MRR</div>
+                            <p style={{ color: '#aaa', fontSize: '0.9rem', lineHeight: 1.6 }}>
+                                <strong>Problema:</strong> Querían escalar servicios sin contratar desarrolladores costosos.<br/><br/>
+                                <strong>Solución:</strong> Desarrollo de SaaS White-label para despliegue automatizado de clientes.<br/><br/>
+                                <strong>Resultado:</strong> 12 clientes desplegados en 30 días con captura de leads 24/7. Retorno de inversión en menos de 3 meses.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
 
             {/* Process Section - WITH ANIMATION */}
             <section ref={processContainer} style={{ marginBottom: '20vh', padding: '0 var(--spacing-lg)' }}>
