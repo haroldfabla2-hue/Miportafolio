@@ -1,14 +1,22 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
-
 import { NotificationsService } from '../notifications/notifications.service';
+import { PdfService } from './pdf.service';
+import { GmailService } from '../google/gmail.service';
+import { GoogleDriveService } from '../google/google-drive.service';
+import * as fs from 'fs';
+import * as path from 'path';
 
 @Injectable()
 export class FinanceService {
     constructor(
         private prisma: PrismaService,
-        private notificationsService: NotificationsService
+        private notificationsService: NotificationsService,
+        private pdfService: PdfService,
+        private gmailService: GmailService,
+        private googleDriveService: GoogleDriveService
     ) { }
+
 
     private isAdmin(user: any): boolean {
         return user?.role === 'ADMIN' || user?.role === 'SUPER_ADMIN';
@@ -420,4 +428,181 @@ export class FinanceService {
                 bills.filter(b => b.status === 'PAID').reduce((sum, b) => sum + b.total, 0),
         };
     }
+
+    async generateContractPdf(data: any, user: any) {
+        // 1. Generate HTML
+        const html = this.pdfService.getContractTemplate(data);
+
+        // 2. Generate PDF Buffer
+        const pdfBuffer = await this.pdfService.generatePdf(html);
+
+        // 3. Create Asset record in DB
+        let projectId = null;
+        if (data.clientCompany) {
+            const project = await this.prisma.project.findFirst({
+                where: { client: { company: data.clientCompany } }
+            });
+            if (project) {
+                projectId = project.id;
+            }
+        }
+
+        const assetName = `CONTRATO_${data.clientCompany.replace(/\s+/g, '_')}_${data.planCode}`;
+        const asset = await this.prisma.asset.create({
+            data: {
+                name: assetName,
+                url: '#', // updated below
+                type: 'document',
+                status: 'DRAFT',
+                uploadedBy: user.id,
+                projectId: projectId
+            }
+        });
+
+        // Log contract generation in the audit trail
+        try {
+            await this.prisma.auditLog.create({
+                data: {
+                    action: 'GENERATE_CONTRACT',
+                    userId: user.id,
+                    details: {
+                        clientCompany: data.clientCompany,
+                        planCode: data.planCode,
+                        price: data.price,
+                        currency: data.currency,
+                        assetId: asset.id
+                    }
+                }
+            });
+        } catch (auditError) {
+            console.error('Failed to write contract generation audit log:', auditError.message);
+        }
+
+
+        // 4. Save PDF to disk
+        const uploadDir = path.join(__dirname, '..', '..', 'uploads', 'contracts');
+        if (!fs.existsSync(uploadDir)) {
+            fs.mkdirSync(uploadDir, { recursive: true });
+        }
+        const filePath = path.join(uploadDir, `${asset.id}.pdf`);
+        fs.writeFileSync(filePath, pdfBuffer);
+
+        // 5. Build download link URL
+        let downloadUrl = `/api/finance/contracts/download/${asset.id}`;
+
+        // 6. Optional: Upload to Google Drive if user is connected
+        let driveId = null;
+        let thumbnailUrl = null;
+        if (user.googleConnected || user.googleAccessToken) {
+            try {
+                const driveData = await this.googleDriveService.uploadFile(
+                    user.id,
+                    `${assetName}.pdf`,
+                    'application/pdf',
+                    pdfBuffer
+                );
+                if (driveData) {
+                    downloadUrl = driveData.webViewLink;
+                    driveId = driveData.id;
+                    thumbnailUrl = driveData.thumbnailLink;
+                }
+            } catch (error) {
+                console.warn('Google Drive upload failed, using local download URL:', error.message);
+            }
+        }
+
+        // Update asset with actual URL & driveId
+        const updatedAsset = await this.prisma.asset.update({
+            where: { id: asset.id },
+            data: {
+                url: downloadUrl,
+                driveId: driveId,
+                thumbnailUrl: thumbnailUrl,
+                status: 'ACTIVE'
+            }
+        });
+
+        return { pdfUrl: updatedAsset.url };
+    }
+
+    async sendContractEmail(data: any, user: any) {
+        const subject = `Propuesta Comercial y Contrato de Servicios - ${data.companyName}`;
+        const body = `
+            <div style="font-family: Arial, sans-serif; color: #333; line-height: 1.6; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #eee; border-radius: 8px;">
+                <h2 style="color: #111; border-bottom: 2px solid #A3FF00; padding-bottom: 10px;">Propuesta y Contrato de Servicios Tecnológicos</h2>
+                <p>Estimado(a) <strong>${data.clientName}</strong>,</p>
+                <p>Es un placer saludarle de parte del equipo de ingeniería. En seguimiento a nuestras conversaciones y el análisis de sus necesidades operativas, hemos formalizado la propuesta técnica y el acuerdo de servicios correspondiente para <strong>${data.companyName}</strong>.</p>
+                
+                <p>Nuestras soluciones integran y licencian de forma nativa los motores propietarios <strong>Silhouette OS</strong> y <strong>CausalOS-Python</strong>, proporcionando una base robusta, segura y de alto rendimiento que servirá de infraestructura para su proyecto.</p>
+
+                <p>Puede descargar el documento del Contrato Marco y el Anexo Técnico (SOW) detallado haciendo clic en el siguiente enlace:</p>
+                
+                <div style="text-align: center; margin: 30px 0;">
+                    <a href="${data.pdfUrl}" style="background-color: #111; color: #A3FF00; padding: 12px 24px; text-decoration: none; font-weight: bold; border-radius: 6px; border: 1px solid #A3FF00; display: inline-block; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
+                        DESCARGAR CONTRATO Y PROPUESTA (PDF)
+                    </a>
+                </div>
+
+                <p style="font-size: 0.9rem; color: #666;">Nota: Si tiene problemas con el botón, puede copiar y pegar el siguiente enlace en su navegador: <br/> ${data.pdfUrl}</p>
+
+                <p>Por favor, revise los términos, alcances y el cronograma de hitos. Una vez conforme, puede firmar digitalmente o hacernos llegar el documento rubricado para dar inicio inmediato a la fase de planificación y despliegue del proyecto.</p>
+
+                <p>Quedamos a su entera disposición para cualquier aclaración o ajuste técnico.</p>
+
+                <hr style="border: 0; border-top: 1px solid #eee; margin: 30px 0;" />
+                <p style="margin: 0;">Atentamente,</p>
+                <p style="margin: 5px 0 0 0; font-weight: bold; color: #111;">Alberto Farah Blair</p>
+                <p style="margin: 0; font-size: 0.9rem; color: #666;">AI & Automation Architect</p>
+            </div>
+        `;
+
+        await this.gmailService.sendEmail(user.id, {
+            to: data.to,
+            subject: subject,
+            body: body,
+            isHtml: true
+        });
+
+        // Log contract email send in the audit trail
+        try {
+            await this.prisma.auditLog.create({
+                data: {
+                    action: 'SEND_CONTRACT_EMAIL',
+                    userId: user.id,
+                    details: {
+                        recipient: data.to,
+                        clientName: data.clientName,
+                        companyName: data.companyName,
+                        pdfUrl: data.pdfUrl
+                    }
+                }
+            });
+        } catch (auditError) {
+            console.error('Failed to write contract email send audit log:', auditError.message);
+        }
+
+
+        return { success: true };
+    }
+
+    async downloadContractFile(id: string) {
+        const asset = await this.prisma.asset.findUnique({
+            where: { id }
+        });
+        if (!asset) {
+            throw new NotFoundException('Contract asset not found');
+        }
+
+        const filePath = path.join(__dirname, '..', '..', 'uploads', 'contracts', `${id}.pdf`);
+        if (!fs.existsSync(filePath)) {
+            throw new NotFoundException('Physical contract PDF file not found');
+        }
+
+        const buffer = fs.readFileSync(filePath);
+        return {
+            buffer,
+            fileName: `${asset.name}.pdf`
+        };
+    }
 }
+

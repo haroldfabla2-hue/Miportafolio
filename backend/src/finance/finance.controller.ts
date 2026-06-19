@@ -6,6 +6,8 @@ import { UseGuards } from '@nestjs/common';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 import { PermissionGuard } from '../guards/permission.guard';
 import { RequiresPermission } from '../decorators/requires-permission.decorator';
+import { Public } from '../auth/public.decorator';
+
 
 @UseGuards(JwtAuthGuard, PermissionGuard)
 @Controller('finance')
@@ -165,4 +167,31 @@ export class FinanceController {
     createTimeLog(@Body() data: any) {
         return this.financeService.createTimeLog(data);
     }
+
+    @Post('contracts/generate')
+    @RequiresPermission('finance:manage')
+    async generateContract(@Body() data: any, @Req() req: any) {
+        return this.financeService.generateContractPdf(data, req.user);
+    }
+
+    @Post('contracts/send')
+    @RequiresPermission('finance:manage')
+    async sendContract(@Body() data: any, @Req() req: any) {
+        return this.financeService.sendContractEmail(data, req.user);
+    }
+
+    @Public()
+    @Get('contracts/download/:id')
+    async downloadContract(@Param('id') id: string, @Res() res: Response) {
+        const { buffer, fileName } = await this.financeService.downloadContractFile(id);
+
+        res.set({
+            'Content-Type': 'application/pdf',
+            'Content-Disposition': `attachment; filename="${fileName}"`,
+            'Content-Length': buffer.length,
+        });
+        res.end(buffer);
+    }
 }
+
+

@@ -4,11 +4,13 @@ import { FinanceController } from './finance.controller';
 import { PdfService } from './pdf.service';
 import { PermissionsModule } from '../permissions/permissions.module';
 import { PermissionGuard } from '../guards/permission.guard';
+import { GoogleModule } from '../google/google.module';
 
 @Module({
-    imports: [PermissionsModule],
+    imports: [PermissionsModule, GoogleModule],
     controllers: [FinanceController],
     providers: [FinanceService, PdfService, PermissionGuard],
     exports: [FinanceService, PdfService],
 })
 export class FinanceModule { }
+

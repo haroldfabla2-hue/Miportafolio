@@ -50,6 +50,9 @@ const ContentEditor = lazy(() => import('./admin/pages/ContentEditor'));
 const ReportsHub = lazy(() => import('./admin/pages/ReportsHub'));
 const ActivityLogsPage = lazy(() => import('./admin/pages/ActivityLogs'));
 const SystemHealthPage = lazy(() => import('./admin/pages/SystemHealth'));
+const CostCalculator = lazy(() => import('./admin/pages/CostCalculator'));
+const ContractGenerator = lazy(() => import('./admin/pages/ContractGenerator'));
+
 
 import { AuthProvider } from './context/AuthContext';
 import { SocketProvider } from './context/SocketContext';
@@ -103,7 +106,10 @@ function App() {
                   <Route path="finance" element={<AdminFinancePage />} />
                   <Route path="finance/bills" element={<BillManager />} />
                   <Route path="finance/invoice-designer" element={<InvoiceDesigner />} />
+                  <Route path="cost-calculator" element={<CostCalculator />} />
+                  <Route path="contracts" element={<ContractGenerator />} />
                   <Route path="pipeline" element={<AdminPipelinePage />} />
+
                   <Route path="iris" element={<AdminIrisPage />} />
                   <Route path="oracle" element={<AdminOraclePage />} />
                   <Route path="reports" element={<ReportsHub />} />

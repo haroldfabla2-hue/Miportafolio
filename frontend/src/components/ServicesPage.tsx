@@ -2,6 +2,7 @@ import React, { useRef } from 'react';
 import { motion, useScroll, useTransform, MotionValue, useMotionValue, useSpring } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
 import SEO from './SEO';
+import RoiCalculator from './RoiCalculator';
 
 // Reusable 3D Tilt Wrapper
 const TiltWrapper: React.FC<{ children: React.ReactNode; className?: string; style?: React.CSSProperties }> = ({ children, className, style }) => {
@@ -333,6 +334,22 @@ const ServicesPage: React.FC = () => {
                     </div>
                 </div>
             </section>
+
+            {/* Calculadora de ROI Section */}
+            <section style={{ marginBottom: '20vh', padding: '0 var(--spacing-lg)' }}>
+                <div style={{ maxWidth: '1000px', margin: '0 auto' }}>
+                    <div style={{ textAlign: 'center', marginBottom: '3rem' }}>
+                        <h2 style={{ fontSize: 'clamp(2rem, 4vw, 3rem)', color: '#fff', fontWeight: 900, textTransform: 'uppercase' }}>
+                            Audita tus <span style={{ color: 'var(--color-accent)' }}>Ahorros en Software</span>
+                        </h2>
+                        <p style={{ color: '#999', fontSize: '1.2rem', marginTop: '1rem' }}>
+                            Descubre el impacto financiero directo al eliminar la tarifa por tarea y automatizar flujos.
+                        </p>
+                    </div>
+                    <RoiCalculator />
+                </div>
+            </section>
+
             {/* Impact & Case Studies Section */}
             <section style={{ marginBottom: '20vh', padding: '0 var(--spacing-lg)' }}>
                 <div style={{ maxWidth: '1000px', margin: '0 auto' }}>

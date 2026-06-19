@@ -56,8 +56,11 @@ const navItems = [
     { type: 'divider' },
     { type: 'section', label: 'Business' },
     { id: 'finance', label: 'Finance', icon: 'finance', path: '/admin/finance', permission: 'finance:view' },
+    { id: 'cost-calculator', label: 'WBS Calculator', icon: 'finance', path: '/admin/cost-calculator', permission: 'finance:view' },
+    { id: 'contract-generator', label: 'Contract Gen', icon: 'files', path: '/admin/contracts', permission: 'finance:view' },
     { id: 'pipeline', label: 'Pipeline', icon: 'pipeline', path: '/admin/pipeline', permission: 'pipeline:view' },
     { type: 'divider' },
+
     { type: 'section', label: 'Intelligence' },
     { id: 'iris', label: 'Iris AI', icon: 'iris', path: '/admin/iris', permission: 'iris:access' },
     { id: 'oracle', label: 'Oracle', icon: 'oracle', path: '/admin/oracle', permission: 'oracle:access' },
