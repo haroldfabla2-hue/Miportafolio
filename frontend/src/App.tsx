@@ -18,6 +18,7 @@ import ContactPage from './components/ContactPage';
 import ScrollToTop from './components/ScrollToTop';
 import BlogPage from './components/BlogPage';
 import BlogPost from './components/BlogPost';
+import SilhouettePage from './components/SilhouettePage';
 
 // Admin pages — lazy-loaded for code splitting
 const JoinPage = lazy(() => import('./admin/pages/JoinPage'));
@@ -146,6 +147,7 @@ function App() {
             <Routes location={location} key={location.pathname}>
               <Route path="/" element={<Home />} />
               <Route path="/projects" element={<ProjectsPage />} />
+              <Route path="/projects/silhouette" element={<SilhouettePage />} />
               <Route path="/services" element={<ServicesPage />} />
               <Route path="/about" element={<AboutPage />} />
               <Route path="/blog" element={<BlogPage />} />

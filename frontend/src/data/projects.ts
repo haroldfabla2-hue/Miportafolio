@@ -84,8 +84,8 @@ export const projects: Project[] = [
     {
         title: "Silhouette Agency OS",
         year: "2026",
-        url: "https://github.com/haroldfabla2-hue/Silhouette-Agency-OS-OpenSource",
-        image: "/projects/github-repo.svg",
+        url: "/projects/silhouette",
+        image: "/projects/silhouette-mockup.png",
         description: "Autonomous Cognitive Operating System for Creative Agencies. An open-source release showcasing advanced system architecture.",
         role: "Creator & Lead Architect",
         services: ["Open Source", "Cognitive OS", "AI Agents"]
