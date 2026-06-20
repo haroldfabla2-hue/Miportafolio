@@ -32,3 +32,15 @@ Archivo de seguimiento de tareas y progreso (Solo adición).
     - **Frontend**: Consolidado componente `Oracle.tsx` con UI premium, gráficos de Recharts y integración con el AI Advisor (CFO Persona).
     - **Limpieza**: Eliminado `OracleView.tsx` redundante y actualizado `AppModule`.
 - **Estado**: ✅ Completado y aprobado por el Senior.
+
+## [2026-06-20] CMS Upgrade: Settings, Taxonomies and Custom Fields (Iris Module)
+- **Tarea**: Crear el dashboard interactivo de configuración del CMS ("Iris") que sea autogestionable y dinámico sin migraciones de base de datos recurrentes.
+- **Acciones**:
+    - **Base de Datos**: Modificado `schema.prisma` agregando `CmsSettings`, `Taxonomy`, `TaxonomyTerm`, `ContentTaxonomyTerm` (pivot), `CustomFieldDefinition` y `PublishingWebhook`.
+    - **Backend**: Creado `CmsSettingsService` y `CmsSettingsController` para el CRUD de configuraciones, webhooks, taxonomías y custom fields.
+    - **Backend**: Creado `SeoService` y `SeoController` para despachar `sitemap.xml`, `robots.txt` y `rss.xml` dinámicos desde la base de datos de producción con caching adaptativo en memoria.
+    - **Backend**: Extendido `CmsService` para persistir `customFields` en transacciones Prisma y despachar webhooks automatizados con firmas HMAC `X-Hub-Signature-256`.
+    - **Frontend**: Creado `SettingsCms.tsx` con UI premium glassmorphism y 5 pestañas de control.
+    - **Frontend**: Integrado `ContentEditor.tsx` para cargar dinámicamente taxonomías y custom fields por tipo de contenido, renderizando inputs y tags en el formulario de edición y enviándolos en el payload.
+    - **Frontend**: Configurada la ruta en `App.tsx` y el enlace en el menú lateral de `Settings.tsx`.
+- **Estado**: ✅ Completado. Compilación exitosa en frontend y backend sin errores.

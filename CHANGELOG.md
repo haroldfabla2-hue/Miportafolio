@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.1.0] - 2026-06-20
+### Added
+- CMS Interactive Settings module ("Iris") with dynamic schema fields.
+- Dynamic Sitemap.xml, Robots.txt, and RSS.xml generators in backend with in-memory caching.
+- Custom field inputs in Content Editor rendering dynamically based on content types.
+- Webhooks automation dispatching POST payloads with HMAC-SHA256 signatures on content publishing.
+- Relationship-based taxonomies (categories and tags) managed from the admin panel.
+
 ## [1.0.0] - 2026-02-15
 ### Added
 - Oracle 2.0 Predictive Engine.

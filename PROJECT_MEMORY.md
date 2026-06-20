@@ -35,6 +35,7 @@ Al inicio de cada sesión, o cuando se te indique cargar el contexto del proyect
     *   AI Core Revolution: Integrado **Minimax 2.5** como proveedor primario, con fallback jerárquico (Minimax -> Kimi -> Gemini -> Zhipu) y protocolo de consistencia de lenguaje.
     *   Infraestructura: Repositorio GitHub creado y código sincronizado.
     *   **Oracle 2.0 Port**: Motor de simulación financiera y AI Strategic Advisor migrados exitosamente desde Brandistry a MiWeb (Backend secured, Frontend consolidado).
+    *   **CMS Iris Module Upgrade**: Implementado el panel interactivo del CMS con soporte para taxonomías dinámicas y custom fields sobre Postgres JSONB, endpoints de SEO dinámicos y webhooks automatizados con firmas HMAC (Junio 2026).
 
 ---
 
