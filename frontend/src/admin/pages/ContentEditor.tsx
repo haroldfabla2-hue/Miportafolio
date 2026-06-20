@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { cmsAdminApi } from '../../services/api';
+import { cmsAdminApi, authFetch } from '../../services/api';
 
 // Content type options
 const contentTypes = [
@@ -48,6 +48,46 @@ const ContentEditor: React.FC = () => {
     const [serviceInput, setServiceInput] = useState('');
     const [previewOpen, setPreviewOpen] = useState(false);
 
+    // CMS Settings & Taxonomies States
+    const [taxonomies, setTaxonomies] = useState<any[]>([]);
+    const [customFieldDefinitions, setCustomFieldDefinitions] = useState<any[]>([]);
+    const [selectedTermIds, setSelectedTermIds] = useState<number[]>([]);
+    const [customFieldValues, setCustomFieldValues] = useState<Record<string, any>>({});
+
+    const fetchTaxonomies = async () => {
+        try {
+            const res = await authFetch('/api/cms-settings/taxonomies');
+            if (res.ok) {
+                const data = await res.json();
+                setTaxonomies(data);
+            }
+        } catch (err) {
+            console.error('Error fetching taxonomies:', err);
+        }
+    };
+
+    const fetchFieldDefinitions = async (type: string) => {
+        try {
+            const res = await authFetch(`/api/cms-settings/custom-fields?contentType=${type}`);
+            if (res.ok) {
+                const data = await res.json();
+                setCustomFieldDefinitions(data);
+            }
+        } catch (err) {
+            console.error('Error fetching custom field definitions:', err);
+        }
+    };
+
+    useEffect(() => {
+        fetchTaxonomies();
+    }, []);
+
+    useEffect(() => {
+        if (formData.type) {
+            fetchFieldDefinitions(formData.type);
+        }
+    }, [formData.type]);
+
     // Load content if editing
     useEffect(() => {
         if (isEditing && id) {
@@ -76,6 +116,9 @@ const ContentEditor: React.FC = () => {
                     services: content.metadata?.services || [],
                 },
             });
+            const termIds = content.taxonomies?.map((t: any) => t.termId) || [];
+            setSelectedTermIds(termIds);
+            setCustomFieldValues(content.customFields || {});
         } catch (err: any) {
             console.error('Failed to load content:', err);
             setError('Failed to load content');
@@ -150,6 +193,8 @@ const ContentEditor: React.FC = () => {
         try {
             const dataToSave = {
                 ...formData,
+                customFields: customFieldValues,
+                taxonomyTermIds: selectedTermIds,
                 status: publish ? 'PUBLISHED' : formData.status,
                 publishedAt: publish ? new Date().toISOString() : undefined,
             };
@@ -310,6 +355,108 @@ const ContentEditor: React.FC = () => {
                             }}
                         />
                     </div>
+
+                    {/* Custom Fields Card */}
+                    {customFieldDefinitions.length > 0 && (
+                        <div className="admin-card">
+                            <h3 style={{ fontSize: '0.9rem', fontWeight: 600, marginBottom: '1rem', color: '#fff' }}>
+                                ⚙️ Custom Fields
+                            </h3>
+                            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1.25rem' }}>
+                                {customFieldDefinitions.map(field => {
+                                    const val = customFieldValues[field.key] ?? '';
+                                    return (
+                                        <div key={field.id} style={{ display: 'flex', flexDirection: 'column' }}>
+                                            <label style={{ display: 'block', fontSize: '0.75rem', fontWeight: 600, color: '#888', marginBottom: '0.5rem', textTransform: 'uppercase' }}>
+                                                {field.label} {field.required && <span style={{ color: '#ef4444' }}>*</span>}
+                                            </label>
+                                            
+                                            {field.fieldType === 'TEXTAREA' ? (
+                                                <textarea
+                                                    value={val}
+                                                    onChange={(e) => setCustomFieldValues(prev => ({ ...prev, [field.key]: e.target.value }))}
+                                                    rows={3}
+                                                    style={{
+                                                        width: '100%',
+                                                        padding: '0.5rem',
+                                                        borderRadius: '6px',
+                                                        border: '1px solid var(--admin-border-color)',
+                                                        background: 'var(--admin-bg)',
+                                                        color: '#fff',
+                                                        resize: 'vertical'
+                                                    }}
+                                                />
+                                            ) : field.fieldType === 'BOOLEAN' ? (
+                                                <div style={{ display: 'flex', alignItems: 'center', height: '100%' }}>
+                                                    <button
+                                                        type="button"
+                                                        onClick={() => setCustomFieldValues(prev => ({ ...prev, [field.key]: !prev[field.key] }))}
+                                                        style={{
+                                                            width: '44px',
+                                                            height: '24px',
+                                                            borderRadius: '12px',
+                                                            background: val ? 'var(--color-accent, #A3FF00)' : 'rgba(255, 255, 255, 0.1)',
+                                                            position: 'relative',
+                                                            cursor: 'pointer',
+                                                            border: 'none',
+                                                            transition: 'background 0.3s'
+                                                        }}
+                                                    >
+                                                        <span style={{
+                                                            width: '18px',
+                                                            height: '18px',
+                                                            borderRadius: '50%',
+                                                            background: val ? '#000' : '#fff',
+                                                            position: 'absolute',
+                                                            top: '3px',
+                                                            left: val ? '23px' : '3px',
+                                                            transition: 'all 0.3s'
+                                                        }} />
+                                                    </button>
+                                                </div>
+                                            ) : field.fieldType === 'SELECT' ? (
+                                                <select
+                                                    value={val}
+                                                    onChange={(e) => setCustomFieldValues(prev => ({ ...prev, [field.key]: e.target.value }))}
+                                                    style={{
+                                                        width: '100%',
+                                                        padding: '0.5rem',
+                                                        borderRadius: '6px',
+                                                        border: '1px solid var(--admin-border-color)',
+                                                        background: 'var(--admin-bg)',
+                                                        color: '#fff'
+                                                    }}
+                                                >
+                                                    <option value="">Select option...</option>
+                                                    {field.options && field.options.map((opt: string) => (
+                                                        <option key={opt} value={opt}>{opt}</option>
+                                                    ))}
+                                                </select>
+                                            ) : (
+                                                <input
+                                                    type={field.fieldType === 'NUMBER' ? 'number' : field.fieldType === 'DATE' ? 'date' : 'text'}
+                                                    value={val}
+                                                    onChange={(e) => {
+                                                        const rawValue = e.target.value;
+                                                        const typedValue = field.fieldType === 'NUMBER' ? (rawValue ? parseFloat(rawValue) : '') : rawValue;
+                                                        setCustomFieldValues(prev => ({ ...prev, [field.key]: typedValue }));
+                                                    }}
+                                                    style={{
+                                                        width: '100%',
+                                                        padding: '0.5rem',
+                                                        borderRadius: '6px',
+                                                        border: '1px solid var(--admin-border-color)',
+                                                        background: 'var(--admin-bg)',
+                                                        color: '#fff'
+                                                    }}
+                                                />
+                                            )}
+                                        </div>
+                                    );
+                                })}
+                            </div>
+                        </div>
+                    )}
 
                     {/* SEO Section */}
                     <div className="admin-card">
@@ -482,6 +629,79 @@ const ContentEditor: React.FC = () => {
                             ))}
                         </div>
                     </div>
+
+                    {/* Taxonomies Card */}
+                    {taxonomies.filter(t => t.scope === 'GLOBAL' || t.scope === formData.type).length > 0 && (
+                        <div className="admin-card">
+                            <h3 style={{ fontSize: '0.9rem', fontWeight: 600, marginBottom: '1rem', color: '#fff' }}>
+                                🗂️ Taxonomies
+                            </h3>
+                            <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+                                {taxonomies
+                                    .filter(t => t.scope === 'GLOBAL' || t.scope === formData.type)
+                                    .map(tax => {
+                                        return (
+                                            <div key={tax.id}>
+                                                <label style={{ display: 'block', fontSize: '0.75rem', fontWeight: 600, color: '#888', marginBottom: '0.5rem', textTransform: 'uppercase' }}>
+                                                    {tax.name} {tax.isRequired && <span style={{ color: '#ef4444' }}>*</span>}
+                                                </label>
+                                                {tax.isMultiSelect ? (
+                                                    <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.4rem', background: 'var(--admin-bg)', padding: '0.6rem', borderRadius: '6px', border: '1px solid var(--admin-border-color)' }}>
+                                                        {tax.terms.map((term: any) => {
+                                                            const isChecked = selectedTermIds.includes(term.id);
+                                                            return (
+                                                                <label key={term.id} style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '0.75rem', cursor: 'pointer', background: isChecked ? 'rgba(163, 255, 0, 0.1)' : 'rgba(255,255,255,0.02)', border: isChecked ? '1px solid rgba(163, 255, 0, 0.3)' : '1px solid rgba(255,255,255,0.05)', padding: '4px 8px', borderRadius: '4px', color: isChecked ? '#a3ff00' : '#888', userSelect: 'none' }}>
+                                                                    <input
+                                                                        type="checkbox"
+                                                                        checked={isChecked}
+                                                                        onChange={(e) => {
+                                                                            if (e.target.checked) {
+                                                                                setSelectedTermIds(prev => [...prev, term.id]);
+                                                                            } else {
+                                                                                setSelectedTermIds(prev => prev.filter(id => id !== term.id));
+                                                                            }
+                                                                        }}
+                                                                        style={{ display: 'none' }}
+                                                                    />
+                                                                    {term.name}
+                                                                </label>
+                                                            );
+                                                        })}
+                                                        {tax.terms.length === 0 && <span style={{ fontSize: '0.75rem', color: '#555' }}>No terms defined.</span>}
+                                                    </div>
+                                                ) : (
+                                                    <select
+                                                        value={selectedTermIds.find(id => tax.terms.some((term: any) => term.id === id)) || ''}
+                                                        onChange={(e) => {
+                                                            const val = e.target.value ? parseInt(e.target.value, 10) : null;
+                                                            const cleaned = selectedTermIds.filter(id => !tax.terms.some((term: any) => term.id === id));
+                                                            if (val) {
+                                                                setSelectedTermIds([...cleaned, val]);
+                                                            } else {
+                                                                setSelectedTermIds(cleaned);
+                                                            }
+                                                        }}
+                                                        style={{
+                                                            width: '100%',
+                                                            padding: '0.5rem',
+                                                            borderRadius: '6px',
+                                                            border: '1px solid var(--admin-border-color)',
+                                                            background: 'var(--admin-bg)',
+                                                            color: '#fff'
+                                                        }}
+                                                    >
+                                                        <option value="">Select term...</option>
+                                                        {tax.terms.map((term: any) => (
+                                                            <option key={term.id} value={term.id}>{term.name}</option>
+                                                        ))}
+                                                    </select>
+                                                )}
+                                            </div>
+                                        );
+                                    })}
+                            </div>
+                        </div>
+                    )}
 
                     {/* Portfolio-specific fields */}
                     {isPortfolio && (

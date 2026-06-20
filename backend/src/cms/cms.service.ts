@@ -1,5 +1,6 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
+import * as crypto from 'crypto';
 
 interface FindAllOptions {
     type?: string;
@@ -34,6 +35,17 @@ export class CmsService {
                 type: 'PORTFOLIO',
                 status: { mode: 'insensitive', equals: 'published' }
             },
+            include: {
+                taxonomies: {
+                    include: {
+                        term: {
+                            include: {
+                                taxonomy: true
+                            }
+                        }
+                    }
+                }
+            },
             orderBy: { publishedAt: 'desc' }
         });
     }
@@ -44,13 +56,35 @@ export class CmsService {
                 type: { mode: 'insensitive', equals: 'blog' },
                 status: { mode: 'insensitive', equals: 'published' }
             },
+            include: {
+                taxonomies: {
+                    include: {
+                        term: {
+                            include: {
+                                taxonomy: true
+                            }
+                        }
+                    }
+                }
+            },
             orderBy: { publishedAt: 'desc' }
         });
     }
 
     async getBySlug(slug: string) {
         const content = await this.prisma.cmsContent.findUnique({
-            where: { slug }
+            where: { slug },
+            include: {
+                taxonomies: {
+                    include: {
+                        term: {
+                            include: {
+                                taxonomy: true
+                            }
+                        }
+                    }
+                }
+            }
         });
         if (!content || content.status?.toLowerCase() !== 'published') return null;
         return content;
@@ -84,6 +118,17 @@ export class CmsService {
         const [items, total] = await Promise.all([
             this.prisma.cmsContent.findMany({
                 where,
+                include: {
+                    taxonomies: {
+                        include: {
+                            term: {
+                                include: {
+                                    taxonomy: true
+                                }
+                            }
+                        }
+                    }
+                },
                 orderBy: { updatedAt: 'desc' },
                 skip,
                 take: limit,
@@ -109,7 +154,18 @@ export class CmsService {
 
     async findOne(id: string) {
         const content = await this.prisma.cmsContent.findUnique({
-            where: { id }
+            where: { id },
+            include: {
+                taxonomies: {
+                    include: {
+                        term: {
+                            include: {
+                                taxonomy: true
+                            }
+                        }
+                    }
+                }
+            }
         });
         if (!content) {
             throw new NotFoundException(`Content with ID ${id} not found`);
@@ -119,6 +175,8 @@ export class CmsService {
 
     async create(data: any) {
         const createData = { ...data };
+        const taxonomyTermIds: number[] = createData.taxonomyTermIds || [];
+        delete createData.taxonomyTermIds;
 
         if (createData.type) {
             createData.type = this.normalizeType(createData.type);
@@ -138,13 +196,36 @@ export class CmsService {
         }
 
         const dataWithTranslations = await this.appendEnglishTranslation(createData);
-        return this.prisma.cmsContent.create({ data: dataWithTranslations });
+
+        const content = await this.prisma.$transaction(async (tx) => {
+            const created = await tx.cmsContent.create({
+                data: {
+                    ...dataWithTranslations,
+                    customFields: data.customFields || {}
+                }
+            });
+
+            if (taxonomyTermIds.length > 0) {
+                await tx.contentTaxonomyTerm.createMany({
+                    data: taxonomyTermIds.map(termId => ({
+                        contentId: created.id,
+                        termId
+                    }))
+                });
+            }
+
+            return created;
+        });
+
+        return this.findOne(content.id);
     }
 
     async update(id: string, data: any) {
         // Verify content exists
         const existing = await this.findOne(id);
         const updateData = { ...data };
+        const taxonomyTermIds: number[] = updateData.taxonomyTermIds;
+        delete updateData.taxonomyTermIds;
 
         if (updateData.type) {
             updateData.type = this.normalizeType(updateData.type);
@@ -164,10 +245,38 @@ export class CmsService {
 
         const dataWithTranslations = await this.appendEnglishTranslation(updateData, existing);
 
-        return this.prisma.cmsContent.update({
-            where: { id },
-            data: dataWithTranslations
+        const content = await this.prisma.$transaction(async (tx) => {
+            const updated = await tx.cmsContent.update({
+                where: { id },
+                data: {
+                    ...dataWithTranslations,
+                    customFields: data.customFields !== undefined ? data.customFields : undefined
+                }
+            });
+
+            if (taxonomyTermIds !== undefined) {
+                await tx.contentTaxonomyTerm.deleteMany({
+                    where: { contentId: id }
+                });
+
+                if (taxonomyTermIds.length > 0) {
+                    await tx.contentTaxonomyTerm.createMany({
+                        data: taxonomyTermIds.map(termId => ({
+                            contentId: id,
+                            termId
+                        }))
+                    });
+                }
+            }
+
+            return updated;
         });
+
+        if (content.status?.toUpperCase() === 'PUBLISHED') {
+            await this.dispatchWebhooks(content, 'CONTENT_UPDATED');
+        }
+
+        return this.findOne(id);
     }
 
     async delete(id: string) {
@@ -193,10 +302,64 @@ export class CmsService {
             }
         }
 
-        return this.prisma.cmsContent.update({
+        const content = await this.prisma.cmsContent.update({
             where: { id },
             data: updateData,
         });
+
+        if (publish) {
+            await this.dispatchWebhooks(content, 'CONTENT_PUBLISHED');
+        }
+
+        return content;
+    }
+
+    private async dispatchWebhooks(content: any, event: 'CONTENT_PUBLISHED' | 'CONTENT_UPDATED') {
+        try {
+            const webhooks = await this.prisma.publishingWebhook.findMany({
+                where: {
+                    active: true,
+                    contentTypes: { has: content.type.toUpperCase() },
+                    events: { has: event }
+                }
+            });
+
+            if (webhooks.length === 0) return;
+
+            const payload = {
+                id: content.id,
+                title: content.title,
+                slug: content.slug,
+                type: content.type,
+                event,
+                publishedAt: content.publishedAt,
+                url: `${content.type.toUpperCase() === 'BLOG' ? '/blog/' : '/projects/'}${content.slug}`
+            };
+
+            webhooks.forEach(async (webhook) => {
+                try {
+                    const headers: Record<string, string> = {
+                        'Content-Type': 'application/json',
+                    };
+
+                    if (webhook.secret) {
+                        const hmac = crypto.createHmac('sha256', webhook.secret);
+                        hmac.update(JSON.stringify(payload));
+                        headers['X-Hub-Signature-256'] = `sha256=${hmac.digest('hex')}`;
+                    }
+
+                    await fetch(webhook.url, {
+                        method: 'POST',
+                        headers,
+                        body: JSON.stringify(payload),
+                    });
+                } catch (error) {
+                    console.error(`[CMS Webhook] Failed to send to ${webhook.name} (${webhook.url}):`, error);
+                }
+            });
+        } catch (error) {
+            console.error('[CMS Webhook] Dispatch error:', error);
+        }
     }
 
     // --- UTILITY METHODS ---

@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { authFetch } from '../../services/api';
 
 // Settings sections
-type SettingsSection = 'profile' | 'google' | 'integrations' | 'api' | 'notifications' | 'appearance';
+type SettingsSection = 'profile' | 'google' | 'integrations' | 'api' | 'notifications' | 'appearance' | 'cms';
 
 // Google connection status
 interface GoogleStatus {
@@ -27,6 +28,7 @@ interface Integration {
 }
 
 const SettingsPage: React.FC = () => {
+    const navigate = useNavigate();
     const [activeSection, setActiveSection] = useState<SettingsSection>('profile');
     const [profile, setProfile] = useState({
         name: 'Alberto Farah',
@@ -71,6 +73,7 @@ const SettingsPage: React.FC = () => {
         { id: 'api', label: 'API Keys', icon: '🔑' },
         { id: 'notifications', label: 'Notifications', icon: '🔔' },
         { id: 'appearance', label: 'Appearance', icon: '🎨' },
+        { id: 'cms', label: 'CMS Settings', icon: '📝' },
     ];
 
     // Check for Google OAuth callback
@@ -175,7 +178,13 @@ const SettingsPage: React.FC = () => {
                     {sections.map(section => (
                         <button
                             key={section.id}
-                            onClick={() => setActiveSection(section.id as SettingsSection)}
+                            onClick={() => {
+                                if (section.id === 'cms') {
+                                    navigate('/admin/settings/cms');
+                                } else {
+                                    setActiveSection(section.id as SettingsSection);
+                                }
+                            }}
                             style={{
                                 display: 'flex', alignItems: 'center', gap: '0.75rem', width: '100%',
                                 padding: '0.875rem 1rem', borderRadius: '10px', border: 'none',

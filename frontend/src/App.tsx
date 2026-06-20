@@ -36,6 +36,7 @@ const NotificationsPage = lazy(() => import('./admin/pages/Notifications'));
 const AdminFilesPage = lazy(() => import('./admin/pages/Files'));
 const AdminAssetsPage = lazy(() => import('./admin/pages/Assets'));
 const AdminSettingsPage = lazy(() => import('./admin/pages/Settings'));
+const AdminCmsSettingsPage = lazy(() => import('./admin/pages/SettingsCms'));
 const AdminIrisPage = lazy(() => import('./admin/pages/Iris'));
 const AdminOraclePage = lazy(() => import('./admin/pages/Oracle'));
 const AdminPipelinePage = lazy(() => import('./admin/pages/PipelineView'));
@@ -117,6 +118,7 @@ function App() {
                   <Route path="tickets" element={<AdminTicketsPage />} />
                   <Route path="notifications" element={<NotificationsPage />} />
                   <Route path="settings" element={<AdminSettingsPage />} />
+                  <Route path="settings/cms" element={<AdminCmsSettingsPage />} />
                   <Route path="settings/roles" element={<RoleManagement />} />
                   <Route path="activity-logs" element={<ActivityLogsPage />} />
                   <Route path="calendar" element={<AdminCalendarPage />} />

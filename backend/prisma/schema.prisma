@@ -353,6 +353,10 @@ model CmsContent {
   metadata    Json?    // Stores specific data like { year, url, role, services }
   coverImage  String?  // Main image of the project
   
+  // Custom Fields & Taxonomies
+  customFields Json?      // { "roi_obtenido": "250%", "duracion": "3 meses" }
+  taxonomies   ContentTaxonomyTerm[]
+
   // Publishing
   status      String   @default("DRAFT") // DRAFT, PUBLISHED, ARCHIVED
   publishedAt DateTime?
@@ -816,3 +820,131 @@ model Event {
 
   @@map("events")
 }
+
+// ==========================================
+// 13. INTERACTIVE CMS CONFIGURATIONS & SETTINGS
+// ==========================================
+
+model CmsSettings {
+  id               Int      @id @default(1) // singleton
+  siteName         String?
+  siteUrl          String?
+  seoDefaults      Json?    // meta templates, og defaults, index rules
+  mediaSettings    Json?    // max MB limits, autoResize, storage
+  publishingConfig Json?    // webhooks configs, standard options
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+
+  @@map("cms_settings")
+}
+
+enum TaxonomyKind {
+  CATEGORY
+  TAG
+}
+
+enum TaxonomyScope {
+  BLOG
+  PORTFOLIO
+  PAGE
+  REPORT
+  GLOBAL
+}
+
+model Taxonomy {
+  id            Int            @id @default(autoincrement())
+  slug          String         @unique
+  name          String
+  description   String?
+  kind          TaxonomyKind
+  scope         TaxonomyScope  @default(GLOBAL)
+  isRequired    Boolean        @default(false)
+  isMultiSelect Boolean        @default(true)
+  terms         TaxonomyTerm[]
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
+
+  @@map("taxonomies")
+}
+
+model TaxonomyTerm {
+  id          Int                   @id @default(autoincrement())
+  taxonomyId  Int
+  taxonomy    Taxonomy              @relation(fields: [taxonomyId], references: [id], onDelete: Cascade)
+  slug        String
+  name        String
+  description String?
+  contents    ContentTaxonomyTerm[]
+  createdAt   DateTime              @default(now())
+  updatedAt   DateTime              @updatedAt
+
+  @@unique([taxonomyId, slug])
+  @@map("taxonomy_terms")
+}
+
+model ContentTaxonomyTerm {
+  contentId String
+  termId    Int
+
+  content CmsContent   @relation(fields: [contentId], references: [id], onDelete: Cascade)
+  term    TaxonomyTerm @relation(fields: [termId], references: [id], onDelete: Cascade)
+
+  @@id([contentId, termId])
+  @@map("content_taxonomy_terms")
+}
+
+enum CustomFieldType {
+  TEXT
+  TEXTAREA
+  NUMBER
+  BOOLEAN
+  DATE
+  URL
+  SELECT
+  MULTISELECT
+}
+
+model CustomFieldDefinition {
+  id          Int             @id @default(autoincrement())
+  contentType String          // "BLOG", "PORTFOLIO", etc.
+  key         String          // "roi_obtenido"
+  label       String          // "ROI obtenido"
+  description String?
+  fieldType   CustomFieldType
+  required    Boolean         @default(false)
+  options     Json?           // select options
+  order       Int             @default(0)
+  createdAt   DateTime        @default(now())
+  updatedAt   DateTime        @updatedAt
+
+  @@unique([contentType, key])
+  @@map("custom_field_definitions")
+}
+
+enum WebhookEvent {
+  CONTENT_PUBLISHED
+  CONTENT_UPDATED
+}
+
+enum WebhookTarget {
+  SLACK
+  DISCORD
+  ZAPIER
+  CUSTOM
+}
+
+model PublishingWebhook {
+  id           Int            @id @default(autoincrement())
+  name         String
+  target       WebhookTarget
+  url          String
+  secret       String?        // HMAC secret
+  active       Boolean        @default(true)
+  contentTypes String[]       @default([]) // "BLOG", "PORTFOLIO", etc.
+  events       WebhookEvent[] @default([])
+  createdAt    DateTime       @default(now())
+  updatedAt    DateTime       @updatedAt
+
+  @@map("publishing_webhooks")
+}
+
