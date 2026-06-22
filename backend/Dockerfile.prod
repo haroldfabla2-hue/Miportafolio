@@ -1,42 +1,59 @@
 # Production Dockerfile for MiWeb Backend (Distroless)
 # Multi-stage build for Zero-Trust minimal attack surface
 
-# Build stage
+# Stage 1: Build the application and generate Prisma Client
 FROM node:20-bullseye-slim AS builder
 
 WORKDIR /app
 
-# Copy package files
+# Copy dependency definitions and prisma schema
 COPY package*.json ./
 COPY prisma ./prisma/
 
-# Install dependencies
+# Install all dependencies (including devDependencies for compilation)
 RUN npm ci
 
-# Copy source code
+# Copy application source code
 COPY . .
 
-# Generate Prisma client and build
+# Generate Prisma Client and build the NestJS application
 RUN npx prisma generate
 RUN npm run build
 
-# Production dependencies only
-RUN npm ci --only=production && npm cache clean --force
-RUN npx prisma generate
+# Stage 2: Install production dependencies only
+FROM node:20-bullseye-slim AS prod-deps
 
-# Production runtime stage (Distroless)
+WORKDIR /app
+
+COPY package*.json ./
+COPY prisma ./prisma/
+
+# Install only production dependencies, skipping the postinstall script to prevent
+# errors due to the absence of the devDependency 'prisma' CLI.
+RUN PRISMA_GENERATE_SKIP_POSTINSTALL=1 npm ci --only=production && npm cache clean --force
+
+# Stage 3: Minimal production runtime using Distroless Node.js
 FROM gcr.io/distroless/nodejs20-debian11 AS production
 
 WORKDIR /app
 
-# Copy package files
+# Copy production package files
 COPY --from=builder /app/package*.json ./
-COPY --from=builder /app/node_modules ./node_modules
+
+# Copy clean production dependencies
+COPY --from=prod-deps /app/node_modules ./node_modules
+
+# Copy the pre-generated Prisma Client artifacts from the builder stage
+# (This ensures the compiled client is present in production without needing the CLI)
+COPY --from=builder /app/node_modules/.prisma ./node_modules/.prisma
+COPY --from=builder /app/node_modules/@prisma/client ./node_modules/@prisma/client
+
+# Copy prisma schema and built application
 COPY --from=builder /app/prisma ./prisma
 COPY --from=builder /app/dist ./dist
 
-# Expose port
+# Expose backend service port
 EXPOSE 3001
 
-# Run application
+# Execute the NestJS main entrypoint
 CMD ["dist/main.js"]
