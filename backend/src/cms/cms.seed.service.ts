@@ -52,7 +52,7 @@ export class CmsSeedService {
                 title: "BSSN USA",
                 year: "2024",
                 url: "https://bssnusa.com/",
-                image: "/projects/project-5.png",
+                image: "/projects/bssn-usa.png",
                 description: "A robust digital platform for a security and solutions network. Key features include secure client portals and real-time service tracking.",
                 role: "Lead Developer",
                 services: ["Web App", "Security Integration"]
@@ -97,7 +97,7 @@ export class CmsSeedService {
                 title: "Silhouette Framework v4",
                 year: "2026",
                 url: "https://github.com/haroldfabla2-hue/framework-silhouette-v4",
-                image: "/projects/github-repo.svg",
+                image: "/projects/silhouette-framework.png",
                 description: "Intelligent enterprise framework featuring 46+ specialized AI teams, auto-optimization, dynamic workflows, and 24/7 intelligent monitoring.",
                 role: "Creator",
                 services: ["Enterprise Architecture", "AI/ML Integration", "Workflows"]
@@ -106,7 +106,7 @@ export class CmsSeedService {
                 title: "Silhouette Brain",
                 year: "2026",
                 url: "https://github.com/haroldfabla2-hue/silhouette-brain",
-                image: "/projects/github-repo.svg",
+                image: "/projects/silhouette-brain.png",
                 description: "Advanced cognitive memory system (4-Tier Memory) for AI Agents, utilizing graph databases and vectorization for deep context retrieval.",
                 role: "AI Engineer",
                 services: ["Vector Databases", "Graph RAG", "Memory Systems"]
@@ -114,8 +114,8 @@ export class CmsSeedService {
             {
                 title: "Contract Generator SaaS",
                 year: "2026",
-                url: "https://github.com/haroldfabla2-hue/contract-generator-svc",
-                image: "/projects/github-repo.svg",
+                url: "https://cg.unityiris.com",
+                image: "/projects/contract-generator.png",
                 description: "AI-powered contract generation SaaS. Automates complex legal drafting workflows using Large Language Models.",
                 role: "Full Stack Developer",
                 services: ["SaaS", "LLM Integration", "Backend Services"]

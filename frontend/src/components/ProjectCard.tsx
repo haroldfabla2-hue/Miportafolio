@@ -11,6 +11,8 @@ interface ProjectCardProps {
 
 const ProjectCard: React.FC<ProjectCardProps> = ({ project, index }) => {
     const isInternal = project.url.startsWith('/');
+    const isGithub = project.url.includes('github.com');
+    const showImage = isInternal || isGithub || (project.image && project.image !== '/projects/placeholder.png' && project.image !== '/projects/github-repo.svg');
 
     return (
         <motion.div
@@ -84,7 +86,7 @@ const ProjectCard: React.FC<ProjectCardProps> = ({ project, index }) => {
                     <div style={{ width: '10px', height: '10px', borderRadius: '50%', backgroundColor: '#27c93f' }} />
 
                     {/* Reload Button */}
-                    {!isInternal && (
+                    {!showImage && (
                         <div
                             title="Reload Preview"
                             onClick={(e) => {
@@ -127,7 +129,7 @@ const ProjectCard: React.FC<ProjectCardProps> = ({ project, index }) => {
                         overflow: 'hidden'
                     }}
                 >
-                    {isInternal ? (
+                    {showImage ? (
                         <img
                             src={project.image}
                             alt={project.title}
