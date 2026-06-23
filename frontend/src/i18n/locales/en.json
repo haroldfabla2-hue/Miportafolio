@@ -78,7 +78,9 @@
     "heroSubtitle": "A curated selection of digital experiences, websites, and brand identities crafted with precision and passion.",
     "errorLoading": "Unable to load projects. Please try again later.",
     "selectedWork": "Selected Work",
-    "viewAllProjects": "View All Projects"
+    "viewAllProjects": "View All Projects",
+    "openProject": "Open Project",
+    "viewLiveSite": "View Live Site"
   },
   "services": {
     "title": "Services",
@@ -87,17 +89,32 @@
     "comprehensiveSolutions": "Comprehensive digital solutions for modern businesses.",
     "webDesign": {
       "title": "Web Design",
-      "items": ["UI/UX Design", "Wireframing", "Prototyping", "Design Systems"],
+      "items": [
+        "UI/UX Design",
+        "Wireframing",
+        "Prototyping",
+        "Design Systems"
+      ],
       "description": "Crafting visually stunning and user-centric interfaces. I focus on aesthetic excellence paired with intuitive functionality to create digital experiences that captivate and convert."
     },
     "development": {
       "title": "Development",
-      "items": ["React / Next.js", "Animation", "CMS Integration", "eCommerce"],
+      "items": [
+        "React / Next.js",
+        "Animation",
+        "CMS Integration",
+        "eCommerce"
+      ],
       "description": "Turning designs into clean, efficient code using React, TypeScript, and modern animation libraries. Ensuring speed, SEO, and responsiveness."
     },
     "branding": {
       "title": "Branding",
-      "items": ["Logo Design", "Brand Identity", "Social Assets", "Guidelines"],
+      "items": [
+        "Logo Design",
+        "Brand Identity",
+        "Social Assets",
+        "Guidelines"
+      ],
       "description": "Defining the core identity of your business. From logo design to comprehensive brand guidelines, I help build brands that resonate and endure."
     },
     "webDevelopment": "Web Development",

@@ -1,4 +1,5 @@
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import type { Project } from '../services/api';
@@ -10,6 +11,7 @@ interface ProjectCardProps {
 }
 
 const ProjectCard: React.FC<ProjectCardProps> = ({ project, index }) => {
+    const { t } = useTranslation();
     const isInternal = project.url.startsWith('/');
     const isGithub = project.url.includes('github.com');
     const showImage = isInternal || isGithub || (project.image && project.image !== '/projects/placeholder.png' && project.image !== '/projects/github-repo.svg');
@@ -190,7 +192,7 @@ const ProjectCard: React.FC<ProjectCardProps> = ({ project, index }) => {
                                 alignItems: 'center',
                                 gap: '8px'
                             }}>
-                                Open Project ➔
+                                {t('projects.openProject')} ➔
                             </div>
                         </MagneticButton>
                     </motion.div>
@@ -221,7 +223,7 @@ const ProjectCard: React.FC<ProjectCardProps> = ({ project, index }) => {
                                 alignItems: 'center',
                                 gap: '8px'
                             }}>
-                                View Live Site ↗
+                                {t('projects.viewLiveSite')} ↗
                             </div>
                         </MagneticButton>
                     </motion.div>

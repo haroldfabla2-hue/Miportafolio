@@ -78,7 +78,9 @@
     "heroSubtitle": "Una selección curada de experiencias digitales, sitios web e identidades de marca creadas con precisión y pasión.",
     "errorLoading": "No se pudieron cargar los proyectos. Por favor, inténtalo de nuevo más tarde.",
     "selectedWork": "Trabajo Destacado",
-    "viewAllProjects": "Ver Todos los Proyectos"
+    "viewAllProjects": "Ver Todos los Proyectos",
+    "openProject": "Ver Proyecto",
+    "viewLiveSite": "Ver Sitio en Vivo"
   },
   "services": {
     "title": "Servicios",
@@ -87,17 +89,32 @@
     "comprehensiveSolutions": "Soluciones digitales integrales para empresas modernas.",
     "webDesign": {
       "title": "Diseño Web",
-      "items": ["Diseño UI/UX", "Wireframing", "Prototipado", "Sistemas de Diseño"],
+      "items": [
+        "Diseño UI/UX",
+        "Wireframing",
+        "Prototipado",
+        "Sistemas de Diseño"
+      ],
       "description": "Creando interfaces visualmente impresionantes y centradas en el usuario. Me enfoco en la excelencia estética combinada con funcionalidad intuitiva para crear experiencias digitales que cautivan y convierten."
     },
     "development": {
       "title": "Desarrollo",
-      "items": ["React / Next.js", "Animación", "Integración CMS", "eCommerce"],
+      "items": [
+        "React / Next.js",
+        "Animación",
+        "Integración CMS",
+        "eCommerce"
+      ],
       "description": "Convirtiendo diseños en código limpio y eficiente usando React, TypeScript y bibliotecas de animación modernas. Asegurando velocidad, SEO y capacidad de respuesta."
     },
     "branding": {
       "title": "Marca",
-      "items": ["Diseño de Logo", "Identidad de Marca", "Assets Sociales", "Guías"],
+      "items": [
+        "Diseño de Logo",
+        "Identidad de Marca",
+        "Assets Sociales",
+        "Guías"
+      ],
       "description": "Definiendo la identidad central de tu negocio. Desde diseño de logotipos hasta guías de marca completas, ayudo a construir marcas que resuenan y perduran."
     },
     "webDevelopment": "Desarrollo Web",
