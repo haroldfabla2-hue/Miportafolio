@@ -1,25 +1,22 @@
 import React, { useRef } from 'react';
 import { motion, useScroll } from 'framer-motion';
+import { useTranslation } from 'react-i18next';
 import SEO from './SEO';
 import PremiumStackingLayer from './PremiumStackingLayer';
 
 const AboutPage: React.FC = () => {
+    const { t } = useTranslation();
     const whyMeContainer = useRef<HTMLDivElement>(null);
     const { scrollYProgress } = useScroll({
         target: whyMeContainer,
         offset: ['start start', 'end end']
     });
 
-    const whyMeCards = [
-        { title: "Collaborative", text: "I view every project as a partnership. Your vision + my expertise." },
-        { title: "Detail Oriented", text: "Obsessed with the micro-interactions that make a site feel alive." },
-        { title: "Transparent", text: "Clear communication, no tech-jargon, and honest timelines." },
-        { title: "Forward Thinking", text: "Always using the latest stable technologies for future-proof solutions." }
-    ];
+    const whyMeKeys = ['collaborative', 'detailOriented', 'transparent', 'forwardThinking'];
 
     return (
         <div style={{ paddingTop: '150px', minHeight: '100vh', paddingBottom: '100px' }}>
-            <SEO title="About Us" description="Learn more about our journey, philosophy, and the impact we create through digital craftsmanship." />
+            <SEO title={t('about.seoTitle')} description={t('about.seoDescription')} />
             {/* Hero Section */}
             <section style={{
                 padding: '0 var(--spacing-lg)',
@@ -41,7 +38,7 @@ const AboutPage: React.FC = () => {
                         textTransform: 'uppercase'
                     }}
                 >
-                    Beyond the <br /> Pixels
+                    {t('about.heroTitle')}
                 </motion.h1>
                 <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '4rem', marginTop: '50px' }}>
                     <motion.div
@@ -49,9 +46,9 @@ const AboutPage: React.FC = () => {
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ duration: 0.8, delay: 0.2 }}
                     >
-                        <h3 style={{ fontSize: '1.5rem', marginBottom: '1rem', color: '#fff' }}>My Journey</h3>
+                        <h3 style={{ fontSize: '1.5rem', marginBottom: '1rem', color: '#fff' }}>{t('about.journeyTitle')}</h3>
                         <p style={{ fontSize: '1.2rem', color: '#999', lineHeight: 1.6 }}>
-                            With over 5 years of experience in digital creation, I've evolved from a curious designer to a full-stack digital craftsman. My passion lies in the intersection of design and technology, where I believe the most impactful user experiences are born.
+                            {t('about.journeyText')}
                         </p>
                     </motion.div>
                     <motion.div
@@ -59,9 +56,9 @@ const AboutPage: React.FC = () => {
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ duration: 0.8, delay: 0.4 }}
                     >
-                        <h3 style={{ fontSize: '1.5rem', marginBottom: '1rem', color: '#fff' }}>Philosophy</h3>
+                        <h3 style={{ fontSize: '1.5rem', marginBottom: '1rem', color: '#fff' }}>{t('about.philosophyTitle')}</h3>
                         <p style={{ fontSize: '1.2rem', color: '#999', lineHeight: 1.6 }}>
-                            I believe in "less, but better". Every pixel should have a purpose, and every interaction should feel natural. My approach is holistic—considering performance, accessibility, and aesthetics as equal pillars of a successful product.
+                            {t('about.philosophyText')}
                         </p>
                     </motion.div>
                 </div>
@@ -77,14 +74,14 @@ const AboutPage: React.FC = () => {
             }}>
                 <div style={{ maxWidth: 'var(--spacing-container)', margin: '0 auto' }}>
                     <h2 style={{ fontSize: 'clamp(2rem, 5vw, 4rem)', fontWeight: 900, marginBottom: '80px', textAlign: 'center' }}>
-                        IMPACT BY THE NUMBERS
+                        {t('about.statsTitle')}
                     </h2>
                     <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '4rem', textAlign: 'center' }}>
                         {[
-                            { label: "Years Experience", value: "05+" },
-                            { label: "Successful Projects", value: "20+" },
-                            { label: "Client Satisfaction", value: "100%" },
-                            { label: "Coffee Consumed", value: "∞" }
+                            { label: t('about.stats.yearsExperience'), value: "05+" },
+                            { label: t('about.stats.successfulProjects'), value: "20+" },
+                            { label: t('about.stats.clientSatisfaction'), value: "100%" },
+                            { label: t('about.stats.coffeeConsumed'), value: "∞" }
                         ].map((stat, index) => (
                             <motion.div
                                 key={stat.label}
@@ -117,12 +114,12 @@ const AboutPage: React.FC = () => {
                 padding: '0 var(--spacing-lg)'
             }}>
                 <div style={{ maxWidth: '1000px', margin: '0 auto 100px auto' }}>
-                    <h2 style={{ fontSize: '3rem', fontWeight: 800, marginBottom: '20px' }}>WHY WORK WITH ME?</h2>
-                    <p style={{ color: '#999', fontSize: '1.2rem' }}>A unique blend of skills that sets projects apart.</p>
+                    <h2 style={{ fontSize: '3rem', fontWeight: 800, marginBottom: '20px' }}>{t('home.whyWorkWithMe')}</h2>
+                    <p style={{ color: '#999', fontSize: '1.2rem' }}>{t('about.whyWorkWithMeSubtitle')}</p>
                 </div>
                 
-                {whyMeCards.map((item, i) => (
-                    <PremiumStackingLayer key={item.title} index={i} totalCards={whyMeCards.length} progress={scrollYProgress}>
+                {whyMeKeys.map((key, i) => (
+                    <PremiumStackingLayer key={key} index={i} totalCards={whyMeKeys.length} progress={scrollYProgress}>
                         <div style={{
                             padding: 'clamp(2rem, 5vw, 4rem)',
                             backgroundColor: 'rgba(20,20,20,0.95)',
@@ -136,8 +133,12 @@ const AboutPage: React.FC = () => {
                             justifyContent: 'center',
                             backdropFilter: 'blur(10px)'
                         }}>
-                            <h4 style={{ fontSize: 'clamp(1.5rem, 3vw, 2.5rem)', fontWeight: 700, marginBottom: '1rem', color: 'var(--color-accent)' }}>{item.title}</h4>
-                            <p style={{ color: '#ccc', lineHeight: 1.6, fontSize: 'clamp(1rem, 2vw, 1.2rem)' }}>{item.text}</p>
+                            <h4 style={{ fontSize: 'clamp(1.5rem, 3vw, 2.5rem)', fontWeight: 700, marginBottom: '1rem', color: 'var(--color-accent)' }}>
+                                {t(`about.values.${key}.title`)}
+                            </h4>
+                            <p style={{ color: '#ccc', lineHeight: 1.6, fontSize: 'clamp(1rem, 2vw, 1.2rem)' }}>
+                                {t(`about.values.${key}.description`)}
+                            </p>
                         </div>
                     </PremiumStackingLayer>
                 ))}

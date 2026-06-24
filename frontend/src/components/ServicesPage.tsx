@@ -123,23 +123,7 @@ const ServicesPage: React.FC = () => {
     const servicesContainer = useRef<HTMLDivElement>(null);
     const processContainer = useRef<HTMLDivElement>(null);
 
-    const services = [
-        {
-            title: "Desarrollo SaaS Custom",
-            description: "Construyo plataformas B2B escalables a medida. Desde sistemas de gestión y CRMs hasta marketplaces con infraestructuras robustas.",
-            tags: ["React/Node", "Arquitectura Cloud", "Sistemas Core", "Escalabilidad"]
-        },
-        {
-            title: "Agentes IA (Atención 24/7)",
-            description: "Implemento agentes de inteligencia artificial que atienden por WhatsApp y Web. Califican leads, agendan citas y reducen el trabajo manual.",
-            tags: ["Automatización", "NLP", "WhatsApp API", "Reducción de Costos"]
-        },
-        {
-            title: "Websites + Reservas",
-            description: "Diseño sitios web premium integrados con motores de reservas y calendarios sincronizados. Interfaz de alto nivel y cero fricción.",
-            tags: ["UX/UI Premium", "Sistemas de Booking", "Conversión", "Pagos"]
-        }
-    ];
+    const serviceKeys = ['saas', 'agents', 'booking'];
 
     const steps = [
         {
@@ -218,10 +202,18 @@ const ServicesPage: React.FC = () => {
 
             {/* Services Cards */}
             <section ref={servicesContainer} style={{ marginBottom: '20vh' }}>
-                {services.map((service, i) => {
-                    // Stacking Effect logic
+                {serviceKeys.map((key, i) => {
+                    const tagsMap: Record<string, string[]> = {
+                        saas: [t('services.items.saas.tags.tech'), t('services.items.saas.tags.arch'), t('services.items.saas.tags.core'), t('services.items.saas.tags.scale')],
+                        agents: [t('services.items.agents.tags.auto'), t('services.items.agents.tags.nlp'), t('services.items.agents.tags.whatsapp'), t('services.items.agents.tags.cost')],
+                        booking: [t('services.items.booking.tags.ui'), t('services.items.booking.tags.booking'), t('services.items.booking.tags.conv'), t('services.items.booking.tags.pay')]
+                    };
+                    const title = t(`services.items.${key}.title`);
+                    const description = t(`services.items.${key}.description`);
+                    const tags = tagsMap[key] || [];
+
                     return (
-                        <div key={i} style={{
+                        <div key={key} style={{
                             height: '100vh',
                             display: 'flex',
                             alignItems: 'center',
@@ -252,14 +244,14 @@ const ServicesPage: React.FC = () => {
                                         background: 'linear-gradient(135deg, rgba(20,20,20,1) 0%, rgba(5,5,5,1) 100%)'
                                     }}>
                                         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
-                                            <h2 style={{ fontSize: 'clamp(1.5rem, 4vw, 3rem)', margin: 0, lineHeight: 1, color: '#fff' }}>{service.title}</h2>
+                                            <h2 style={{ fontSize: 'clamp(1.5rem, 4vw, 3rem)', margin: 0, lineHeight: 1, color: '#fff' }}>{title}</h2>
                                             <span style={{ fontSize: '1.5rem', color: 'var(--color-accent)', fontFamily: 'monospace' }}>0{i + 1}</span>
                                         </div>
                                         <div>
-                                            <p style={{ fontSize: 'clamp(1rem, 2vw, 1.5rem)', color: '#aaa', maxWidth: '600px', lineHeight: 1.5 }}>{service.description}</p>
+                                            <p style={{ fontSize: 'clamp(1rem, 2vw, 1.5rem)', color: '#aaa', maxWidth: '600px', lineHeight: 1.5 }}>{description}</p>
                                         </div>
                                         <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
-                                            {service.tags.map(tag => (
+                                            {tags.map(tag => (
                                                 <span key={tag} style={{
                                                     backgroundColor: 'rgba(255,255,255,0.05)',
                                                     padding: '8px 16px',
@@ -289,46 +281,46 @@ const ServicesPage: React.FC = () => {
                         <div style={{ width: '40px', height: '40px', backgroundColor: 'rgba(163,255,0,0.1)', borderRadius: '10px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                             <span style={{ fontSize: '1.5rem' }}>🤖</span>
                         </div>
-                        <h2 style={{ fontSize: 'clamp(2rem, 4vw, 3rem)', margin: 0, color: '#fff' }}>Soluciones de IA y Automatización</h2>
+                        <h2 style={{ fontSize: 'clamp(2rem, 4vw, 3rem)', margin: 0, color: '#fff' }}>{t('services.aiTitle')}</h2>
                     </div>
                     
                     <p style={{ fontSize: '1.2rem', color: '#ccc', marginBottom: '3rem', maxWidth: '800px', lineHeight: 1.6 }}>
-                        Ayudo a freelancers, agencias y negocios digitales a hacer en horas lo que antes tomaba semanas. Construyo sistemas cognitivos, flujos automatizados (no-code/low-code) y micro-SaaS a medida.
+                        {t('services.aiDescription')}
                     </p>
 
                     <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '3rem', marginBottom: '3rem' }}>
                         <div>
-                            <h3 style={{ color: 'var(--color-accent)', marginBottom: '1rem', fontSize: '1.2rem' }}>Problemas Típicos</h3>
+                            <h3 style={{ color: 'var(--color-accent)', marginBottom: '1rem', fontSize: '1.2rem' }}>{t('services.problems.title')}</h3>
                             <ul style={{ listStyle: 'none', padding: 0, margin: 0, color: '#aaa', display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-                                <li style={{ display: 'flex', gap: '10px' }}><span>❌</span> Procesos manuales repetitivos que roban horas vitales a tu equipo.</li>
-                                <li style={{ display: 'flex', gap: '10px' }}><span>❌</span> Uso de documentos y contratos improvisados que exponen a tu negocio.</li>
-                                <li style={{ display: 'flex', gap: '10px' }}><span>❌</span> Cuellos de botella graves en el onboarding o soporte de clientes.</li>
+                                <li style={{ display: 'flex', gap: '10px' }}><span>❌</span> {t('services.problems.manualDesc')}</li>
+                                <li style={{ display: 'flex', gap: '10px' }}><span>❌</span> {t('services.problems.contractDesc')}</li>
+                                <li style={{ display: 'flex', gap: '10px' }}><span>❌</span> {t('services.problems.supportDesc')}</li>
                             </ul>
                         </div>
                         <div>
-                            <h3 style={{ color: '#fff', marginBottom: '1rem', fontSize: '1.2rem' }}>Resultados Obtenidos</h3>
+                            <h3 style={{ color: '#fff', marginBottom: '1rem', fontSize: '1.2rem' }}>{t('services.results.title')}</h3>
                             <ul style={{ listStyle: 'none', padding: 0, margin: 0, color: '#aaa', display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-                                <li style={{ display: 'flex', gap: '10px' }}><span>✅</span> Flujos de trabajo invisibles que operan 24/7 sin intervención humana.</li>
-                                <li style={{ display: 'flex', gap: '10px' }}><span>✅</span> Infraestructura cognitiva (Agentes IA) conectada a tus propios datos.</li>
-                                <li style={{ display: 'flex', gap: '10px' }}><span>✅</span> Capacidad de escalar el volumen de clientes sin multiplicar tus costos.</li>
+                                <li style={{ display: 'flex', gap: '10px' }}><span>✅</span> {t('services.results.invisibleDesc')}</li>
+                                <li style={{ display: 'flex', gap: '10px' }}><span>✅</span> {t('services.results.cognitiveDesc')}</li>
+                                <li style={{ display: 'flex', gap: '10px' }}><span>✅</span> {t('services.results.scalingDesc')}</li>
                             </ul>
                         </div>
                     </div>
 
                     <div style={{ borderTop: '1px solid rgba(255,255,255,0.1)', paddingTop: '2rem' }}>
-                        <h3 style={{ color: '#fff', marginBottom: '1.5rem', fontSize: '1.1rem' }}>Proyectos Destacados</h3>
+                        <h3 style={{ color: '#fff', marginBottom: '1.5rem', fontSize: '1.1rem' }}>{t('services.ai.featuredProjects')}</h3>
                         <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap' }}>
                             <a href="https://github.com/AlbertoFarah/contract-generator-svc" target="_blank" rel="noreferrer" style={{ padding: '10px 20px', backgroundColor: 'rgba(255,255,255,0.05)', borderRadius: '8px', color: '#fff', textDecoration: 'none', border: '1px solid rgba(255,255,255,0.1)', display: 'flex', alignItems: 'center', gap: '8px', transition: 'all 0.3s ease' }} onMouseOver={(e) => e.currentTarget.style.borderColor = 'var(--color-accent)'} onMouseOut={(e) => e.currentTarget.style.borderColor = 'rgba(255,255,255,0.1)'}>
-                                📄 Contract Generator SaaS
+                                {t('services.ai.contractGeneratorLink')}
                             </a>
                             <a href="https://github.com/AlbertoFarah/Silhouette-Agency-OS-OpenSource" target="_blank" rel="noreferrer" style={{ padding: '10px 20px', backgroundColor: 'rgba(255,255,255,0.05)', borderRadius: '8px', color: '#fff', textDecoration: 'none', border: '1px solid rgba(255,255,255,0.1)', display: 'flex', alignItems: 'center', gap: '8px', transition: 'all 0.3s ease' }} onMouseOver={(e) => e.currentTarget.style.borderColor = 'var(--color-accent)'} onMouseOut={(e) => e.currentTarget.style.borderColor = 'rgba(255,255,255,0.1)'}>
-                                🧠 Silhouette Agency OS
+                                {t('services.ai.silhouetteLink')}
                             </a>
                         </div>
                         
                         <div style={{ marginTop: '3rem', textAlign: 'center' }}>
                             <a href="/contact" style={{ display: 'inline-block', padding: '15px 30px', backgroundColor: 'var(--color-accent)', color: '#000', fontWeight: 'bold', borderRadius: '30px', textDecoration: 'none', textTransform: 'uppercase', letterSpacing: '1px' }}>
-                                Hablemos de tu automatización
+                                {t('services.ai.cta')}
                             </a>
                         </div>
                     </div>
@@ -340,13 +332,189 @@ const ServicesPage: React.FC = () => {
                 <div style={{ maxWidth: '1000px', margin: '0 auto' }}>
                     <div style={{ textAlign: 'center', marginBottom: '3rem' }}>
                         <h2 style={{ fontSize: 'clamp(2rem, 4vw, 3rem)', color: '#fff', fontWeight: 900, textTransform: 'uppercase' }}>
-                            Audita tus <span style={{ color: 'var(--color-accent)' }}>Ahorros en Software</span>
+                            {t('services.roiAuditTitlePart1')} <span style={{ color: 'var(--color-accent)' }}>{t('services.roiAuditTitlePart2')}</span>
                         </h2>
                         <p style={{ color: '#999', fontSize: '1.2rem', marginTop: '1rem' }}>
-                            Descubre el impacto financiero directo al eliminar la tarifa por tarea y automatizar flujos.
+                            {t('services.roiAuditSubtitle')}
                         </p>
                     </div>
                     <RoiCalculator />
+                </div>
+            </section>
+
+            {/* Planes y Precios Section */}
+            <section style={{ marginBottom: '20vh', padding: '0 var(--spacing-lg)' }}>
+                <div style={{ maxWidth: '1100px', margin: '0 auto' }}>
+                    <div style={{ textAlign: 'center', marginBottom: '4rem' }}>
+                        <h2 style={{ fontSize: 'clamp(2rem, 4vw, 3.5rem)', color: '#fff', fontWeight: 900, textTransform: 'uppercase' }}>
+                            {t('services.pricing.title')}
+                        </h2>
+                        <p style={{ color: '#999', fontSize: '1.2rem', marginTop: '1rem', maxWidth: '700px', margin: '1rem auto 0 auto' }}>
+                            {t('services.pricing.subtitle')}
+                        </p>
+                    </div>
+
+                    <div style={{ 
+                        display: 'grid', 
+                        gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', 
+                        gap: '2rem', 
+                        alignItems: 'stretch' 
+                    }}>
+                        {/* Plan Esencial */}
+                        <div style={{ 
+                            backgroundColor: 'rgba(15,15,15,0.7)', 
+                            border: '1px solid rgba(255,255,255,0.05)', 
+                            borderRadius: '25px', 
+                            padding: '3rem 2rem', 
+                            display: 'flex', 
+                            flexDirection: 'column', 
+                            justifyContent: 'space-between',
+                            backdropFilter: 'blur(10px)',
+                            transition: 'all 0.3s ease'
+                        }}>
+                            <div>
+                                <span style={{ color: '#aaa', fontSize: '0.9rem', textTransform: 'uppercase', letterSpacing: '0.1em' }}>{t('services.pricing.esencial.badge')}</span>
+                                <h3 style={{ color: '#fff', fontSize: '2rem', margin: '0.5rem 0' }}>{t('services.pricing.esencial.title')}</h3>
+                                <p style={{ color: '#777', fontSize: '0.95rem', marginBottom: '2rem', minHeight: '40px' }}>{t('services.pricing.esencial.description')}</p>
+                                
+                                <div style={{ marginBottom: '2rem' }}>
+                                    <span style={{ fontSize: '2.5rem', fontWeight: 900, color: '#fff' }}>{t('services.pricing.esencial.price')}</span>
+                                    <span style={{ color: '#555', fontSize: '0.9rem' }}>{t('services.pricing.paymentType')}</span>
+                                    <div style={{ color: '#777', fontSize: '0.8rem', marginTop: '4px' }}>{t('services.pricing.equivalent', { amount: '$800 USD' })}</div>
+                                </div>
+
+                                <ul style={{ listStyle: 'none', padding: 0, margin: '0 0 3rem 0', display: 'flex', flexDirection: 'column', gap: '1rem', color: '#aaa', fontSize: '0.95rem' }}>
+                                    {(t('services.pricing.esencial.features', { returnObjects: true }) as string[]).map((feat, idx) => (
+                                        <li key={idx} style={{ display: 'flex', gap: '10px' }}><span>✓</span> {feat}</li>
+                                    ))}
+                                </ul>
+                            </div>
+                            <a href="/contact?plan=esencial" style={{ 
+                                display: 'block', 
+                                width: '100%', 
+                                textAlign: 'center', 
+                                padding: '14px', 
+                                borderRadius: '30px', 
+                                backgroundColor: 'rgba(255,255,255,0.05)', 
+                                border: '1px solid rgba(255,255,255,0.1)', 
+                                color: '#fff', 
+                                fontWeight: 'bold', 
+                                textDecoration: 'none',
+                                transition: 'all 0.3s ease'
+                            }}>
+                                {t('services.pricing.selectPlan')}
+                            </a>
+                        </div>
+
+                        {/* Plan Profesional (Destacado) */}
+                        <div style={{ 
+                            backgroundColor: 'rgba(25,25,25,0.8)', 
+                            border: '2px solid var(--color-accent)', 
+                            borderRadius: '25px', 
+                            padding: '3rem 2rem', 
+                            display: 'flex', 
+                            flexDirection: 'column', 
+                            justifyContent: 'space-between',
+                            backdropFilter: 'blur(10px)',
+                            transform: 'scale(1.02)',
+                            boxShadow: '0 20px 40px rgba(163,255,0,0.15)',
+                            position: 'relative'
+                        }}>
+                            <div style={{ 
+                                position: 'absolute', 
+                                top: '-15px', 
+                                left: '50%', 
+                                transform: 'translateX(-50%)', 
+                                backgroundColor: 'var(--color-accent)', 
+                                color: '#000', 
+                                padding: '6px 16px', 
+                                borderRadius: '20px', 
+                                fontSize: '0.8rem', 
+                                fontWeight: 'bold', 
+                                textTransform: 'uppercase',
+                                letterSpacing: '0.05em'
+                            }}>
+                                {t('services.pricing.mostPopular')}
+                            </div>
+                            <div>
+                                <span style={{ color: 'var(--color-accent)', fontSize: '0.9rem', textTransform: 'uppercase', letterSpacing: '0.1em', fontWeight: 'bold' }}>{t('services.pricing.profesional.badge')}</span>
+                                <h3 style={{ color: '#fff', fontSize: '2rem', margin: '0.5rem 0' }}>{t('services.pricing.profesional.title')}</h3>
+                                <p style={{ color: '#999', fontSize: '0.95rem', marginBottom: '2rem', minHeight: '40px' }}>{t('services.pricing.profesional.description')}</p>
+                                
+                                <div style={{ marginBottom: '2rem' }}>
+                                    <span style={{ fontSize: '2.5rem', fontWeight: 900, color: '#fff' }}>{t('services.pricing.profesional.price')}</span>
+                                    <span style={{ color: 'var(--color-accent)', fontSize: '0.9rem', fontWeight: 'bold' }}>{t('services.pricing.paymentType')}</span>
+                                    <div style={{ color: '#999', fontSize: '0.8rem', marginTop: '4px' }}>{t('services.pricing.equivalent', { amount: '$1,400 USD' })}</div>
+                                </div>
+
+                                <ul style={{ listStyle: 'none', padding: 0, margin: '0 0 3rem 0', display: 'flex', flexDirection: 'column', gap: '1rem', color: '#ccc', fontSize: '0.95rem' }}>
+                                    {(t('services.pricing.profesional.features', { returnObjects: true }) as string[]).map((feat, idx) => (
+                                        <li key={idx} style={{ display: 'flex', gap: '10px' }}><span>✓</span> {feat}</li>
+                                    ))}
+                                </ul>
+                            </div>
+                            <a href="/contact?plan=profesional" style={{ 
+                                display: 'block', 
+                                width: '100%', 
+                                textAlign: 'center', 
+                                padding: '14px', 
+                                borderRadius: '30px', 
+                                backgroundColor: 'var(--color-accent)', 
+                                color: '#000', 
+                                fontWeight: 'bold', 
+                                textDecoration: 'none',
+                                transition: 'all 0.3s ease'
+                            }}>
+                                {t('services.pricing.startProject')}
+                            </a>
+                        </div>
+
+                        {/* Plan Corporativo */}
+                        <div style={{ 
+                            backgroundColor: 'rgba(15,15,15,0.7)', 
+                            border: '1px solid rgba(255,255,255,0.05)', 
+                            borderRadius: '25px', 
+                            padding: '3rem 2rem', 
+                            display: 'flex', 
+                            flexDirection: 'column', 
+                            justifyContent: 'space-between',
+                            backdropFilter: 'blur(10px)',
+                            transition: 'all 0.3s ease'
+                        }}>
+                            <div>
+                                <span style={{ color: '#aaa', fontSize: '0.9rem', textTransform: 'uppercase', letterSpacing: '0.1em' }}>{t('services.pricing.corporativo.badge')}</span>
+                                <h3 style={{ color: '#fff', fontSize: '2rem', margin: '0.5rem 0' }}>{t('services.pricing.corporativo.title')}</h3>
+                                <p style={{ color: '#777', fontSize: '0.95rem', marginBottom: '2rem', minHeight: '40px' }}>{t('services.pricing.corporativo.description')}</p>
+                                
+                                <div style={{ marginBottom: '2rem' }}>
+                                    <span style={{ fontSize: '2.5rem', fontWeight: 900, color: '#fff' }}>{t('services.pricing.corporativo.price')}</span>
+                                    <span style={{ color: '#555', fontSize: '0.9rem' }}>{t('services.pricing.from')}</span>
+                                    <div style={{ color: '#777', fontSize: '0.8rem', marginTop: '4px' }}>{t('services.pricing.equivalent', { amount: '$2,200+ USD' })}</div>
+                                </div>
+
+                                <ul style={{ listStyle: 'none', padding: 0, margin: '0 0 3rem 0', display: 'flex', flexDirection: 'column', gap: '1rem', color: '#aaa', fontSize: '0.95rem' }}>
+                                    {(t('services.pricing.corporativo.features', { returnObjects: true }) as string[]).map((feat, idx) => (
+                                        <li key={idx} style={{ display: 'flex', gap: '10px' }}><span>✓</span> {feat}</li>
+                                    ))}
+                                </ul>
+                            </div>
+                            <a href="/contact?plan=corporativo" style={{ 
+                                display: 'block', 
+                                width: '100%', 
+                                textAlign: 'center', 
+                                padding: '14px', 
+                                borderRadius: '30px', 
+                                backgroundColor: 'rgba(255,255,255,0.05)', 
+                                border: '1px solid rgba(255,255,255,0.1)', 
+                                color: '#fff', 
+                                fontWeight: 'bold', 
+                                textDecoration: 'none',
+                                transition: 'all 0.3s ease'
+                            }}>
+                                {t('services.pricing.quoteSolution')}
+                            </a>
+                        </div>
+                    </div>
                 </div>
             </section>
 
@@ -354,47 +522,48 @@ const ServicesPage: React.FC = () => {
             <section style={{ marginBottom: '20vh', padding: '0 var(--spacing-lg)' }}>
                 <div style={{ maxWidth: '1000px', margin: '0 auto' }}>
                     <div style={{ textAlign: 'center', marginBottom: '4rem' }}>
-                        <h2 style={{ fontSize: 'clamp(2rem, 4vw, 3rem)', margin: 0, color: '#fff', fontWeight: 900 }}>Impacto Real <span style={{ color: 'var(--color-accent)' }}>B2B</span></h2>
-                        <p style={{ color: '#999', fontSize: '1.2rem', marginTop: '1rem' }}>Sistemas implementados operando en producción.</p>
+                        <h2 style={{ fontSize: 'clamp(2rem, 4vw, 3rem)', margin: 0, color: '#fff', fontWeight: 900 }}>
+                            {t('services.impact.titlePart1')} <span style={{ color: 'var(--color-accent)' }}>{t('services.impact.titlePart2')}</span>
+                        </h2>
+                        <p style={{ color: '#999', fontSize: '1.2rem', marginTop: '1rem' }}>{t('services.impact.subtitle')}</p>
                     </div>
 
                     <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '2rem' }}>
                         {/* Case 1 */}
                         <div style={{ backgroundColor: 'rgba(20,20,20,0.6)', border: '1px solid rgba(255,255,255,0.05)', borderRadius: '20px', padding: '2rem', backdropFilter: 'blur(10px)' }}>
-                            <h3 style={{ color: '#fff', fontSize: '1.3rem', marginBottom: '0.5rem' }}>Clínica (Healthcare)</h3>
-                            <div style={{ color: 'var(--color-accent)', fontSize: '2rem', fontWeight: 900, marginBottom: '1rem' }}>-7% No-shows</div>
+                            <h3 style={{ color: '#fff', fontSize: '1.3rem', marginBottom: '0.5rem' }}>{t('services.impact.case1.title')}</h3>
+                            <div style={{ color: 'var(--color-accent)', fontSize: '2rem', fontWeight: 900, marginBottom: '1rem' }}>{t('services.impact.case1.metric')}</div>
                             <p style={{ color: '#aaa', fontSize: '0.9rem', lineHeight: 1.6 }}>
-                                <strong>Problema:</strong> El equipo colapsaba respondiendo leads (+42 horas de retraso).<br/><br/>
-                                <strong>Solución:</strong> Despliegue de Agente IA por WhatsApp con sincronización de calendarios.<br/><br/>
-                                <strong>Resultado:</strong> Tiempo de respuesta reducido a 2 minutos. +34% en nuevas reservas automáticas y 14 horas semanales liberadas para el equipo médico.
+                                <strong>{t('services.impact.case1.problem')}</strong><br/><br/>
+                                <strong>{t('services.impact.case1.solution')}</strong><br/><br/>
+                                <strong>{t('services.impact.case1.result')}</strong>
                             </p>
                         </div>
 
                         {/* Case 2 */}
                         <div style={{ backgroundColor: 'rgba(20,20,20,0.6)', border: '1px solid rgba(255,255,255,0.05)', borderRadius: '20px', padding: '2rem', backdropFilter: 'blur(10px)' }}>
-                            <h3 style={{ color: '#fff', fontSize: '1.3rem', marginBottom: '0.5rem' }}>Red Inmobiliaria (Real Estate)</h3>
-                            <div style={{ color: 'var(--color-accent)', fontSize: '2rem', fontWeight: 900, marginBottom: '1rem' }}>+47% Cierres</div>
+                            <h3 style={{ color: '#fff', fontSize: '1.3rem', marginBottom: '0.5rem' }}>{t('services.impact.case2.title')}</h3>
+                            <div style={{ color: 'var(--color-accent)', fontSize: '2rem', fontWeight: 900, marginBottom: '1rem' }}>{t('services.impact.case2.metric')}</div>
                             <p style={{ color: '#aaa', fontSize: '0.9rem', lineHeight: 1.6 }}>
-                                <strong>Problema:</strong> 80% de leads de portales no calificados, desperdiciando 12h/día de los brokers.<br/><br/>
-                                <strong>Solución:</strong> Sistema de Pre-screening IA e integración profunda con CRM.<br/><br/>
-                                <strong>Resultado:</strong> Calificación de leads en 3 minutos (61% de tasa de calificación). Eficiencia del equipo mejorada de 8h a 2h al día filtrando leads.
+                                <strong>{t('services.impact.case2.problem')}</strong><br/><br/>
+                                <strong>{t('services.impact.case2.solution')}</strong><br/><br/>
+                                <strong>{t('services.impact.case2.result')}</strong>
                             </p>
                         </div>
 
                         {/* Case 3 */}
                         <div style={{ backgroundColor: 'rgba(20,20,20,0.6)', border: '1px solid rgba(255,255,255,0.05)', borderRadius: '20px', padding: '2rem', backdropFilter: 'blur(10px)' }}>
-                            <h3 style={{ color: '#fff', fontSize: '1.3rem', marginBottom: '0.5rem' }}>Agencia de Marketing (B2B)</h3>
-                            <div style={{ color: 'var(--color-accent)', fontSize: '2rem', fontWeight: 900, marginBottom: '1rem' }}>$12K/mes MRR</div>
+                            <h3 style={{ color: '#fff', fontSize: '1.3rem', marginBottom: '0.5rem' }}>{t('services.impact.case3.title')}</h3>
+                            <div style={{ color: 'var(--color-accent)', fontSize: '2rem', fontWeight: 900, marginBottom: '1rem' }}>{t('services.impact.case3.metric')}</div>
                             <p style={{ color: '#aaa', fontSize: '0.9rem', lineHeight: 1.6 }}>
-                                <strong>Problema:</strong> Querían escalar servicios sin contratar desarrolladores costosos.<br/><br/>
-                                <strong>Solución:</strong> Desarrollo de SaaS White-label para despliegue automatizado de clientes.<br/><br/>
-                                <strong>Resultado:</strong> 12 clientes desplegados en 30 días con captura de leads 24/7. Retorno de inversión en menos de 3 meses.
+                                <strong>{t('services.impact.case3.problem')}</strong><br/><br/>
+                                <strong>{t('services.impact.case3.solution')}</strong><br/><br/>
+                                <strong>{t('services.impact.case3.result')}</strong>
                             </p>
                         </div>
                     </div>
                 </div>
             </section>
-
 
             {/* Process Section - WITH ANIMATION */}
             <section ref={processContainer} style={{ marginBottom: '20vh', padding: '0 var(--spacing-lg)' }}>

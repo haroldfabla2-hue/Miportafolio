@@ -66,7 +66,40 @@
     "discoverTitle": "DISCOVER MY",
     "discoverSubtitle": "DESIGN JOURNEY.",
     "bio": "I started my journey 5 years ago transforming ideas into digital reality.",
-    "yearsExperience": "Years of Experience"
+    "yearsExperience": "Years of Experience",
+    "heroTitle": "Beyond the Pixels",
+    "journeyTitle": "Professional Journey",
+    "journeyText": "Our trajectory is defined by a relentless pursuit of engineering excellence. We architect robust, scalable systems that bridge the gap between abstract algorithmic theory and tangible business value.",
+    "philosophyTitle": "Engineering Philosophy",
+    "philosophyText": "We believe that true innovation operates invisibly. By leveraging advanced artificial intelligence and deterministic automation, we eliminate operational friction, allowing enterprises to scale with unprecedented efficiency.",
+    "values": {
+      "collaborative": {
+        "title": "Collaborative Synergy",
+        "description": "Fostering deeply integrated partnerships to align technical execution with overarching strategic objectives."
+      },
+      "detailOriented": {
+        "title": "Rigorous Precision",
+        "description": "Applying uncompromising standards to every line of code, ensuring deterministic outcomes and zero-defect deployments."
+      },
+      "transparent": {
+        "title": "Absolute Transparency",
+        "description": "Maintaining an open, auditable flow of information throughout the entire software development lifecycle."
+      },
+      "forwardThinking": {
+        "title": "Prospective Innovation",
+        "description": "Anticipating technological paradigm shifts to future-proof digital infrastructures against emerging challenges."
+      }
+    },
+    "stats": {
+      "yearsExperience": "Years of Expertise",
+      "successfulProjects": "Successful Projects",
+      "clientSatisfaction": "Client Satisfaction",
+      "coffeeConsumed": "Compilation Cycles"
+    },
+    "statsTitle": "IMPACT BY THE NUMBERS",
+    "whyWorkWithMeSubtitle": "A unique blend of skills that sets projects apart.",
+    "seoTitle": "About Us",
+    "seoDescription": "Learn more about our journey, philosophy, and the impact we create through digital craftsmanship."
   },
   "projects": {
     "title": "Projects",
@@ -139,6 +172,144 @@
       "developmentDesc": "Turning designs into clean, efficient code using React, TypeScript, and modern animation libraries. Ensuring speed, SEO, and responsiveness.",
       "launch": "Launch",
       "launchDesc": "Deployment, testing, and final optimization. I provide documentation and support to help you manage and grow your new digital asset."
+    },
+    "items": {
+      "saas": {
+        "title": "Custom SaaS Development",
+        "description": "I build custom, scalable B2B platforms. From management systems and CRMs to marketplaces with robust infrastructure.",
+        "tags": {
+          "tech": "React/Node",
+          "arch": "Cloud Architecture",
+          "core": "Core Systems",
+          "scale": "Scalability"
+        }
+      },
+      "agents": {
+        "title": "AI Agents (24/7 Support)",
+        "description": "I deploy artificial intelligence agents that assist via WhatsApp and Web. They qualify leads, schedule appointments, and reduce manual workload.",
+        "tags": {
+          "auto": "Automation",
+          "nlp": "NLP",
+          "whatsapp": "WhatsApp API",
+          "cost": "Cost Reduction"
+        }
+      },
+      "booking": {
+        "title": "Websites + Bookings",
+        "description": "I design premium websites integrated with booking engines and synchronized calendars. High-end interface and zero friction.",
+        "tags": {
+          "ui": "Premium UX/UI",
+          "booking": "Booking Systems",
+          "conv": "Conversion",
+          "pay": "Payments"
+        }
+      }
+    },
+    "aiTitle": "Advanced AI & Automation Solutions",
+    "aiDescription": "Transforming enterprise operations through state-of-the-art cognitive frameworks and hyper-automation architectures.",
+    "problems": {
+      "title": "Systemic Inefficiencies",
+      "manualWork": "Redundant Manual Labor",
+      "manualDesc": "Redundant manual labor stealing vital hours from your team.",
+      "contractExposures": "Contractual & Compliance Exposures",
+      "contractDesc": "Use of improvised documents and contracts that expose your business.",
+      "supportBottlenecks": "Operational Support Bottlenecks",
+      "supportDesc": "Severe bottlenecks in client onboarding or support."
+    },
+    "results": {
+      "title": "Engineered Outcomes",
+      "invisibleWorkflows": "Operationally Invisible Workflows",
+      "invisibleDesc": "Invisible workflows operating 24/7 with zero human intervention.",
+      "cognitiveRag": "Cognitive RAG Systems",
+      "cognitiveDesc": "Cognitive infrastructure (AI Agents) integrated with your own data.",
+      "scalingSupport": "Dynamic Support Scalability",
+      "scalingDesc": "Ability to scale client volume without multiplying operational costs."
+    },
+    "ai": {
+      "featuredProjects": "Featured Projects",
+      "cta": "Let's talk about your automation",
+      "contractGeneratorLink": "📄 Contract Generator SaaS",
+      "silhouetteLink": "🧠 Silhouette Agency OS"
+    },
+    "roiAuditTitlePart1": "Audit your",
+    "roiAuditTitlePart2": "Software Savings",
+    "roiAuditSubtitle": "Discover the direct financial impact of eliminating per-task fees and automating workflows.",
+    "pricing": {
+      "title": "Development & Automation Plans",
+      "subtitle": "Choose the integration tier your business needs. No per-task fees and scalable AI infrastructure.",
+      "paymentType": " / once",
+      "from": " / starting from",
+      "mostPopular": "Most Popular",
+      "selectPlan": "Select Plan",
+      "startProject": "Start Project",
+      "quoteSolution": "Quote Solution",
+      "equivalent": "Equivalent to {{amount}} (For global clients)",
+      "esencial": {
+        "badge": "Starter",
+        "title": "Essential Plan",
+        "price": "S/ 2,800",
+        "description": "Ideal for professionals and SMEs looking to establish a premium digital presence and capture leads.",
+        "features": [
+          "Premium landing page (up to 4 sections)",
+          "Optimized UX and local SEO (Google Maps)",
+          "Intelligent WhatsApp button",
+          "Form connected to Google Sheets",
+          "com domain & hosting for the 1st year"
+        ]
+      },
+      "profesional": {
+        "badge": "Growth",
+        "title": "Professional Plan",
+        "price": "S/ 4,800",
+        "description": "Complete setup to automate sales, leads, and seamlessly sync with your CRM.",
+        "features": [
+          "Corporate Premium Website (up to 8 sections)",
+          "Native CRM integration",
+          "Synchronized scheduling funnel",
+          "AI Chatbot for lead qualification",
+          "Self-managed dashboard for the team",
+          "Maintenance & optimization of AI workflows"
+        ]
+      },
+      "corporativo": {
+        "badge": "Custom",
+        "title": "Corporate Plan",
+        "price": "S/ 7,500+",
+        "description": "For enterprises needing bespoke software and deep automation integrations.",
+        "features": [
+          "High-speed React / Next.js development",
+          "Multi-agent swarms & AI with RAG (Vector DB)",
+          "Automated contract & document generation",
+          "Deep integration of custom ERPs & APIs",
+          "Dedicated cloud infrastructure (VPS/Docker)"
+        ]
+      }
+    },
+    "impact": {
+      "titlePart1": "Real B2B",
+      "titlePart2": "Impact",
+      "subtitle": "Systems in production delivering measurable returns.",
+      "case1": {
+        "title": "Clinic (Healthcare)",
+        "metric": "-7% No-shows",
+        "problem": "Problem: Team collapsed replying to leads (+42 hour delays).",
+        "solution": "Solution: WhatsApp AI Agent deployment with calendar syncing.",
+        "result": "Result: Response time cut to 2 minutes, +34% automated bookings, and 14 weekly hours freed for medical staff."
+      },
+      "case2": {
+        "title": "Real Estate Network",
+        "metric": "+47% Deals Closed",
+        "problem": "Problem: 80% of portal leads unqualified, wasting 12h/day of brokers' time.",
+        "solution": "Solution: AI Pre-screening system & deep CRM integration.",
+        "result": "Result: Lead qualification in 3 minutes (61% qualification rate). Team filtering efficiency improved from 8h to 2h daily."
+      },
+      "case3": {
+        "title": "Marketing Agency (B2B)",
+        "metric": "$12K/mo MRR",
+        "problem": "Problem: Needed to scale services without hiring expensive developers.",
+        "solution": "Solution: White-label SaaS development for automated client provisioning.",
+        "result": "Result: 12 clients launched in 30 days with 24/7 lead capture. ROI achieved in less than 3 months."
+      }
     }
   },
   "blog": {
@@ -184,7 +355,19 @@
       "company": "Your company name",
       "message": "Tell me about your project..."
     },
-    "optional": "(Optional)"
+    "optional": "(Optional)",
+    "modal": {
+      "title": "Start Your Project",
+      "subtitle": "Tell me a bit about what you're looking to build.",
+      "nameLabel": "Name",
+      "namePlaceholder": "Your Name",
+      "emailLabel": "Email",
+      "emailPlaceholder": "your@email.com",
+      "detailsLabel": "Project Details",
+      "detailsPlaceholder": "I need a website for...",
+      "submit": "Submit Proposal Request",
+      "alert": "Proposal request sent! I'll be in touch."
+    }
   },
   "footer": {
     "rights": "All rights reserved",
@@ -197,5 +380,39 @@
     "generic": "Something went wrong",
     "notFound": "Page not found",
     "serverError": "Server error"
+  },
+  "roi": {
+    "title": "Savings & Operating ROI Calculator",
+    "subtitle": "Calculate your return on investment by eliminating per-task fees and automating manual processes.",
+    "currency": {
+      "pen": "Soles (PEN)",
+      "usd": "Dollars (USD)"
+    },
+    "labels": {
+      "taskVolume": "Executed Tasks in Zapier / mo",
+      "hoursFreed": "Monthly manual hours to automate",
+      "hourlyCost": "Hourly wage cost of responsible staff"
+    },
+    "units": {
+      "tasks": "tasks",
+      "hours": "hours",
+      "perHour": " / h",
+      "perMonth": " / mo",
+      "hoursZero": "0h",
+      "hoursMax": "200h",
+      "minPen": "S/. 15",
+      "minUsd": "$5",
+      "maxPen": "S/. 300",
+      "maxUsd": "$80"
+    },
+    "results": {
+      "zapierCost": "Monthly Zapier Cost:",
+      "n8nHostingCost": "Monthly n8n Cost (VPS Hosting):",
+      "licenseSavings": "Net License Savings:",
+      "manualValue": "Value of Freed Manual Hours:",
+      "annualRoi": "Estimated Annual Financial Return (ROI)",
+      "returnOnDevelopment": "~{{percent}}% return on development fee"
+    },
+    "cta": "Book Free Process Audit"
   }
 }

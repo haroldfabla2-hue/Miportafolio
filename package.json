@@ -1,5 +1,8 @@
 {
   "dependencies": {
     "@studio-freight/react-lenis": "^0.0.47"
+  },
+  "scripts": {
+    "prepare": "husky"
   }
 }

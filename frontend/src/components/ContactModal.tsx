@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { useTranslation } from 'react-i18next';
 
 interface ContactModalProps {
     isOpen: boolean;
@@ -7,6 +8,7 @@ interface ContactModalProps {
 }
 
 const ContactModal: React.FC<ContactModalProps> = ({ isOpen, onClose }) => {
+    const { t } = useTranslation();
     const [formData, setFormData] = useState({
         name: '',
         email: '',
@@ -19,7 +21,7 @@ const ContactModal: React.FC<ContactModalProps> = ({ isOpen, onClose }) => {
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
-        alert("Proposal request sent! I'll be in touch.");
+        alert(t('contact.modal.alert'));
         setFormData({ name: '', email: '', message: '' });
         onClose();
     };
@@ -84,12 +86,12 @@ const ContactModal: React.FC<ContactModalProps> = ({ isOpen, onClose }) => {
                                 ✕
                             </button>
 
-                            <h2 style={{ fontSize: '2rem', marginBottom: '1rem', fontWeight: 800 }}>Start Your Project</h2>
-                            <p style={{ color: '#999', marginBottom: '2rem' }}>Tell me a bit about what you're looking to build.</p>
+                            <h2 style={{ fontSize: '2rem', marginBottom: '1rem', fontWeight: 800 }}>{t('contact.modal.title')}</h2>
+                            <p style={{ color: '#999', marginBottom: '2rem' }}>{t('contact.modal.subtitle')}</p>
 
                             <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
                                 <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
-                                    <label style={{ fontSize: '0.8rem', color: '#666', fontWeight: 700, textTransform: 'uppercase' }}>Name</label>
+                                    <label style={{ fontSize: '0.8rem', color: '#666', fontWeight: 700, textTransform: 'uppercase' }}>{t('contact.modal.nameLabel')}</label>
                                     <input
                                         type="text"
                                         name="name"
@@ -104,12 +106,12 @@ const ContactModal: React.FC<ContactModalProps> = ({ isOpen, onClose }) => {
                                             color: '#fff',
                                             outline: 'none'
                                         }}
-                                        placeholder="Your Name"
+                                        placeholder={t('contact.modal.namePlaceholder')}
                                     />
                                 </div>
 
                                 <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
-                                    <label style={{ fontSize: '0.8rem', color: '#666', fontWeight: 700, textTransform: 'uppercase' }}>Email</label>
+                                    <label style={{ fontSize: '0.8rem', color: '#666', fontWeight: 700, textTransform: 'uppercase' }}>{t('contact.modal.emailLabel')}</label>
                                     <input
                                         type="email"
                                         name="email"
@@ -124,12 +126,12 @@ const ContactModal: React.FC<ContactModalProps> = ({ isOpen, onClose }) => {
                                             color: '#fff',
                                             outline: 'none'
                                         }}
-                                        placeholder="your@email.com"
+                                        placeholder={t('contact.modal.emailPlaceholder')}
                                     />
                                 </div>
 
                                 <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
-                                    <label style={{ fontSize: '0.8rem', color: '#666', fontWeight: 700, textTransform: 'uppercase' }}>Project Details</label>
+                                    <label style={{ fontSize: '0.8rem', color: '#666', fontWeight: 700, textTransform: 'uppercase' }}>{t('contact.modal.detailsLabel')}</label>
                                     <textarea
                                         name="message"
                                         value={formData.message}
@@ -145,7 +147,7 @@ const ContactModal: React.FC<ContactModalProps> = ({ isOpen, onClose }) => {
                                             outline: 'none',
                                             resize: 'none'
                                         }}
-                                        placeholder="I need a website for..."
+                                        placeholder={t('contact.modal.detailsPlaceholder')}
                                     />
                                 </div>
 
@@ -163,7 +165,7 @@ const ContactModal: React.FC<ContactModalProps> = ({ isOpen, onClose }) => {
                                         cursor: 'pointer'
                                     }}
                                 >
-                                    Submit Proposal Request
+                                    {t('contact.modal.submit')}
                                 </button>
                             </form>
                         </motion.div>

@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
+import { useTranslation } from 'react-i18next';
 
 const exchangeRate = 3.75; // USD to PEN SBS rate
 
@@ -14,6 +15,7 @@ interface CalculationResults {
 }
 
 const RoiCalculator: React.FC = () => {
+    const { t, i18n } = useTranslation();
     const [currency, setCurrency] = useState<'PEN' | 'USD'>('PEN');
     const [tasks, setTasks] = useState<number>(50000);
     const [flows, setFlows] = useState<number>(10);
@@ -81,7 +83,8 @@ const RoiCalculator: React.FC = () => {
     }, [tasks, flows, hours, rate, currency]);
 
     const formatVal = (val: number) => {
-        return new Intl.NumberFormat('es-PE', {
+        const locale = i18n.language === 'es' ? 'es-PE' : 'en-US';
+        return new Intl.NumberFormat(locale, {
             style: 'currency',
             currency: currency,
             maximumFractionDigits: 0
@@ -110,9 +113,9 @@ const RoiCalculator: React.FC = () => {
                 marginBottom: '30px'
             }}>
                 <div>
-                    <h3 style={{ margin: 0, fontSize: '1.4rem', fontWeight: 'bold' }}>Calculadora de Ahorro y ROI Operativo</h3>
+                    <h3 style={{ margin: 0, fontSize: '1.4rem', fontWeight: 'bold' }}>{t('roi.title')}</h3>
                     <p style={{ margin: '5px 0 0 0', fontSize: '0.85rem', color: '#888' }}>
-                        Calcula el retorno de inversión al eliminar la tarifa por tarea y automatizar procesos manuales.
+                        {t('roi.subtitle')}
                     </p>
                 </div>
                 {/* Currency selector toggle */}
@@ -137,7 +140,7 @@ const RoiCalculator: React.FC = () => {
                             transition: 'all 0.3s ease'
                         }}
                     >
-                        Soles (PEN)
+                        {t('roi.currency.pen')}
                     </button>
                     <button
                         onClick={() => handleCurrencyChange('USD')}
@@ -153,7 +156,7 @@ const RoiCalculator: React.FC = () => {
                             transition: 'all 0.3s ease'
                         }}
                     >
-                        Dólares (USD)
+                        {t('roi.currency.usd')}
                     </button>
                 </div>
             </div>
@@ -169,9 +172,9 @@ const RoiCalculator: React.FC = () => {
                     {/* Slider 1: Tasks */}
                     <div>
                         <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px' }}>
-                            <label style={{ fontSize: '0.9rem', color: '#ccc' }}>Tareas Ejecutadas en Zapier / mes</label>
+                            <label style={{ fontSize: '0.9rem', color: '#ccc' }}>{t('roi.labels.taskVolume')}</label>
                             <span style={{ fontSize: '1rem', fontWeight: 'bold', color: 'var(--color-accent)' }}>
-                                {tasks.toLocaleString()} tareas
+                                {tasks.toLocaleString()} {t('roi.units.tasks')}
                             </span>
                         </div>
                         <input
@@ -199,9 +202,9 @@ const RoiCalculator: React.FC = () => {
                     {/* Slider 2: Manual hours */}
                     <div>
                         <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px' }}>
-                            <label style={{ fontSize: '0.9rem', color: '#ccc' }}>Horas de trabajo manual mensual a automatizar</label>
+                            <label style={{ fontSize: '0.9rem', color: '#ccc' }}>{t('roi.labels.hoursFreed')}</label>
                             <span style={{ fontSize: '1rem', fontWeight: 'bold', color: 'var(--color-accent)' }}>
-                                {hours} horas
+                                {hours} {t('roi.units.hours')}
                             </span>
                         </div>
                         <input
@@ -221,17 +224,17 @@ const RoiCalculator: React.FC = () => {
                             }}
                         />
                         <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.75rem', color: '#555', marginTop: '4px' }}>
-                            <span>0h</span>
-                            <span>200h</span>
+                            <span>{t('roi.units.hoursZero')}</span>
+                            <span>{t('roi.units.hoursMax')}</span>
                         </div>
                     </div>
 
                     {/* Slider 3: Hourly Rate */}
                     <div>
                         <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px' }}>
-                            <label style={{ fontSize: '0.9rem', color: '#ccc' }}>Costo salarial por hora del personal responsable</label>
+                            <label style={{ fontSize: '0.9rem', color: '#ccc' }}>{t('roi.labels.hourlyCost')}</label>
                             <span style={{ fontSize: '1rem', fontWeight: 'bold', color: 'var(--color-accent)' }}>
-                                {formatVal(rate)} / h
+                                {formatVal(rate)} {t('roi.units.perHour')}
                             </span>
                         </div>
                         <input
@@ -251,8 +254,8 @@ const RoiCalculator: React.FC = () => {
                             }}
                         />
                         <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.75rem', color: '#555', marginTop: '4px' }}>
-                            <span>{currency === 'PEN' ? 'S/. 15' : '$5'}</span>
-                            <span>{currency === 'PEN' ? 'S/. 300' : '$80'}</span>
+                            <span>{currency === 'PEN' ? t('roi.units.minPen') : t('roi.units.minUsd')}</span>
+                            <span>{currency === 'PEN' ? t('roi.units.maxPen') : t('roi.units.maxUsd')}</span>
                         </div>
                     </div>
                 </div>
@@ -271,13 +274,13 @@ const RoiCalculator: React.FC = () => {
                     <div style={{ display: 'flex', flexDirection: 'column', gap: '15px' }}>
                         {/* Zapier Cost vs n8n */}
                         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                            <span style={{ fontSize: '0.9rem', color: '#aaa' }}>Costo Mensual Zapier:</span>
+                            <span style={{ fontSize: '0.9rem', color: '#aaa' }}>{t('roi.results.zapierCost')}</span>
                             <span style={{ fontSize: '1rem', textDecoration: 'line-through', color: '#ff4d4d' }}>
                                 {formatVal(results.zapierCost)}
                             </span>
                         </div>
                         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                            <span style={{ fontSize: '0.9rem', color: '#aaa' }}>Costo Mensual n8n (Hosting VPS):</span>
+                            <span style={{ fontSize: '0.9rem', color: '#aaa' }}>{t('roi.results.n8nHostingCost')}</span>
                             <span style={{ fontSize: '1rem', fontWeight: 'bold', color: 'var(--color-accent)' }}>
                                 {formatVal(results.n8nHostingCost)}
                             </span>
@@ -286,18 +289,18 @@ const RoiCalculator: React.FC = () => {
 
                         {/* License Savings */}
                         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                            <span style={{ fontSize: '0.9rem', color: '#aaa' }}>Ahorro Neto en Licencias:</span>
+                            <span style={{ fontSize: '0.9rem', color: '#aaa' }}>{t('roi.results.licenseSavings')}</span>
                             <span style={{ fontSize: '1.2rem', fontWeight: 'bold', color: 'var(--color-accent)' }}>
-                                {formatVal(results.licenseSavings)} / mes
+                                {formatVal(results.licenseSavings)} {t('roi.units.perMonth')}
                             </span>
                         </div>
 
                         {/* Labor Freed Value */}
                         {hours > 0 && (
                             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                                <span style={{ fontSize: '0.9rem', color: '#aaa' }}>Valor de Horas Manuales Liberadas:</span>
+                                <span style={{ fontSize: '0.9rem', color: '#aaa' }}>{t('roi.results.manualValue')}</span>
                                 <span style={{ fontSize: '1.1rem', color: '#fff' }}>
-                                    {formatVal(results.timeSavedValue)} / mes
+                                    {formatVal(results.timeSavedValue)} {t('roi.units.perMonth')}
                                 </span>
                             </div>
                         )}
@@ -312,14 +315,14 @@ const RoiCalculator: React.FC = () => {
                         textAlign: 'center'
                     }}>
                         <span style={{ fontSize: '0.8rem', textTransform: 'uppercase', color: '#888', letterSpacing: '1px', display: 'block', marginBottom: '5px' }}>
-                            Retorno Financiero Anual Estimado (ROI)
+                            {t('roi.results.annualRoi')}
                         </span>
                         <span style={{ fontSize: '2.2rem', fontWeight: '900', color: 'var(--color-accent)', display: 'block', lineHeight: '1.1' }}>
                             {formatVal(results.totalAnnualSavings)}
                         </span>
                         {results.roiPercentage > 0 && (
                             <span style={{ fontSize: '0.8rem', color: '#aaa', marginTop: '5px', display: 'block' }}>
-                                ~{results.roiPercentage}% de retorno sobre la tarifa de desarrollo
+                                {t('roi.results.returnOnDevelopment', { percent: results.roiPercentage })}
                             </span>
                         )}
                     </div>
@@ -342,7 +345,7 @@ const RoiCalculator: React.FC = () => {
                         onMouseOver={(e) => e.currentTarget.style.transform = 'translateY(-2px)'}
                         onMouseOut={(e) => e.currentTarget.style.transform = 'translateY(0)'}
                         >
-                            Reservar Auditoría de Procesos Gratis
+                            {t('roi.cta')}
                         </a>
                     </div>
                 </div>

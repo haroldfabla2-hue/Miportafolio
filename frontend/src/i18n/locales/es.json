@@ -66,7 +66,40 @@
     "discoverTitle": "DESCUBRE MI",
     "discoverSubtitle": "TRAYECTORIA DE DISEÑO.",
     "bio": "Comencé mi viaje hace 5 años transformando ideas en realidad digital.",
-    "yearsExperience": "Años de Experiencia"
+    "yearsExperience": "Años de Experiencia",
+    "heroTitle": "Más Allá de los Píxeles",
+    "journeyTitle": "Trayectoria Profesional",
+    "journeyText": "Nuestra trayectoria se define por una búsqueda incesante de la excelencia en ingeniería. Arquitectamos sistemas robustos y escalables que cierran la brecha entre la teoría algorítmica abstracta y el valor empresarial tangible.",
+    "philosophyTitle": "Filosofía de Ingeniería",
+    "philosophyText": "Creemos que la verdadera innovación opera de manera invisible. Al aprovechar la inteligencia artificial avanzada y la automatización determinista, eliminamos la fricción operativa, permitiendo a las empresas escalar con una eficiencia sin precedentes.",
+    "values": {
+      "collaborative": {
+        "title": "Sinergia Colaborativa",
+        "description": "Fomento de alianzas profundamente integradas para alinear la ejecución técnica con los objetivos estratégicos globales."
+      },
+      "detailOriented": {
+        "title": "Precisión Rigurosa",
+        "description": "Aplicación de estándares inflexibles a cada línea de código, garantizando resultados deterministas y despliegues sin defectos."
+      },
+      "transparent": {
+        "title": "Transparencia Absoluta",
+        "description": "Mantenimiento de un flujo de información abierto y auditable durante todo el ciclo de vida del desarrollo de software."
+      },
+      "forwardThinking": {
+        "title": "Innovación Prospectiva",
+        "description": "Anticipación de los cambios de paradigma tecnológico para blindar las infraestructuras digitales frente a desafíos emergentes."
+      }
+    },
+    "stats": {
+      "yearsExperience": "Años de Experiencia",
+      "successfulProjects": "Proyectos Completados",
+      "clientSatisfaction": "Satisfacción del Cliente",
+      "coffeeConsumed": "Ciclos de Compilación"
+    },
+    "statsTitle": "IMPACTO EN CIFRAS",
+    "whyWorkWithMeSubtitle": "Una mezcla única de habilidades que hace destacar los proyectos.",
+    "seoTitle": "Sobre Nosotros",
+    "seoDescription": "Obtenga más información sobre nuestra trayectoria, filosofía y el impacto que creamos a través de la artesanía digital."
   },
   "projects": {
     "title": "Proyectos",
@@ -126,7 +159,7 @@
     "processDescription": "Un flujo de trabajo transparente y colaborativo diseñado para ofrecer resultados excepcionales.",
     "webDev": {
       "title": "Desarrollo Web",
-      "description": "Dando vida a los diseños con código limpio, robusto y escalable. Especializándome en ecosistemas modernos de React, bibliotecas de animación y arquitectura centrada en el rendimiento."
+      "description": "Dando vida a los diseños con código limpio, robusto y scalables. Especializándome en ecosistemas modernos de React, bibliotecas de animación y arquitectura centrada en el rendimiento."
     },
     "steps": {
       "discovery": "Descubrimiento",
@@ -139,6 +172,144 @@
       "developmentDesc": "Convirtiendo diseños en código limpio y eficiente usando React, TypeScript y bibliotecas de animación modernas. Asegurando velocidad, SEO y capacidad de respuesta.",
       "launch": "Lanzamiento",
       "launchDesc": "Despliegue, pruebas y optimización final. Proporciono documentación y soporte para ayudarte a gestionar y hacer crecer tu nuevo activo digital."
+    },
+    "items": {
+      "saas": {
+        "title": "Desarrollo SaaS Custom",
+        "description": "Construyo plataformas B2B escalables a medida. Desde sistemas de gestión y CRMs hasta marketplaces con infraestructuras robustas.",
+        "tags": {
+          "tech": "React/Node",
+          "arch": "Arquitectura Cloud",
+          "core": "Sistemas Core",
+          "scale": "Escalabilidad"
+        }
+      },
+      "agents": {
+        "title": "Agentes IA (Atención 24/7)",
+        "description": "Implemento agentes de inteligencia artificial que atienden por WhatsApp y Web. Califican leads, agendan citas y reducen el trabajo manual.",
+        "tags": {
+          "auto": "Automatización",
+          "nlp": "NLP",
+          "whatsapp": "WhatsApp API",
+          "cost": "Reducción de Costos"
+        }
+      },
+      "booking": {
+        "title": "Websites + Reservas",
+        "description": "Diseño sitios web premium integrados con motores de reservas y calendarios sincronizados. Interfaz de alto nivel y cero fricción.",
+        "tags": {
+          "ui": "UX/UI Premium",
+          "booking": "Sistemas de Booking",
+          "conv": "Conversión",
+          "pay": "Pagos"
+        }
+      }
+    },
+    "aiTitle": "Soluciones de Inteligencia Artificial y Automatización Avanzada",
+    "aiDescription": "Transformación de las operaciones corporativas mediante marcos cognitivos de última generación y arquitecturas de hiperautomatización.",
+    "problems": {
+      "title": "Ineficiencias Sistémicas",
+      "manualWork": "Esfuerzo Manual Redundante",
+      "manualDesc": "Procesos manuales repetitivos que roban horas vitales a tu equipo.",
+      "contractExposures": "Vulnerabilidades Contractuales y de Cumplimiento",
+      "contractDesc": "Uso de documentos y contratos improvisados que exponen a tu negocio.",
+      "supportBottlenecks": "Saturación Operativa en Soporte",
+      "supportDesc": "Cuellos de botella graves en el onboarding o soporte de clientes."
+    },
+    "results": {
+      "title": "Resultados de Ingeniería",
+      "invisibleWorkflows": "Flujos de Trabajo Operacionalmente Invisibles",
+      "invisibleDesc": "Flujos de trabajo operacionalmente invisibles que operan 24/7 sin intervención humana.",
+      "cognitiveRag": "Sistemas Cognitivos RAG",
+      "cognitiveDesc": "Sistemas Cognitivos RAG integrados con sus propios datos.",
+      "scalingSupport": "Escalabilidad Dinámica de Soporte",
+      "scalingDesc": "Escalabilidad dinámica de soporte sin multiplicar sus costos."
+    },
+    "ai": {
+      "featuredProjects": "Proyectos Destacados",
+      "cta": "Hablemos de tu automatización",
+      "contractGeneratorLink": "📄 Contract Generator SaaS",
+      "silhouetteLink": "🧠 Silhouette Agency OS"
+    },
+    "roiAuditTitlePart1": "Audita tus",
+    "roiAuditTitlePart2": "Ahorros en Software",
+    "roiAuditSubtitle": "Descubre el impacto financiero directo al eliminar la tarifa por tarea y automatizar flujos.",
+    "pricing": {
+      "title": "Planes de Desarrollo & Automatización",
+      "subtitle": "Elige el nivel de integración que tu negocio necesita. Sin tarifas por tarea y con infraestructura de IA escalable.",
+      "paymentType": " / pago único",
+      "from": " / desde",
+      "mostPopular": "Más Popular",
+      "selectPlan": "Seleccionar Plan",
+      "startProject": "Iniciar Proyecto",
+      "quoteSolution": "Cotizar Solución",
+      "equivalent": "Equivalente a {{amount}} (Para clientes globales)",
+      "esencial": {
+        "badge": "Inicial",
+        "title": "Plan Esencial",
+        "price": "S/ 2,800",
+        "description": "Ideal para profesionales y Pymes que buscan validar presencia digital y captar prospectos.",
+        "features": [
+          "Landing Page premium (hasta 4 secciones)",
+          "UX optimizada y SEO Local (Google Maps)",
+          "Botón inteligente de WhatsApp",
+          "Formulario conectado a Google Sheets",
+          "Dominio .com y Hosting el 1er año"
+        ]
+      },
+      "profesional": {
+        "badge": "Crecimiento",
+        "title": "Plan Profesional",
+        "price": "S/ 4,800",
+        "description": "Estructura completa para automatizar ventas, leads y sincronizar con CRM sin fricción.",
+        "features": [
+          "Web Corporativa Premium (hasta 8 secciones)",
+          "Integración nativa con tu CRM",
+          "Embudo de agendamiento sincronizado",
+          "Chatbot de IA calificador de leads",
+          "Panel auto-gestionable para el equipo",
+          "Mantenimiento y optimización de flujos de IA"
+        ]
+      },
+      "corporativo": {
+        "badge": "A Medida",
+        "title": "Plan Corporativo",
+        "price": "S/ 7,500+",
+        "description": "Para empresas que necesitan software a medida e integraciones profundas de automatización.",
+        "features": [
+          "Desarrollo React / Next.js de alta velocidad",
+          "Swarms multi-agente e IA con RAG (Vector DB)",
+          "Generación automática de contratos/documentos",
+          "Integración profunda de ERPs y APIs a medida",
+          "Infraestructura en la nube dedicada (VPS/Docker)"
+        ]
+      }
+    },
+    "impact": {
+      "titlePart1": "Impacto Real",
+      "titlePart2": "B2B",
+      "subtitle": "Sistemas implementados operando en producción.",
+      "case1": {
+        "title": "Clínica (Healthcare)",
+        "metric": "-7% No-shows",
+        "problem": "Problema: El equipo colapsaba respondiendo leads (+42 horas de retraso).",
+        "solution": "Solución: Despliegue de Agente IA por WhatsApp con sincronización de calendarios.",
+        "result": "Resultado: Tiempo de respuesta reducido a 2 minutos. +34% en nuevas reservas automáticas y 14 horas semanales liberadas para el equipo médico."
+      },
+      "case2": {
+        "title": "Red Inmobiliaria (Real Estate)",
+        "metric": "+47% Cierres",
+        "problem": "Problema: 80% de leads de portales no calificados, desperdiciando 12h/día de los brokers.",
+        "solution": "Solución: Sistema de Pre-screening IA e integración profunda con CRM.",
+        "result": "Resultado: Calificación de leads en 3 minutos (61% de tasa de calificación). Eficiencia del equipo mejorada de 8h a 2h al día filtrando leads."
+      },
+      "case3": {
+        "title": "Agencia de Marketing (B2B)",
+        "metric": "$12K/mes MRR",
+        "problem": "Problema: Querían escalar servicios sin contratar desarrolladores costosos.",
+        "solution": "Solución: Desarrollo de SaaS White-label para despliegue automatizado de clientes.",
+        "result": "Resultado: 12 clientes desplegados en 30 días con captura de leads 24/7. Retorno de inversión en menos de 3 meses."
+      }
     }
   },
   "blog": {
@@ -184,7 +355,19 @@
       "company": "Nombre de tu empresa",
       "message": "Cuéntame sobre tu proyecto..."
     },
-    "optional": "(Opcional)"
+    "optional": "(Opcional)",
+    "modal": {
+      "title": "Comienza tu Proyecto",
+      "subtitle": "Cuéntame un poco sobre lo que estás buscando construir.",
+      "nameLabel": "Nombre",
+      "namePlaceholder": "Tu Nombre",
+      "emailLabel": "Email",
+      "emailPlaceholder": "tu@correo.com",
+      "detailsLabel": "Detalles del Proyecto",
+      "detailsPlaceholder": "Necesito un sitio web para...",
+      "submit": "Enviar Solicitud de Propuesta",
+      "alert": "¡Solicitud de propuesta enviada! Me pondré en contacto."
+    }
   },
   "footer": {
     "rights": "Todos los derechos reservados",
@@ -197,5 +380,39 @@
     "generic": "Algo salió mal",
     "notFound": "Página no encontrada",
     "serverError": "Error del servidor"
+  },
+  "roi": {
+    "title": "Calculadora de Ahorro y ROI Operativo",
+    "subtitle": "Calcula el retorno de inversión al eliminar la tarifa por tarea y automatizar procesos manuales.",
+    "currency": {
+      "pen": "Soles (PEN)",
+      "usd": "Dólares (USD)"
+    },
+    "labels": {
+      "taskVolume": "Tareas Ejecutadas en Zapier / mes",
+      "hoursFreed": "Horas de trabajo manual mensual a automatizar",
+      "hourlyCost": "Costo salarial por hora del personal responsable"
+    },
+    "units": {
+      "tasks": "tareas",
+      "hours": "horas",
+      "perHour": " / h",
+      "perMonth": " / mes",
+      "hoursZero": "0h",
+      "hoursMax": "200h",
+      "minPen": "S/. 15",
+      "minUsd": "$5",
+      "maxPen": "S/. 300",
+      "maxUsd": "$80"
+    },
+    "results": {
+      "zapierCost": "Costo Mensual Zapier:",
+      "n8nHostingCost": "Costo Mensual n8n (Hosting VPS):",
+      "licenseSavings": "Ahorro Neto en Licencias:",
+      "manualValue": "Valor de Horas Manuales Liberadas:",
+      "annualRoi": "Retorno Financiero Anual Estimado (ROI)",
+      "returnOnDevelopment": "~{{percent}}% de retorno sobre la tarifa de desarrollo"
+    },
+    "cta": "Reservar Auditoría de Procesos Gratis"
   }
 }
