@@ -49,7 +49,7 @@ export const projects: Project[] = [
         title: "BSSN USA",
         year: "2024",
         url: "https://bssnusa.com/",
-        image: "/projects/project-5.png",
+        image: "/projects/bssn-usa.png",
         description: "A robust digital platform for a security and solutions network. Key features include secure client portals and real-time service tracking.",
         role: "Lead Developer",
         services: ["Web App", "Security Integration"]

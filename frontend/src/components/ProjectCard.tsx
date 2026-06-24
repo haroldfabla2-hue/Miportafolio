@@ -14,7 +14,7 @@ const ProjectCard: React.FC<ProjectCardProps> = ({ project, index }) => {
     const { t } = useTranslation();
     const isInternal = project.url.startsWith('/');
     const isGithub = project.url.includes('github.com');
-    const showImage = isInternal || isGithub || (project.image && project.image !== '/projects/placeholder.png' && project.image !== '/projects/github-repo.svg');
+    const showImage = isInternal || isGithub;
 
     return (
         <motion.div
