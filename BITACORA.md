@@ -44,3 +44,14 @@ Archivo de seguimiento de tareas y progreso (Solo adición).
     - **Frontend**: Integrado `ContentEditor.tsx` para cargar dinámicamente taxonomías y custom fields por tipo de contenido, renderizando inputs y tags en el formulario de edición y enviándolos en el payload.
     - **Frontend**: Configurada la ruta en `App.tsx` y el enlace en el menú lateral de `Settings.tsx`.
 - **Estado**: ✅ Completado. Compilación exitosa en frontend y backend sin errores.
+
+## [2026-06-24] i18n Architecture Phase: Bilingual Support & Babel AST Shield
+- **Tarea**: Refactorizar componentes estáticos con texto duro en JSX a i18next y desplegar un analizador AST local en pre-commits.
+- **Acciones**:
+    - **Estructuración Léxica**: Extendidos archivos `en.json` y `es.json` con namespaces completos para `about`, `services`, `roi` y `contact.modal`.
+    - **Refactorización de Vistas**: Refactorizados `AboutPage.tsx`, `ServicesPage.tsx`, `ContactModal.tsx` y `RoiCalculator.tsx` para usar `useTranslation`.
+    - **Formato de Moneda**: Integrado `Intl.NumberFormat` dinámico basado en `i18n.language` en la calculadora de ROI.
+    - **Shield Anti-Deuda**: Creado script `detect-hardcoded.cjs` que audita nodos de Babel AST (`JSXText`, `JSXExpressionContainer` y `JSXAttribute` para placeholder/alt/title/aria-label) en staged files.
+    - **Git hook**: Vinculados Husky y lint-staged en el pre-commit hook del repositorio.
+    - **Despliegue**: Sincronizado el repositorio local con GitHub, y rebuild de la imagen Docker de producción en el VPS.
+- **Estado**: ✅ Completado, testeado y desplegado con éxito en el VPS Silhouette Server.
