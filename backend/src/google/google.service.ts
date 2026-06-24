@@ -82,7 +82,8 @@ export class GoogleService {
                 'https://www.googleapis.com/auth/userinfo.email',
                 'https://www.googleapis.com/auth/userinfo.profile',
                 'https://www.googleapis.com/auth/gmail.modify',
-                'https://www.googleapis.com/auth/drive.file'
+                'https://www.googleapis.com/auth/drive.file',
+                'https://www.googleapis.com/auth/spreadsheets'
             ],
             include_granted_scopes: true,
             prompt: 'consent' // Force refresh token generation

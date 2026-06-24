@@ -1,0 +1,16 @@
+# Alberto Farah | Silhouette Agency OS
+
+An elite software engineering and AI agency specializing in custom SaaS development, Autonomous AI Agents, Retrieval-Augmented Generation (RAG) pipelines, and Multi-Agent Swarms. Built on premium architectural principles with high-fidelity user experiences.
+
+## Services
+- **AI Swarms & Autonomy**: Custom multi-agent systems designed for complex operational pipelines.
+- **Tailored SaaS Architecture**: Multi-tenant, secure, high-performance web applications.
+- **Enterprise Cognitive Systems**: Semantic search, vector memory databases, and RAG search.
+
+## Featured Projects
+- **Silhouette Agency OS**: An autonomous, local-first operating system for creative agencies utilizing local LLMs (via Ollama) and hybrid 4-tier vector memory.
+- **Contract Generator SaaS**: An automated SaaS utility generating legally compliant agreements dynamically (`cg.unityiris.com`).
+
+## Contact
+- **Website**: https://albertofarah.com
+- **Email**: alberto.farah.b@gmail.com

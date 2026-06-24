@@ -3,6 +3,7 @@ import { motion, useScroll, useTransform, MotionValue, useMotionValue, useSpring
 import { useTranslation } from 'react-i18next';
 import SEO from './SEO';
 import RoiCalculator from './RoiCalculator';
+import { getServiceSchema } from './JsonLd';
 
 // Reusable 3D Tilt Wrapper
 const TiltWrapper: React.FC<{ children: React.ReactNode; className?: string; style?: React.CSSProperties }> = ({ children, className, style }) => {
@@ -165,7 +166,11 @@ const ServicesPage: React.FC = () => {
 
     return (
         <div style={{ paddingTop: '150px', minHeight: '100vh', paddingBottom: '100px' }}>
-            <SEO title={t('services.title')} description={t('services.heroSubtitle')} />
+            <SEO 
+                title={t('services.title')} 
+                description={t('services.heroSubtitle')} 
+                schemaMarkup={getServiceSchema(t('services.title'), t('services.heroSubtitle'))}
+            />
             
             {/* Hero Section */}
             <section style={{

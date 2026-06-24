@@ -1,0 +1,12 @@
+User-agent: *
+Allow: /
+Sitemap: https://albertofarah.com/sitemap.xml
+
+User-agent: GPTBot
+Allow: /
+
+User-agent: ClaudeBot
+Allow: /
+
+User-agent: Google-Extended
+Allow: /

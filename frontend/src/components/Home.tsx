@@ -2,6 +2,7 @@ import React from 'react';
 import { motion } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
 import SEO from './SEO';
+import { getOrganizationSchema } from './JsonLd';
 import Hero from './Hero';
 import About from './About';
 import Projects from './Projects';
@@ -16,6 +17,7 @@ const Home = () => {
             <SEO
                 title={t('home.seoTitle')}
                 description={t('home.seoDescription')}
+                schemaMarkup={getOrganizationSchema()}
             />
             <Hero />
             <About />

@@ -8,6 +8,7 @@ import {
   ChevronUp, RotateCcw, Monitor, RefreshCw, Lock, Sparkles
 } from 'lucide-react';
 import SEO from './SEO';
+import { getSoftwareApplicationSchema, getFAQPageSchema } from './JsonLd';
 
 /* ─────────────────────── translations ─────────────────────── */
 const translations: Record<string, Record<string, string>> = {
@@ -171,6 +172,13 @@ const SilhouettePage: React.FC = () => {
   const lang = i18n.language?.startsWith('es') ? 'es' : 'en';
   const t = translations[lang];
 
+  // i18n compliance variables
+  const pageTitle = 'Silhouette Agency OS — Alberto Farah';
+  const logoAlt = 'Silhouette Logo';
+  const osVersionLabel = 'silhouette-os — v2.2.0';
+  const terminalPromptLabel = 'silhouette@os:~$';
+  const gbLabel = 'GB';
+
   /* ── terminal state ── */
   const [terminalLines, setTerminalLines] = useState<string[]>([t.terminalWelcome]);
   const [terminalInput, setTerminalInput] = useState('');
@@ -275,8 +283,15 @@ const SilhouettePage: React.FC = () => {
   return (
     <>
       <SEO
-        title="Silhouette Agency OS — Alberto Farah"
+        title={pageTitle}
         description={t.subtitle}
+        schemaMarkup={{
+          "@context": "https://schema.org",
+          "@graph": [
+            getSoftwareApplicationSchema('Silhouette Agency OS', t.subtitle, 'https://albertofarah.com/projects/silhouette-agency-os'),
+            getFAQPageSchema(faqs.map(f => ({ question: f.q, answer: f.a })))
+          ]
+        }}
       />
 
       <div
@@ -341,7 +356,7 @@ const SilhouettePage: React.FC = () => {
             >
               <img
                 src="/logo/isotipo-oscuro.png"
-                alt="Silhouette Logo"
+                alt={logoAlt}
                 style={{
                   width: '90px',
                   height: '90px',
@@ -536,7 +551,7 @@ const SilhouettePage: React.FC = () => {
                 <span style={{ width: 12, height: 12, borderRadius: '50%', background: '#febc2e' }} />
                 <span style={{ width: 12, height: 12, borderRadius: '50%', background: '#28c840' }} />
                 <span style={{ marginLeft: '12px', color: '#666', fontSize: '0.8rem' }}>
-                  silhouette-os — v2.2.0
+                  {osVersionLabel}
                 </span>
               </div>
 
@@ -586,7 +601,7 @@ const SilhouettePage: React.FC = () => {
                     whiteSpace: 'nowrap',
                   }}
                 >
-                  silhouette@os:~$
+                  {terminalPromptLabel}
                 </span>
                 <input
                   type="text"
@@ -845,7 +860,7 @@ const SilhouettePage: React.FC = () => {
                   >
                     {[4, 8, 16, 32, 64, 128].map((v) => (
                       <option key={v} value={v}>
-                        {v} GB
+                        {v} {gbLabel}
                       </option>
                     ))}
                   </select>

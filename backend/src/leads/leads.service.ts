@@ -4,6 +4,7 @@ import { LeadStatus } from '@prisma/client';
 import { GmailService } from '../google/gmail.service';
 import { ConfigService } from '@nestjs/config';
 import { google } from 'googleapis';
+import { GoogleSheetsService } from '../google/google-sheets.service';
 
 @Injectable()
 export class LeadsService {
@@ -13,6 +14,7 @@ export class LeadsService {
         private prisma: PrismaService,
         private gmailService: GmailService,
         private configService: ConfigService,
+        private googleSheetsService: GoogleSheetsService,
     ) { }
 
     private buildWhereClause(user: any) {
@@ -92,6 +94,11 @@ export class LeadsService {
         // Keep lead capture resilient: email notification should never break form submission.
         this.notifyLeadByEmail(lead).catch((error) => {
             this.logger.warn(`Lead email notification failed for lead ${lead.id}: ${error?.message || error}`);
+        });
+
+        // Sync to Google Sheets backup
+        this.googleSheetsService.appendLeadRow(lead).catch((error) => {
+            this.logger.warn(`Lead Google Sheets sync failed for lead ${lead.id}: ${error?.message || error}`);
         });
 
         return lead;

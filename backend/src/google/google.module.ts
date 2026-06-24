@@ -2,6 +2,7 @@ import { Module, forwardRef } from '@nestjs/common';
 import { GoogleService } from './google.service';
 import { GmailService } from './gmail.service';
 import { GoogleDriveService } from './google-drive.service';
+import { GoogleSheetsService } from './google-sheets.service';
 import { GmailController } from './gmail.controller';
 import { DriveController } from './drive.controller';
 import { GoogleController } from './google.controller';
@@ -12,8 +13,8 @@ import { PermissionGuard } from '../guards/permission.guard';
 
 @Module({
     imports: [forwardRef(() => UsersModule), ConfigModule, PermissionsModule],
-    providers: [GoogleService, GmailService, GoogleDriveService, PermissionGuard],
+    providers: [GoogleService, GmailService, GoogleDriveService, GoogleSheetsService, PermissionGuard],
     controllers: [GmailController, DriveController, GoogleController],
-    exports: [GoogleService, GmailService, GoogleDriveService],
+    exports: [GoogleService, GmailService, GoogleDriveService, GoogleSheetsService],
 })
 export class GoogleModule { }
