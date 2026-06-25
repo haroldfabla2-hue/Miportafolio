@@ -566,6 +566,12 @@ model Lead {
   assignedToId String?
   assignedTo   User?      @relation(fields: [assignedToId], references: [id])
   
+  // Advanced Qualification (BANT/CHAMP)
+  operationalPain   String?    @db.Text
+  monthlyVolume     Float?
+  roiEstimate       Float?
+  qualificationStep String?
+  
   createdAt   DateTime   @default(now())
   updatedAt   DateTime   @updatedAt
 

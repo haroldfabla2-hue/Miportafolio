@@ -414,5 +414,46 @@
       "returnOnDevelopment": "~{{percent}}% return on development fee"
     },
     "cta": "Book Free Process Audit"
+  },
+  "qualify": {
+    "title": "Let's Qualify Your Project",
+    "subtitle": "Calculate your ROI and operational alignment in 3 quick steps.",
+    "steps": {
+      "step1": "Operational Pain",
+      "step2": "Volume & ROI",
+      "step3": "Contact Details"
+    },
+    "form": {
+      "pain": {
+        "title": "What is your main operational bottleneck?",
+        "saas": "Manual task repetition / double data entry",
+        "agents": "Customer support lag / lack of 24/7 automation",
+        "custom": "No scalable system for operations"
+      },
+      "roi": {
+        "title": "Let's estimate your task volume & hours",
+        "tasks": "How many monthly tasks do you want to automate?",
+        "hours": "How many staff hours are wasted on these tasks / mo?",
+        "hourlyRate": "Staff average hourly rate (USD)",
+        "estimate": "Estimated Monthly ROI Savings:"
+      },
+      "contact": {
+        "title": "Who should we send this report to?",
+        "name": "Full Name",
+        "email": "Business Email (No Gmail/Yahoo)",
+        "phone": "Phone Number (WhatsApp preferred)",
+        "company": "Company Name",
+        "submit": "Analyze & Get Free Audit",
+        "success": "Analysis completed! We have sent a copy of your ROI report to your email.",
+        "invalidEmail": "Please provide a valid corporate email address (free email providers are not allowed)."
+      }
+    }
+  },
+  "exitIntent": {
+    "title": "Don't leave empty-handed!",
+    "subtitle": "Get a Free custom Architecture & ROI Audit for your business.",
+    "description": "We will map out your current workflows, calculate potential automation savings, and design a custom AI/SaaS blueprint for you.",
+    "cta": "Claim Free Audit Now",
+    "noThanks": "No, thanks, I want to exit"
   }
 }

@@ -414,5 +414,46 @@
       "returnOnDevelopment": "~{{percent}}% de retorno sobre la tarifa de desarrollo"
     },
     "cta": "Reservar Auditoría de Procesos Gratis"
+  },
+  "qualify": {
+    "title": "Califica tu Proyecto",
+    "subtitle": "Calcula tu ROI y alineación operativa en 3 rápidos pasos.",
+    "steps": {
+      "step1": "Dolor Operativo",
+      "step2": "Volumen y ROI",
+      "step3": "Datos de Contacto"
+    },
+    "form": {
+      "pain": {
+        "title": "¿Cuál es tu principal cuello de botella operativo?",
+        "saas": "Repetición manual de tareas / doble entrada de datos",
+        "agents": "Lentitud en soporte / falta de automatización 24/7",
+        "custom": "Sin un sistema escalable para operaciones"
+      },
+      "roi": {
+        "title": "Estimemos tu volumen de tareas y horas",
+        "tasks": "¿Cuántas tareas mensuales deseas automatizar?",
+        "hours": "¿Cuántas horas de personal se pierden en estas tareas / mes?",
+        "hourlyRate": "Costo promedio por hora del personal (USD)",
+        "estimate": "Ahorro Estimado Mensual (ROI):"
+      },
+      "contact": {
+        "title": "¿A quién debemos enviar este reporte?",
+        "name": "Nombre Completo",
+        "email": "Correo Corporativo (No Gmail/Yahoo)",
+        "phone": "Teléfono (WhatsApp preferido)",
+        "company": "Nombre de la Empresa",
+        "submit": "Analizar y Obtener Auditoría Gratis",
+        "success": "¡Análisis completado! Hemos enviado una copia de tu reporte de ROI a tu correo.",
+        "invalidEmail": "Por favor, introduce un correo corporativo válido (no se permiten proveedores gratuitos)."
+      }
+    }
+  },
+  "exitIntent": {
+    "title": "¡No te vayas con las manos vacías!",
+    "subtitle": "Obtén una Auditoría de Arquitectura y ROI Gratis para tu negocio.",
+    "description": "Mapearemos tus flujos de trabajo actuales, calcularemos los ahorros potenciales de automatización y diseñaremos un blueprint de IA/SaaS a tu medida.",
+    "cta": "Reclamar Auditoría Gratis Ahora",
+    "noThanks": "No, gracias, prefiero salir"
   }
 }

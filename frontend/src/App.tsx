@@ -19,6 +19,7 @@ import ScrollToTop from './components/ScrollToTop';
 import BlogPage from './components/BlogPage';
 import BlogPost from './components/BlogPost';
 import SilhouettePage from './components/SilhouettePage';
+import ExitIntentModal from './components/ExitIntentModal';
 
 // Admin pages — lazy-loaded for code splitting
 const JoinPage = lazy(() => import('./admin/pages/JoinPage'));
@@ -158,6 +159,7 @@ function App() {
             </Routes>
           </main>
           <Footer />
+          <ExitIntentModal />
         </Layout>
       </div>
     </ReactLenis>

@@ -85,6 +85,12 @@ export class LeadsService {
                 source: data.source,
                 notes: data.notes,
                 assignedToId: data.assignedToId,
+                
+                // Advanced Qualification
+                operationalPain: data.operationalPain,
+                monthlyVolume: data.monthlyVolume !== undefined && data.monthlyVolume !== null ? parseFloat(String(data.monthlyVolume)) : null,
+                roiEstimate: data.roiEstimate !== undefined && data.roiEstimate !== null ? parseFloat(String(data.roiEstimate)) : null,
+                qualificationStep: data.qualificationStep,
             },
             include: {
                 assignedTo: { select: { id: true, name: true } },
@@ -97,6 +103,70 @@ export class LeadsService {
         });
 
         // Sync to Google Sheets backup
+        this.googleSheetsService.appendLeadRow(lead).catch((error) => {
+            this.logger.warn(`Lead Google Sheets sync failed for lead ${lead.id}: ${error?.message || error}`);
+        });
+
+        return lead;
+    }
+
+    async upsertQualify(data: any) {
+        // Look for a lead with the same email created in the last 2 hours
+        const twoHoursAgo = new Date(Date.now() - 2 * 60 * 60 * 1000);
+        const existingLead = await this.prisma.lead.findFirst({
+            where: {
+                email: data.email,
+                createdAt: { gte: twoHoursAgo }
+            }
+        });
+
+        if (existingLead) {
+            // Update the existing lead
+            const updated = await this.prisma.lead.update({
+                where: { id: existingLead.id },
+                data: {
+                    name: data.name || existingLead.name,
+                    company: data.company || existingLead.company,
+                    phone: data.phone || existingLead.phone,
+                    notes: data.notes || existingLead.notes,
+                    operationalPain: data.operationalPain || existingLead.operationalPain,
+                    monthlyVolume: data.monthlyVolume !== undefined && data.monthlyVolume !== null ? parseFloat(String(data.monthlyVolume)) : existingLead.monthlyVolume,
+                    roiEstimate: data.roiEstimate !== undefined && data.roiEstimate !== null ? parseFloat(String(data.roiEstimate)) : existingLead.roiEstimate,
+                    qualificationStep: data.qualificationStep || existingLead.qualificationStep,
+                }
+            });
+
+            // Sync to Google Sheets
+            this.googleSheetsService.appendLeadRow(updated).catch((error) => {
+                this.logger.warn(`Lead Google Sheets sync failed on update for ${updated.id}: ${error?.message || error}`);
+            });
+
+            return updated;
+        }
+
+        // Create a new lead
+        const lead = await this.prisma.lead.create({
+            data: {
+                name: data.name || 'Anonymous Qualify',
+                company: data.company,
+                email: data.email,
+                phone: data.phone,
+                value: data.value || 0,
+                status: data.status || 'NEW',
+                source: data.source || 'WEBSITE_QUALIFY',
+                notes: data.notes,
+                operationalPain: data.operationalPain,
+                monthlyVolume: data.monthlyVolume !== undefined && data.monthlyVolume !== null ? parseFloat(String(data.monthlyVolume)) : null,
+                roiEstimate: data.roiEstimate !== undefined && data.roiEstimate !== null ? parseFloat(String(data.roiEstimate)) : null,
+                qualificationStep: data.qualificationStep || 'COMPLETED',
+            }
+        });
+
+        // Trigger email & sheets sync
+        this.notifyLeadByEmail(lead).catch((error) => {
+            this.logger.warn(`Lead email notification failed for lead ${lead.id}: ${error?.message || error}`);
+        });
+
         this.googleSheetsService.appendLeadRow(lead).catch((error) => {
             this.logger.warn(`Lead Google Sheets sync failed for lead ${lead.id}: ${error?.message || error}`);
         });

@@ -25,6 +25,34 @@ export class LeadsController {
         });
     }
 
+    @Post('qualify')
+    @Public()
+    async qualifyFromWebsite(@Body() data: {
+        name: string;
+        email: string;
+        phone?: string;
+        company?: string;
+        message?: string;
+        operationalPain?: string;
+        monthlyVolume?: number;
+        roiEstimate?: number;
+        qualificationStep?: string;
+    }) {
+        return this.leadsService.upsertQualify({
+            name: data.name,
+            email: data.email,
+            phone: data.phone,
+            company: data.company,
+            notes: data.message,
+            operationalPain: data.operationalPain,
+            monthlyVolume: data.monthlyVolume,
+            roiEstimate: data.roiEstimate,
+            qualificationStep: data.qualificationStep,
+            source: 'WEBSITE_QUALIFY',
+            status: 'NEW',
+        });
+    }
+
     // --- PROTECTED ENDPOINTS ---
 
     @Get()
