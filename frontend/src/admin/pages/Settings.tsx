@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { authFetch } from '../../services/api';
 
 // Settings sections
-type SettingsSection = 'profile' | 'google' | 'integrations' | 'api' | 'notifications' | 'appearance' | 'cms';
+type SettingsSection = 'profile' | 'google' | 'integrations' | 'api' | 'notifications' | 'appearance' | 'cms' | 'roles';
 
 // Google connection status
 interface GoogleStatus {
@@ -68,6 +68,7 @@ const SettingsPage: React.FC = () => {
 
     const sections = [
         { id: 'profile', label: 'Profile', icon: '👤' },
+        { id: 'roles', label: 'Team & Roles', icon: '👥' },
         { id: 'google', label: 'Google', icon: '🔵' },
         { id: 'integrations', label: 'Other Integrations', icon: '🔌' },
         { id: 'api', label: 'API Keys', icon: '🔑' },
@@ -181,6 +182,8 @@ const SettingsPage: React.FC = () => {
                             onClick={() => {
                                 if (section.id === 'cms') {
                                     navigate('/admin/settings/cms');
+                                } else if (section.id === 'roles') {
+                                    navigate('/admin/settings/roles');
                                 } else {
                                     setActiveSection(section.id as SettingsSection);
                                 }

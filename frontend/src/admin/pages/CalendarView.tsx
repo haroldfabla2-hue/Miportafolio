@@ -6,6 +6,9 @@ import {
 import { eventsApi } from '../../services/api';
 import type { CalendarEvent, EventType } from '../../types/models';
 import { useAuth } from '../../context/AuthContext';
+import { useTranslation } from 'react-i18next';
+import { toast } from 'sonner';
+import { DangerConfirmModal } from '../components/ui/DangerConfirmModal';
 
 // Color map for event types
 const TYPE_COLORS: Record<EventType, string> = {
@@ -22,7 +25,7 @@ export const CalendarView: React.FC = () => {
     const [loading, setLoading] = useState(true);
     const [selectedEvent, setSelectedEvent] = useState<CalendarEvent | null>(null);
     const [isModalOpen, setIsModalOpen] = useState(false);
-    const [newEventStart, setNewEventStart] = useState<Date | null>(null);
+    const [newEventStart, setNewEventStart] = useState<Date | undefined>();
 
     // Navigation
     const nextMonth = () => setCurrentDate(new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 1));
@@ -204,11 +207,21 @@ interface EventModalProps {
     isOpen: boolean;
     onClose: () => void;
     event: CalendarEvent | null;
-    initialDate: Date | null;
+    initialDate?: Date;
     onSave: () => void;
 }
 
 const EventModal: React.FC<EventModalProps> = ({ isOpen, onClose, event, initialDate, onSave }) => {
+    const { t } = useTranslation();
+    const [saving, setSaving] = useState(false);
+    const [confirmModal, setConfirmModal] = useState<{
+        isOpen: boolean;
+        title: string;
+        message: string;
+        action: (() => void) | null;
+        requireType?: string;
+    }>({ isOpen: false, title: '', message: '', action: null });
+
     const [formData, setFormData] = useState({
         title: event?.title || '',
         description: event?.description || '',
@@ -222,7 +235,6 @@ const EventModal: React.FC<EventModalProps> = ({ isOpen, onClose, event, initial
         clientId: event?.clientId || '',
         color: event?.color || TYPE_COLORS[(event?.type as EventType) || 'MEETING']
     });
-    const [saving, setSaving] = useState(false);
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -242,26 +254,36 @@ const EventModal: React.FC<EventModalProps> = ({ isOpen, onClose, event, initial
             } else {
                 await eventsApi.create(payload);
             }
+            toast.success(t('calendar.saveSuccess', 'Event saved successfully'));
             onSave();
         } catch (error) {
             console.error(error);
-            alert('Failed to save event');
+            toast.error(t('calendar.saveError', 'Failed to save event'));
         } finally {
             setSaving(false);
         }
     };
 
-    const handleDelete = async () => {
-        if (!event || !confirm('Delete this event?')) return;
-        setSaving(true);
-        try {
-            await eventsApi.delete(event.id);
-            onSave();
-        } catch (error) {
-            alert('Failed to delete');
-        } finally {
-            setSaving(false);
-        }
+    const handleDelete = () => {
+        if (!event) return;
+        setConfirmModal({
+            isOpen: true,
+            title: t('calendar.deleteTitle', 'Delete Event'),
+            message: t('calendar.deleteMessage', 'Are you sure you want to delete this event?'),
+            requireType: 'ELIMINAR',
+            action: async () => {
+                setSaving(true);
+                try {
+                    await eventsApi.delete(event.id);
+                    toast.success(t('calendar.deleteSuccess', 'Event deleted successfully'));
+                    onSave();
+                } catch (error) {
+                    toast.error(t('calendar.deleteError', 'Failed to delete'));
+                } finally {
+                    setSaving(false);
+                }
+            }
+        });
     };
 
     return (
@@ -368,6 +390,18 @@ const EventModal: React.FC<EventModalProps> = ({ isOpen, onClose, event, initial
                     </div>
                 </form>
             </div>
+            
+            <DangerConfirmModal
+                isOpen={confirmModal.isOpen}
+                title={confirmModal.title}
+                message={confirmModal.message}
+                requireType={confirmModal.requireType}
+                onConfirm={() => {
+                    if (confirmModal.action) confirmModal.action();
+                    setConfirmModal({ ...confirmModal, isOpen: false });
+                }}
+                onCancel={() => setConfirmModal({ ...confirmModal, isOpen: false })}
+            />
         </div>
     );
 };

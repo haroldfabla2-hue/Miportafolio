@@ -25,6 +25,7 @@ const LeadQualificationForm: React.FC<LeadQualificationFormProps> = ({ onSuccess
   const [email, setEmail] = useState('');
   const [phone, setPhone] = useState('');
   const [company, setCompany] = useState('');
+  const [acceptedTerms, setAcceptedTerms] = useState(false);
 
   // i18n compliance keys
   const nextLabel = 'Continue';
@@ -75,6 +76,11 @@ const LeadQualificationForm: React.FC<LeadQualificationFormProps> = ({ onSuccess
       return;
     }
 
+    if (!acceptedTerms) {
+      setErrorMsg(i18n.language.startsWith('es') ? 'Debe aceptar la Política de Privacidad para continuar.' : 'You must accept the Privacy Policy to continue.');
+      return;
+    }
+
     if (!isCorporateEmail(email)) {
       setErrorMsg(t('qualify.form.contact.invalidEmail'));
       return;
@@ -97,11 +103,8 @@ const LeadQualificationForm: React.FC<LeadQualificationFormProps> = ({ onSuccess
 
       if (response.status === 201 || response.status === 200) {
         setSuccess(true);
-        if (onSuccess) {
-          setTimeout(() => {
-            onSuccess();
-          }, 3000);
-        }
+        // We do NOT auto-call onSuccess() here anymore. We want them to see the Calendly iframe.
+        // The modal will be closed manually by the user or via Calendly event if we add listeners.
       }
     } catch (err: any) {
       setErrorMsg(err.response?.data?.message || (i18n.language.startsWith('es') ? 'Error al enviar los datos. Por favor intente de nuevo.' : 'Failed to send data. Please try again.'));
@@ -159,15 +162,28 @@ const LeadQualificationForm: React.FC<LeadQualificationFormProps> = ({ onSuccess
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
             exit={{ opacity: 0 }}
-            style={{ textAlign: 'center', padding: '20px 0' }}
+            style={{ textAlign: 'center', padding: '10px 0' }}
           >
-            <CheckCircle2 size={64} style={{ color: '#A3FF00', margin: '0 auto 24px auto', display: 'block' }} />
-            <h3 style={{ fontSize: '1.5rem', fontWeight: 800, marginBottom: '12px' }}>
+            <h3 style={{ fontSize: '1.5rem', fontWeight: 800, marginBottom: '8px' }}>
               {i18n.language.startsWith('es') ? '¡Datos Calificados!' : 'Project Qualified!'}
             </h3>
-            <p style={{ color: '#aaa', lineHeight: 1.6, maxWidth: '400px', margin: '0 auto' }}>
-              {t('qualify.form.contact.success')}
+            <p style={{ color: '#aaa', lineHeight: 1.4, maxWidth: '400px', margin: '0 auto 16px auto', fontSize: '0.9rem' }}>
+              {i18n.language.startsWith('es') ? 'Elige una fecha y hora para nuestra llamada estratégica. Tu información ya está pre-cargada.' : 'Pick a time for our strategic call. Your details have been pre-filled.'}
             </p>
+            <div style={{ borderRadius: '16px', overflow: 'hidden', height: '400px', background: '#fff', border: '1px solid rgba(255,255,255,0.1)' }}>
+              <iframe
+                src={`https://calendly.com/alberto-farah-b/30min?name=${encodeURIComponent(name)}&email=${encodeURIComponent(email)}&hide_event_type_details=1&hide_gdpr_banner=1`}
+                width="100%"
+                height="100%"
+                frameBorder="0"
+                title="Calendly Scheduling"
+              ></iframe>
+            </div>
+            {onCancel && (
+               <button onClick={onCancel} style={{ marginTop: '16px', background: 'transparent', border: 'none', color: '#666', cursor: 'pointer', textDecoration: 'underline' }}>
+                 {i18n.language.startsWith('es') ? 'Cerrar ventana' : 'Close window'}
+               </button>
+            )}
           </motion.div>
         ) : step === 1 ? (
           <motion.div
@@ -501,6 +517,22 @@ const LeadQualificationForm: React.FC<LeadQualificationFormProps> = ({ onSuccess
                   ⚠️ {errorMsg}
                 </div>
               )}
+
+              {/* GDPR Checkbox */}
+              <div style={{ display: 'flex', alignItems: 'flex-start', gap: '12px', marginTop: '16px', padding: '12px', background: 'rgba(255,255,255,0.03)', borderRadius: '8px', border: '1px solid rgba(255,255,255,0.05)' }}>
+                <input 
+                  type="checkbox" 
+                  id="gdpr_consent"
+                  checked={acceptedTerms}
+                  onChange={(e) => setAcceptedTerms(e.target.checked)}
+                  style={{ marginTop: '4px', cursor: 'pointer', accentColor: '#A3FF00' }}
+                />
+                <label htmlFor="gdpr_consent" style={{ color: '#888', fontSize: '0.85rem', lineHeight: 1.4, cursor: 'pointer' }}>
+                  {i18n.language.startsWith('es') 
+                    ? <>He leído y acepto la <a href="/privacy" target="_blank" style={{ color: '#A3FF00', textDecoration: 'underline' }}>Política de Privacidad</a> y consiento el procesamiento de mis datos.</>
+                    : <>I have read and accept the <a href="/privacy" target="_blank" style={{ color: '#A3FF00', textDecoration: 'underline' }}>Privacy Policy</a> and consent to the processing of my data.</>}
+                </label>
+              </div>
 
               {/* Actions */}
               <div style={{ display: 'flex', gap: '16px', marginTop: '24px' }}>

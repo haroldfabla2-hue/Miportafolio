@@ -345,6 +345,12 @@ export const contentApi = {
         return response.data;
     },
 
+    // Pricing
+    getPricing: async (): Promise<CmsContent[]> => {
+        const response = await apiInstance.get('/cms/pricing');
+        return response.data;
+    },
+
     // Single content by slug
     getContentBySlug: async (slug: string): Promise<CmsContent | null> => {
         const response = await apiInstance.get(`/cms/content/${slug}`);

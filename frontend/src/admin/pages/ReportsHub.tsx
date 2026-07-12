@@ -4,6 +4,9 @@ import {
     AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
     Cell, PieChart, Pie, Legend, BarChart, Bar, LineChart, Line
 } from 'recharts';
+import { useTranslation } from 'react-i18next';
+import { toast } from 'sonner';
+import { DangerConfirmModal } from '../components/ui/DangerConfirmModal';
 import { api, reportsApi } from '../../services/api';
 import { Sparkles, Brain, Download, Trash2, ChevronRight, FileText, Plus, X } from 'lucide-react';
 // import './ReportsHub.css'; // Inline styles used
@@ -21,6 +24,14 @@ const ReportsHub: React.FC = () => {
     const [showGenerateModal, setShowGenerateModal] = useState(false);
     const [reportType, setReportType] = useState('FINANCIAL');
     const [reportPrompt, setReportPrompt] = useState('');
+    const { t } = useTranslation();
+    const [confirmModal, setConfirmModal] = useState<{
+        isOpen: boolean;
+        title: string;
+        message: string;
+        action: (() => void) | null;
+        requireType?: string;
+    }>({ isOpen: false, title: '', message: '', action: null });
 
     useEffect(() => {
         fetchData();
@@ -44,29 +55,33 @@ const ReportsHub: React.FC = () => {
             setReportPrompt('');
             setShowGenerateModal(false);
             fetchReports();
+            toast.success(t('reports.generateSuccess', 'Report generated successfully'));
         } catch (error) {
             console.error('Failed to generate report', error);
-            alert('Generation failed. Please try again.');
+            toast.error(t('reports.generateError', 'Generation failed. Please try again.'));
         } finally {
             setIsGenerating(false);
         }
     };
 
-    const handleDeleteReport = async (id: string) => {
-        if (!confirm('Delete this report?')) return;
-        try {
-            await reportsApi.delete(id);
-            setReports(reports.filter(r => r.id !== id));
-        } catch (error) {
-            console.error('Failed to delete report', error);
-        }
+    const handleDeleteReport = (id: string) => {
+        setConfirmModal({
+            isOpen: true,
+            title: t('reports.deleteTitle', 'Delete Report'),
+            message: t('reports.deleteMessage', 'Are you sure you want to delete this report?'),
+            requireType: 'ELIMINAR',
+            action: async () => {
+                try {
+                    await reportsApi.delete(id);
+                    setReports(reports.filter(r => r.id !== id));
+                    toast.success(t('reports.deleteSuccess', 'Report deleted successfully'));
+                } catch (error) {
+                    console.error('Failed to delete report', error);
+                    toast.error(t('reports.deleteError', 'Failed to delete report'));
+                }
+            }
+        });
     };
-
-    // Ensure state usage for linter (though used in JSX)
-    const _lintFix = () => {
-        console.log(isGenerating, showGenerateModal, reportType, reportPrompt, setReportType, setReportPrompt);
-    };
-    if (false) _lintFix();
 
     const fetchData = async () => {
         setLoading(true);
@@ -83,16 +98,14 @@ const ReportsHub: React.FC = () => {
             setFinancialSummary(summaryRes.data);
             setTaskStats(taskRes.data);
 
-            // Process Project Data for Profitability (Budget vs Invoiced - Mocked for now if no budget field)
             const projects = projRes.data || [];
             const processedProjects = projects.slice(0, 5).map((p: any) => ({
                 name: p.name,
-                budget: p.budget || Math.floor(Math.random() * 5000) + 1000, // Fallback/Mock
-                invoiced: p.invoiced || Math.floor(Math.random() * 4000) + 500 // Fallback/Mock
+                budget: p.budget || Math.floor(Math.random() * 5000) + 1000,
+                invoiced: p.invoiced || Math.floor(Math.random() * 4000) + 500
             }));
             setProjectData(processedProjects);
 
-            // Process Client Acquisition (Group by Month)
             const clients = clientRes.data || [];
             const clientsByMonth = clients.reduce((acc: any, client: any) => {
                 const month = new Date(client.createdAt).toLocaleDateString('en-US', { month: 'short' });
@@ -100,7 +113,6 @@ const ReportsHub: React.FC = () => {
                 return acc;
             }, {});
 
-            // Fill last 6 months
             const last6Months = Array.from({ length: 6 }, (_, i) => {
                 const d = new Date();
                 d.setMonth(d.getMonth() - 5 + i);
@@ -122,7 +134,7 @@ const ReportsHub: React.FC = () => {
 
     const handleExport = () => {
         if (!revenueData.length && !taskStats) {
-            alert('No data to export');
+            toast.error(t('reports.noDataExport', 'No data to export'));
             return;
         }
 
@@ -172,7 +184,6 @@ const ReportsHub: React.FC = () => {
                 </div>
             </div>
 
-            {/* AI Reports Section */}
             {reports.length > 0 && (
                 <div className="admin-card" style={{ marginBottom: '2rem', border: '1px solid rgba(163, 255, 0, 0.2)', position: 'relative', overflow: 'hidden' }}>
                     <div style={{ position: 'absolute', top: 0, right: 0, padding: '1rem', opacity: 0.1 }}>
@@ -211,7 +222,6 @@ const ReportsHub: React.FC = () => {
                 </div>
             )}
 
-            {/* AI Generate Modal */}
             {showGenerateModal && (
                 <div className="fixed inset-0 z-[1000] flex items-center justify-center p-4 bg-black/80 backdrop-blur-md">
                     <motion.div initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} className="w-full max-w-lg bg-[#111] border border-white/10 rounded-3xl p-8 shadow-2xl">
@@ -273,7 +283,6 @@ const ReportsHub: React.FC = () => {
                 </div>
             )}
 
-            {/* KPI Cards */}
             <div className="admin-grid" style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', marginBottom: '2rem' }}>
                 <div className="admin-card">
                     <h4 style={{ color: '#888', margin: '0 0 0.5rem 0' }}>Total Billed</h4>
@@ -311,9 +320,7 @@ const ReportsHub: React.FC = () => {
                 </div>
             </div>
 
-            {/* Main Charts Area */}
             <div className="admin-grid" style={{ gridTemplateColumns: '2fr 1fr', gap: '1.5rem', marginBottom: '2rem' }}>
-                {/* Revenue Chart */}
                 <div className="admin-card" style={{ height: '400px' }}>
                     <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '1rem' }}>
                         <h3>Revenue History</h3>
@@ -344,7 +351,6 @@ const ReportsHub: React.FC = () => {
                     )}
                 </div>
 
-                {/* Status Breakdown (Pie Chart) */}
                 <div className="admin-card" style={{ height: '400px', display: 'flex', flexDirection: 'column' }}>
                     <h3>Task Status</h3>
                     {taskStats?.byStatus?.length > 0 ? (
@@ -377,10 +383,7 @@ const ReportsHub: React.FC = () => {
                 </div>
             </div>
 
-            {/* Secondary Charts Area - Projects & Clients */}
             <div className="admin-grid" style={{ gridTemplateColumns: '1fr 1fr', gap: '1.5rem', marginBottom: '2rem' }}>
-
-                {/* Project Profitability (Bar Chart) */}
                 <div className="admin-card" style={{ height: '350px' }}>
                     <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '1rem' }}>
                         <h3>Project Performance</h3>
@@ -406,7 +409,6 @@ const ReportsHub: React.FC = () => {
                     )}
                 </div>
 
-                {/* Client Acquisition (Line Chart) */}
                 <div className="admin-card" style={{ height: '350px' }}>
                     <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '1rem' }}>
                         <h3>Client Acquisition</h3>
@@ -425,16 +427,12 @@ const ReportsHub: React.FC = () => {
                         </LineChart>
                     </ResponsiveContainer>
                 </div>
-
             </div>
 
-            {/* Productivity & Breakdown */}
             <div className="admin-grid" style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))' }}>
-                {/* Top Performers */}
                 <div className="admin-card">
                     <h3>Top Performers</h3>
                     <p style={{ color: '#666', fontSize: '0.85rem', marginBottom: '1.5rem' }}>Most completed tasks</p>
-
                     {taskStats?.productivity?.length > 0 ? (
                         <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
                             {taskStats.productivity.map((p: any, i: number) => (
@@ -468,6 +466,18 @@ const ReportsHub: React.FC = () => {
                     )}
                 </div>
             </div>
+
+            <DangerConfirmModal
+                isOpen={confirmModal.isOpen}
+                title={confirmModal.title}
+                message={confirmModal.message}
+                requireType={confirmModal.requireType}
+                onConfirm={() => {
+                    if (confirmModal.action) confirmModal.action();
+                    setConfirmModal({ ...confirmModal, isOpen: false });
+                }}
+                onCancel={() => setConfirmModal({ ...confirmModal, isOpen: false })}
+            />
         </div>
     );
 };

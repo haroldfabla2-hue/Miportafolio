@@ -5,6 +5,7 @@ import {
     Globe, Tags, Layers, Zap, Image, Check, Trash2, Edit2, Plus, 
     Settings, Shield, ChevronDown, ChevronUp, Save, Play, Info
 } from 'lucide-react';
+import { PremiumTabs } from '../components/ui/PremiumTabs';
 
 type TabId = 'general-seo' | 'taxonomies' | 'custom-fields' | 'automation' | 'media';
 
@@ -529,30 +530,12 @@ const SettingsCms: React.FC = () => {
 
             <div style={{ display: 'grid', gridTemplateColumns: '240px 1fr', gap: '2rem', marginTop: '2rem' }} className="settings-layout">
                 {/* Sidebar Navigation */}
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
-                    {tabs.map((tab) => (
-                        <button
-                            key={tab.id}
-                            onClick={() => setActiveTab(tab.id)}
-                            style={{
-                                display: 'flex',
-                                alignItems: 'center',
-                                gap: '0.75rem',
-                                padding: '1rem',
-                                borderRadius: '12px',
-                                border: '1px solid rgba(255,255,255,0.05)',
-                                background: activeTab === tab.id ? 'var(--color-accent, #A3FF00)' : 'rgba(25, 25, 25, 0.4)',
-                                color: activeTab === tab.id ? '#000' : '#888',
-                                fontWeight: activeTab === tab.id ? 'bold' : 'normal',
-                                transition: 'all 0.3s',
-                                textAlign: 'left'
-                            }}
-                        >
-                            {tab.icon}
-                            <span>{tab.label}</span>
-                        </button>
-                    ))}
-                </div>
+                <PremiumTabs
+                    tabs={tabs}
+                    activeTab={activeTab}
+                    onChange={(id) => setActiveTab(id as TabId)}
+                    className="flex-col w-full bg-transparent border-none p-0"
+                />
 
                 {/* Main Content Area */}
                 <div

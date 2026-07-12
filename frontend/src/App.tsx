@@ -20,6 +20,8 @@ import BlogPage from './components/BlogPage';
 import BlogPost from './components/BlogPost';
 import SilhouettePage from './components/SilhouettePage';
 import ExitIntentModal from './components/ExitIntentModal';
+import PrivacyPolicy from './components/PrivacyPolicy';
+import TermsOfService from './components/TermsOfService';
 
 // Admin pages — lazy-loaded for code splitting
 const JoinPage = lazy(() => import('./admin/pages/JoinPage'));
@@ -60,6 +62,7 @@ const ContractGenerator = lazy(() => import('./admin/pages/ContractGenerator'));
 import { AuthProvider } from './context/AuthContext';
 import { SocketProvider } from './context/SocketContext';
 import { StoreProvider } from './context/StoreContext';
+import { Toaster } from 'sonner';
 
 // Loading fallback for lazy-loaded admin pages
 const AdminLoader = () => (
@@ -79,6 +82,8 @@ const AdminLoader = () => (
   </div>
 );
 
+import CookieConsent from './components/CookieConsent';
+
 function App() {
   const location = useLocation();
   const isAdminRoute = location.pathname.startsWith('/admin');
@@ -91,6 +96,7 @@ function App() {
         <AuthProvider>
           <SocketProvider>
             <StoreProvider>
+              <Toaster position="bottom-right" theme="dark" richColors />
               <Routes>
                 <Route path="/admin/login" element={<LoginPage />} />
                 <Route path="/invite/:token" element={<JoinPage />} />
@@ -156,10 +162,13 @@ function App() {
               <Route path="/blog" element={<BlogPage />} />
               <Route path="/blog/:slug" element={<BlogPost />} />
               <Route path="/contact" element={<ContactPage />} />
+              <Route path="/privacy" element={<PrivacyPolicy />} />
+              <Route path="/terms" element={<TermsOfService />} />
             </Routes>
           </main>
           <Footer />
           <ExitIntentModal />
+          <CookieConsent />
         </Layout>
       </div>
     </ReactLenis>

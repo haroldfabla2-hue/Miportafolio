@@ -23,6 +23,12 @@ export class CmsController {
         return this.cmsService.getBlogs();
     }
 
+    @Get('pricing')
+    @Public()
+    getPricing() {
+        return this.cmsService.getPricing();
+    }
+
     @Get('content/:slug')
     @Public()
     getBySlug(@Param('slug') slug: string) {

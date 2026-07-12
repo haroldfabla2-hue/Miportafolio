@@ -71,6 +71,18 @@ export class CmsService {
         });
     }
 
+    async getPricing() {
+        return this.prisma.cmsContent.findMany({
+            where: {
+                type: { mode: 'insensitive', equals: 'pricing' },
+                status: { mode: 'insensitive', equals: 'published' }
+            },
+            // We order by createdAt assuming Esencial, Profesional, Corporativo are created in order,
+            // or we could order by slug. We'll use createdAt for simplicity.
+            orderBy: { createdAt: 'asc' }
+        });
+    }
+
     async getBySlug(slug: string) {
         const content = await this.prisma.cmsContent.findUnique({
             where: { slug },

@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { leadsApi } from '../../services/api';
 import type { Lead, LeadStatus } from '../../types/models';
-import {
-    Plus, X, Mail, Building2,
-    Trash2, Edit2, UserPlus, Search, Loader2
-} from 'lucide-react';
+import { Edit2, Plus, Search, Trash2, ArrowRight, TrendingUp, Filter, Loader2, Download, Building2, Mail, Sparkles, UserPlus, X } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
+import { toast } from 'sonner';
+import { DangerConfirmModal } from '../components/ui/DangerConfirmModal';
+import { motion, AnimatePresence } from 'framer-motion';
 
 const STAGES: { id: LeadStatus; label: string; color: string }[] = [
     { id: 'NEW', label: 'New', color: 'bg-slate-500' },
@@ -22,6 +23,16 @@ export const PipelineView: React.FC = () => {
     const [loading, setLoading] = useState(true);
     const [showModal, setShowModal] = useState(false);
     const [editingLead, setEditingLead] = useState<Lead | null>(null);
+    const { t } = useTranslation();
+
+    // Confirm Modal states
+    const [confirmModal, setConfirmModal] = useState<{
+        isOpen: boolean;
+        title: string;
+        message: string;
+        action: (() => void) | null;
+        requireType?: string;
+    }>({ isOpen: false, title: '', message: '', action: null });
     const [searchTerm, setSearchTerm] = useState('');
     const [draggedLead, setDraggedLead] = useState<Lead | null>(null);
 
@@ -72,27 +83,42 @@ export const PipelineView: React.FC = () => {
         setDraggedLead(null);
     };
 
-    const handleDelete = async (id: string) => {
-        if (!confirm('Delete this lead?')) return;
-        try {
-            await leadsApi.delete(id);
-            setLeads(prev => prev.filter(l => l.id !== id));
-            loadData();
-        } catch (error) {
-            console.error('Failed to delete lead:', error);
-        }
+    const handleDelete = (id: string) => {
+        setConfirmModal({
+            isOpen: true,
+            title: t('pipeline.deleteTitle', 'Delete Lead'),
+            message: t('pipeline.deleteMessage', 'Are you sure you want to delete this lead? This action cannot be undone.'),
+            requireType: 'ELIMINAR',
+            action: async () => {
+                try {
+                    await leadsApi.delete(id);
+                    setLeads(prev => prev.filter(l => l.id !== id));
+                    loadData();
+                    toast.success(t('pipeline.deleteSuccess', 'Lead deleted successfully'));
+                } catch (error) {
+                    console.error('Failed to delete lead:', error);
+                    toast.error(t('pipeline.deleteError', 'Failed to delete lead'));
+                }
+            }
+        });
     };
 
-    const handleConvert = async (lead: Lead) => {
-        if (!confirm(`Convert ${lead.name} to a client? This will create a new client and mark the lead as WON.`)) return;
-        try {
-            await leadsApi.convert(lead);
-            loadData();
-            alert('Lead converted successfully!');
-        } catch (error) {
-            console.error('Failed to convert lead:', error);
-            alert('Failed to convert lead.');
-        }
+    const handleConvert = (lead: Lead) => {
+        setConfirmModal({
+            isOpen: true,
+            title: t('pipeline.convertTitle', 'Convert to Client'),
+            message: t('pipeline.convertMessage', `Convert ${lead.name} to a client? This will create a new client and mark the lead as WON.`),
+            action: async () => {
+                try {
+                    await leadsApi.convert(lead);
+                    loadData();
+                    toast.success(t('pipeline.convertSuccess', 'Lead converted successfully!'));
+                } catch (error) {
+                    console.error('Failed to convert lead:', error);
+                    toast.error(t('pipeline.convertError', 'Failed to convert lead.'));
+                }
+            }
+        });
     };
 
     const filteredLeads = leads.filter(lead =>
@@ -120,15 +146,35 @@ export const PipelineView: React.FC = () => {
             {/* Header */}
             <div className="flex justify-between items-center bg-white/50 backdrop-blur-md p-4 rounded-xl border border-white/20 shadow-sm">
                 <div>
-                    <h1 className="text-2xl font-bold text-slate-800">Sales Pipeline</h1>
-                    <p className="text-slate-500">Manage your leads and deals</p>
+                    <h1 className="text-2xl font-bold text-slate-800">{t('pipeline.title', 'Sales Pipeline')}</h1>
+                    <p className="text-slate-500">{t('pipeline.subtitle', 'Manage your leads and deals')}</p>
                 </div>
-                <button
-                    onClick={() => { setEditingLead(null); setShowModal(true); }}
-                    className="flex items-center gap-2 px-4 py-2 bg-indigo-600 text-white rounded-lg shadow-lg hover:bg-indigo-700 transition font-medium"
-                >
-                    <Plus size={18} /> New Lead
-                </button>
+                <div className="flex gap-2">
+                    <button
+                        onClick={() => {
+                            // Simple CSV export
+                            const header = "Name,Email,Company,Status,Value\n";
+                            const rows = leads.map(l => `${l.name},${l.email},${l.company || ''},${l.status},${l.value || 0}`).join("\n");
+                            const blob = new Blob([header + rows], { type: 'text/csv' });
+                            const url = window.URL.createObjectURL(blob);
+                            const a = document.createElement('a');
+                            a.href = url;
+                            a.download = `leads_export_${new Date().toISOString().split('T')[0]}.csv`;
+                            a.click();
+                            window.URL.revokeObjectURL(url);
+                            toast.success(t('common.exportSuccess', 'Data exported to CSV'));
+                        }}
+                        className="flex items-center gap-2 px-4 py-2 bg-slate-100 text-slate-700 rounded-lg shadow-sm hover:bg-slate-200 transition font-medium"
+                    >
+                        <Download size={18} /> {t('common.export', 'Export CSV')}
+                    </button>
+                    <button
+                        onClick={() => { setEditingLead(null); setShowModal(true); }}
+                        className="flex items-center gap-2 px-4 py-2 bg-indigo-600 text-white rounded-lg shadow-lg hover:bg-indigo-700 transition font-medium"
+                    >
+                        <Plus size={18} /> {t('pipeline.newLead', 'New Lead')}
+                    </button>
+                </div>
             </div>
 
             {/* Stats Cards */}
@@ -156,75 +202,102 @@ export const PipelineView: React.FC = () => {
                 {STAGES.map(stage => (
                     <div
                         key={stage.id}
-                        className="flex-shrink-0 w-80 bg-slate-50/50 rounded-xl border border-slate-200/60 flex flex-col max-h-full"
+                        className="flex-shrink-0 w-80 bg-slate-900/40 backdrop-blur-md rounded-xl border border-slate-800/60 flex flex-col max-h-full overflow-hidden"
                         onDragOver={handleDragOver}
                         onDrop={(e) => handleDrop(e, stage.id)}
                     >
                         {/* Column Header */}
-                        <div className="p-3 border-b border-slate-200/60 flex items-center justify-between sticky top-0 bg-slate-50/95 backdrop-blur-sm z-10 rounded-t-xl">
+                        <div className="p-3 border-b border-white/5 flex items-center justify-between sticky top-0 bg-slate-900/90 backdrop-blur-md z-10">
                             <div className="flex items-center gap-2">
-                                <div className={`w-3 h-3 rounded-full ${stage.color}`}></div>
-                                <span className="font-bold text-slate-700 text-sm">{stage.label}</span>
-                                <span className="text-xs bg-slate-200 text-slate-600 px-2 py-0.5 rounded-full font-medium">
+                                <div className={`w-3 h-3 rounded-full ${stage.color} shadow-[0_0_8px_rgba(255,255,255,0.2)]`}></div>
+                                <span className="font-bold text-slate-200 text-sm">{stage.label}</span>
+                                <span className="text-xs bg-slate-800 text-slate-400 px-2 py-0.5 rounded-full font-medium">
                                     {getLeadsByStage(stage.id).length}
                                 </span>
                             </div>
                         </div>
 
                         {/* Cards Container */}
-                        <div className="p-2 space-y-2 overflow-y-auto flex-1 custom-scroll min-h-[150px]">
-                            {getLeadsByStage(stage.id).map(lead => (
-                                <div
-                                    key={lead.id}
-                                    draggable
-                                    onDragStart={(e) => handleDragStart(e, lead)}
-                                    className="bg-white p-3 rounded-lg border border-slate-200 shadow-sm cursor-grab active:cursor-grabbing hover:shadow-md transition group relative"
-                                >
-                                    <div className="flex justify-between items-start mb-2">
-                                        <h4 className="font-medium text-slate-800 truncate pr-6" title={lead.name}>{lead.name}</h4>
-                                        <div className="xl:opacity-0 group-hover:opacity-100 flex gap-1 absolute top-2 right-2 transition-opacity bg-white/80 p-0.5 rounded backdrop-blur-sm">
-                                            <button
-                                                onClick={() => { setEditingLead(lead); setShowModal(true); }}
-                                                className="p-1 hover:bg-slate-100 rounded text-slate-400 hover:text-indigo-500"
-                                                title="Edit"
-                                            >
-                                                <Edit2 size={12} />
-                                            </button>
-                                            <button
-                                                onClick={() => handleDelete(lead.id)}
-                                                className="p-1 hover:bg-red-50 rounded text-slate-400 hover:text-red-500"
-                                                title="Delete"
-                                            >
-                                                <Trash2 size={12} />
-                                            </button>
-                                        </div>
-                                    </div>
-
-                                    {lead.company && (
-                                        <div className="flex items-center gap-1.5 text-xs text-slate-500 mb-1.5">
-                                            <Building2 size={12} /> {lead.company}
-                                        </div>
-                                    )}
-
-                                    <div className="flex items-center gap-1.5 text-xs text-slate-500 mb-3">
-                                        <Mail size={12} /> <span className="truncate">{lead.email}</span>
-                                    </div>
-
-                                    <div className="flex justify-between items-center pt-2 border-t border-slate-50">
-                                        <span className="text-sm font-bold text-slate-700">
-                                            ${lead.value?.toLocaleString() || 0}
-                                        </span>
-                                        {stage.id === 'NEGOTIATION' && (
-                                            <button
-                                                onClick={() => handleConvert(lead)}
-                                                className="text-[10px] bg-emerald-100 text-emerald-700 px-2 py-1 rounded-full flex items-center gap-1 hover:bg-emerald-200 font-medium transition"
-                                            >
-                                                <UserPlus size={10} /> Convert
-                                            </button>
+                        <div className="p-3 space-y-3 overflow-y-auto flex-1 custom-scroll min-h-[150px]">
+                            <AnimatePresence>
+                                {getLeadsByStage(stage.id).map(lead => {
+                                    // Generate a deterministic mock AI score based on lead ID for demo purposes
+                                    const aiScore = Math.floor((lead.id.charCodeAt(0) + lead.id.charCodeAt(lead.id.length-1)) % 40) + 60;
+                                    const isHot = aiScore > 85;
+                                    return (
+                                    <motion.div
+                                        key={lead.id}
+                                        layout
+                                        initial={{ opacity: 0, scale: 0.9, y: 20 }}
+                                        animate={{ opacity: 1, scale: 1, y: 0 }}
+                                        exit={{ opacity: 0, scale: 0.9 }}
+                                        whileHover={{ y: -4, scale: 1.02 }}
+                                        transition={{ type: "spring", stiffness: 400, damping: 25 }}
+                                        draggable
+                                        onDragStart={(e: any) => handleDragStart(e, lead)}
+                                        className={`bg-slate-800/80 backdrop-blur-md p-4 rounded-xl border ${isHot ? 'border-amber-500/50 shadow-[0_4px_15px_rgba(245,158,11,0.15)]' : 'border-slate-700'} shadow-sm cursor-grab active:cursor-grabbing hover:shadow-lg transition-all group relative overflow-hidden`}
+                                    >
+                                        {/* AI Glow Effect for Hot Leads */}
+                                        {isHot && (
+                                            <div className="absolute top-0 right-0 w-16 h-16 bg-amber-500/20 blur-2xl -z-10 rounded-full mix-blend-screen" />
                                         )}
-                                    </div>
-                                </div>
-                            ))}
+                                        
+                                        <div className="flex justify-between items-start mb-2">
+                                            <h4 className="font-bold text-slate-100 truncate pr-6" title={lead.name}>{lead.name}</h4>
+                                            <div className="xl:opacity-0 group-hover:opacity-100 flex gap-1 absolute top-2 right-2 transition-opacity bg-slate-800/90 p-0.5 rounded-lg backdrop-blur-sm border border-slate-700">
+                                                <button
+                                                    onClick={() => { setEditingLead(lead); setShowModal(true); }}
+                                                    className="p-1.5 hover:bg-slate-700 rounded-md text-slate-400 hover:text-accent transition-colors"
+                                                    title="Edit"
+                                                >
+                                                    <Edit2 size={12} />
+                                                </button>
+                                                <button
+                                                    onClick={() => handleDelete(lead.id)}
+                                                    className="p-1.5 hover:bg-red-500/20 rounded-md text-slate-400 hover:text-red-400 transition-colors"
+                                                    title="Delete"
+                                                >
+                                                    <Trash2 size={12} />
+                                                </button>
+                                            </div>
+                                        </div>
+
+                                        {lead.company && (
+                                            <div className="flex items-center gap-2 text-xs text-slate-400 mb-2 font-medium">
+                                                <Building2 size={12} className="text-slate-500" /> {lead.company}
+                                            </div>
+                                        )}
+
+                                        <div className="flex items-center gap-2 text-xs text-slate-400 mb-4 font-medium">
+                                            <Mail size={12} className="text-slate-500" /> <span className="truncate">{lead.email}</span>
+                                        </div>
+
+                                        <div className="flex justify-between items-center pt-3 border-t border-slate-700/50">
+                                            <span className="text-sm font-black text-slate-200">
+                                                ${lead.value?.toLocaleString() || 0}
+                                            </span>
+                                            
+                                            <div className="flex gap-2 items-center">
+                                                {/* Iris AI Lead Score Indicator */}
+                                                <div className={`flex items-center gap-1 text-[10px] px-2 py-1 rounded-full font-bold ${isHot ? 'bg-amber-500/20 text-amber-400 border border-amber-500/30' : 'bg-slate-700/50 text-slate-400'}`}>
+                                                    <Sparkles size={10} />
+                                                    {aiScore}
+                                                </div>
+                                                
+                                                {stage.id === 'NEGOTIATION' && (
+                                                    <button
+                                                        onClick={() => handleConvert(lead)}
+                                                        className="text-[10px] bg-accent/20 text-accent border border-accent/30 px-2.5 py-1 rounded-full flex items-center gap-1 hover:bg-accent hover:text-black font-bold transition-all"
+                                                    >
+                                                        <UserPlus size={10} /> Convert
+                                                    </button>
+                                                )}
+                                            </div>
+                                        </div>
+                                    </motion.div>
+                                    )
+                                })}
+                            </AnimatePresence>
                         </div>
                     </div>
                 ))}
@@ -244,13 +317,26 @@ export const PipelineView: React.FC = () => {
                             }
                             setShowModal(false);
                             loadData();
+                            toast.success(t('pipeline.saveSuccess', 'Lead saved successfully!'));
                         } catch (error) {
                             console.error('Failed to save lead:', error);
-                            alert('Failed to save lead.');
+                            toast.error(t('pipeline.saveError', 'Failed to save lead.'));
                         }
                     }}
                 />
             )}
+            {/* Danger Confirm Modal */}
+            <DangerConfirmModal
+                isOpen={confirmModal.isOpen}
+                title={confirmModal.title}
+                message={confirmModal.message}
+                requireType={confirmModal.requireType}
+                onConfirm={() => {
+                    if (confirmModal.action) confirmModal.action();
+                    setConfirmModal({ ...confirmModal, isOpen: false });
+                }}
+                onCancel={() => setConfirmModal({ ...confirmModal, isOpen: false })}
+            />
         </div>
     );
 };

@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { api } from '../../services/api';
+import { useTranslation } from 'react-i18next';
+import { toast } from 'sonner';
 
 interface Client {
     id: string;
@@ -18,6 +20,7 @@ interface InvoiceItem {
 const InvoiceDesigner: React.FC = () => {
     const [clients, setClients] = useState<Client[]>([]);
     const [loading, setLoading] = useState(false);
+    const { t } = useTranslation();
 
     const [invoice, setInvoice] = useState({
         clientId: '',
@@ -71,7 +74,7 @@ const InvoiceDesigner: React.FC = () => {
 
     const handleSave = async (status: 'DRAFT' | 'PENDING') => {
         if (!invoice.clientId) {
-            alert('Please select a client');
+            toast.error(t('invoice.selectClient', 'Please select a client'));
             return;
         }
 
@@ -90,7 +93,10 @@ const InvoiceDesigner: React.FC = () => {
                 })),
                 total,
             });
-            alert(`Invoice ${status === 'DRAFT' ? 'saved as draft' : 'created'} successfully!`);
+            toast.success(status === 'DRAFT' 
+                ? t('invoice.savedDraft', 'Invoice saved as draft successfully!')
+                : t('invoice.created', 'Invoice created successfully!'));
+                
             // Reset form
             setInvoice({
                 clientId: '',
@@ -101,7 +107,7 @@ const InvoiceDesigner: React.FC = () => {
             setItems([{ id: '1', description: '', quantity: 1, unitPrice: 0 }]);
         } catch (error) {
             console.error('Failed to create invoice:', error);
-            alert('Failed to create invoice');
+            toast.error(t('invoice.createError', 'Failed to create invoice'));
         } finally {
             setLoading(false);
         }

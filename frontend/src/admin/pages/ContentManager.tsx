@@ -1,4 +1,6 @@
 import React, { useState, useEffect } from 'react';
+import { Edit2, Trash2, Eye, Plus, Search, Filter, Calendar } from 'lucide-react';
+import { PremiumTabs } from '../components/ui/PremiumTabs';
 import { useNavigate } from 'react-router-dom';
 import { cmsAdminApi } from '../../services/api';
 import type { CmsContent } from '../../types/cms';
@@ -255,27 +257,15 @@ const ContentManager: React.FC = () => {
                 alignItems: 'center'
             }}>
                 {/* Type Tabs */}
-                <div style={{ display: 'flex', gap: '0.25rem', background: 'var(--admin-card-bg)', padding: '0.25rem', borderRadius: '10px' }}>
-                    {contentTypes.map(type => (
-                        <button
-                            key={type}
-                            onClick={() => { setActiveType(type); setPage(1); }}
-                            style={{
-                                padding: '0.5rem 1rem',
-                                borderRadius: '8px',
-                                border: 'none',
-                                background: activeType === type ? 'var(--color-accent)' : 'transparent',
-                                color: activeType === type ? '#000' : '#888',
-                                fontWeight: 600,
-                                fontSize: '0.8rem',
-                                cursor: 'pointer',
-                                textTransform: 'capitalize'
-                            }}
-                        >
-                            {type === 'all' ? 'All' : type.toLowerCase()}
-                        </button>
-                    ))}
-                </div>
+                <PremiumTabs
+                    tabs={contentTypes.map(type => ({
+                        id: type,
+                        label: type === 'all' ? 'All' : type.toLowerCase().replace(/\b\w/g, l => l.toUpperCase())
+                    }))}
+                    activeTab={activeType}
+                    onChange={(id) => { setActiveType(id); setPage(1); }}
+                    className="border-none bg-slate-900/50"
+                />
 
                 {/* Status Filter */}
                 <select

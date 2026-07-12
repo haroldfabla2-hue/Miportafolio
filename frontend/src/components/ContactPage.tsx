@@ -1,20 +1,49 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { motion } from 'framer-motion';
 import axios from 'axios';
 import { useTranslation } from 'react-i18next';
+import { useSearchParams } from 'react-router-dom';
 import SEO from './SEO';
 
 const API_BASE = import.meta.env.VITE_API_URL || '';
 const CONTACT_EMAIL = 'alberto.farah.b@gmail.com';
 
 const ContactPage: React.FC = () => {
-    const { t } = useTranslation();
+    const { t, i18n } = useTranslation();
+    const [searchParams] = useSearchParams();
     const [formData, setFormData] = useState({
         name: '',
         email: '',
         company: '',
         message: ''
     });
+    const [acceptedTerms, setAcceptedTerms] = useState(false);
+
+    const selectedPlan = searchParams.get('plan');
+
+    const lastPrefill = useRef<string>('');
+
+    useEffect(() => {
+        if (selectedPlan) {
+            const planNames: Record<string, string> = {
+                esencial: t('services.pricing.esencial.title'),
+                profesional: t('services.pricing.profesional.title'),
+                corporativo: t('services.pricing.corporativo.title')
+            };
+            const planTitle = planNames[selectedPlan] || selectedPlan;
+            const prefill = t('contact.prefillMessage', { plan: planTitle });
+            
+            setFormData(prev => {
+                // Solo sobreescribir si el campo está vacío o si no ha sido modificado por el usuario (coincide con el último pre-llenado)
+                if (prev.message === '' || prev.message === lastPrefill.current) {
+                    lastPrefill.current = prefill;
+                    return { ...prev, message: prefill };
+                }
+                return prev;
+            });
+        }
+    }, [selectedPlan, t]);
+
     const [submitting, setSubmitting] = useState(false);
     const [submitted, setSubmitted] = useState(false);
     const [error, setError] = useState('');
@@ -25,6 +54,12 @@ const ContactPage: React.FC = () => {
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
+        
+        if (!acceptedTerms) {
+            setError(i18n.language.startsWith('es') ? 'Debe aceptar la Política de Privacidad para enviar su mensaje.' : 'You must accept the Privacy Policy to send your message.');
+            return;
+        }
+
         setSubmitting(true);
         setError('');
         try {
@@ -247,6 +282,22 @@ const ContactPage: React.FC = () => {
                                         {error}
                                     </motion.p>
                                 )}
+
+                                {/* GDPR Checkbox */}
+                                <div style={{ display: 'flex', alignItems: 'flex-start', gap: '12px', marginTop: '1rem', padding: '12px', background: 'rgba(255,255,255,0.02)', borderRadius: '8px', border: '1px solid rgba(255,255,255,0.05)' }}>
+                                    <input 
+                                        type="checkbox" 
+                                        id="gdpr_consent_contact"
+                                        checked={acceptedTerms}
+                                        onChange={(e) => setAcceptedTerms(e.target.checked)}
+                                        style={{ marginTop: '4px', cursor: 'pointer', accentColor: '#A3FF00' }}
+                                    />
+                                    <label htmlFor="gdpr_consent_contact" style={{ color: '#888', fontSize: '0.85rem', lineHeight: 1.4, cursor: 'pointer' }}>
+                                        {i18n.language.startsWith('es') 
+                                            ? <>He leído y acepto la <a href="/privacy" target="_blank" style={{ color: '#A3FF00', textDecoration: 'underline' }}>Política de Privacidad</a> y consiento el procesamiento de mis datos.</>
+                                            : <>I have read and accept the <a href="/privacy" target="_blank" style={{ color: '#A3FF00', textDecoration: 'underline' }}>Privacy Policy</a> and consent to the processing of my data.</>}
+                                    </label>
+                                </div>
 
                                 <button
                                     type="submit"

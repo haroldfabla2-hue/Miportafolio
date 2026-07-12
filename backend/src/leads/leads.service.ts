@@ -5,6 +5,7 @@ import { GmailService } from '../google/gmail.service';
 import { ConfigService } from '@nestjs/config';
 import { google } from 'googleapis';
 import { GoogleSheetsService } from '../google/google-sheets.service';
+import { EmailService } from '../email/email.service';
 
 @Injectable()
 export class LeadsService {
@@ -15,6 +16,7 @@ export class LeadsService {
         private gmailService: GmailService,
         private configService: ConfigService,
         private googleSheetsService: GoogleSheetsService,
+        private emailService: EmailService,
     ) { }
 
     private buildWhereClause(user: any) {
@@ -102,6 +104,13 @@ export class LeadsService {
             this.logger.warn(`Lead email notification failed for lead ${lead.id}: ${error?.message || error}`);
         });
 
+        // Enqueue async welcome email to the lead using BullMQ + Resend
+        if (lead.email) {
+            this.emailService.enqueueWelcomeEmail(lead.email, lead.name).catch((error) => {
+                this.logger.warn(`Failed to enqueue welcome email for lead ${lead.id}: ${error?.message}`);
+            });
+        }
+
         // Sync to Google Sheets backup
         this.googleSheetsService.appendLeadRow(lead).catch((error) => {
             this.logger.warn(`Lead Google Sheets sync failed for lead ${lead.id}: ${error?.message || error}`);
@@ -166,6 +175,13 @@ export class LeadsService {
         this.notifyLeadByEmail(lead).catch((error) => {
             this.logger.warn(`Lead email notification failed for lead ${lead.id}: ${error?.message || error}`);
         });
+
+        // Enqueue async welcome email for the qualified lead
+        if (lead.email) {
+            this.emailService.enqueueWelcomeEmail(lead.email, lead.name).catch((error) => {
+                this.logger.warn(`Failed to enqueue qualified welcome email for lead ${lead.id}: ${error?.message}`);
+            });
+        }
 
         this.googleSheetsService.appendLeadRow(lead).catch((error) => {
             this.logger.warn(`Lead Google Sheets sync failed for lead ${lead.id}: ${error?.message || error}`);

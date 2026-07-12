@@ -1,8 +1,10 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
+import { Link } from 'react-router-dom';
 
 const Footer: React.FC = () => {
-    const { t } = useTranslation();
+    const { t, i18n } = useTranslation();
+    const isEs = i18n.language.startsWith('es');
     const currentYear = new Date().getFullYear();
     const contactEmail = 'alberto.farah.b@gmail.com';
     
@@ -12,8 +14,8 @@ const Footer: React.FC = () => {
             color: '#fff',
             padding: '4rem 0',
             borderTop: '1px solid #222',
-            borderRadius: '40px 40px 0 0', // Curve top only
-            marginTop: '-40px', // Negative margin to pull up against previous section if desired, or just standard
+            borderRadius: '40px 40px 0 0',
+            marginTop: '-40px',
             position: 'relative',
             zIndex: 10
         }}>
@@ -31,10 +33,34 @@ const Footer: React.FC = () => {
                     <p style={{ color: '#666' }}>© {currentYear} {t('footer.rights')}.</p>
                 </div>
 
-                <div className="footer-links" style={{ display: 'flex', gap: '2rem' }}>
-                    <a href="https://linkedin.com/in/alberto-farah-blair" target="_blank" rel="noopener noreferrer" style={{ color: '#fff', fontWeight: 600 }}>{t('footer.linkedin')}</a>
-                    <a href="https://instagram.com" target="_blank" rel="noopener noreferrer" style={{ color: '#fff', fontWeight: 600 }}>{t('footer.instagram')}</a>
-                    <a href={`mailto:${contactEmail}`} style={{ color: '#fff', fontWeight: 600 }}>{t('footer.email')}</a>
+                <div className="footer-links" style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+                    <div style={{ display: 'flex', gap: '2rem' }}>
+                        <a href="https://linkedin.com/in/alberto-farah-blair" target="_blank" rel="noopener noreferrer" style={{ color: '#fff', fontWeight: 600 }}>{t('footer.linkedin')}</a>
+                        <a href="https://instagram.com" target="_blank" rel="noopener noreferrer" style={{ color: '#fff', fontWeight: 600 }}>{t('footer.instagram')}</a>
+                        <a href={`mailto:${contactEmail}`} style={{ color: '#fff', fontWeight: 600 }}>{t('footer.email')}</a>
+                    </div>
+                    <div style={{ display: 'flex', gap: '1.5rem', marginTop: '1rem', flexWrap: 'wrap' }}>
+                        <Link to="/privacy" style={{ color: '#888', fontSize: '0.85rem', textDecoration: 'underline' }}>
+                            {isEs ? 'Política de Privacidad' : 'Privacy Policy'}
+                        </Link>
+                        <Link to="/terms" style={{ color: '#888', fontSize: '0.85rem', textDecoration: 'underline' }}>
+                            {isEs ? 'Términos de Servicio' : 'Terms of Service'}
+                        </Link>
+                        <button 
+                            onClick={() => window.dispatchEvent(new Event('openCookieConsent'))}
+                            style={{ 
+                                background: 'none', 
+                                border: 'none', 
+                                color: '#888', 
+                                fontSize: '0.85rem', 
+                                textDecoration: 'underline',
+                                cursor: 'pointer',
+                                padding: 0
+                            }}
+                        >
+                            {isEs ? 'Configuración de Cookies' : 'Cookie Settings'}
+                        </button>
+                    </div>
                 </div>
             </div>
         </footer>

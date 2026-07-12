@@ -1,6 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { api } from '../../services/api';
 import { useAuth } from '../../context/AuthContext';
+import { useTranslation } from 'react-i18next';
+import { toast } from 'sonner';
+import { DangerConfirmModal } from '../components/ui/DangerConfirmModal';
 
 // Types
 interface FileItem {
@@ -125,7 +128,15 @@ const FilesPage: React.FC = () => {
     const [loading, setLoading] = useState(false);
     const [currentFolder, setCurrentFolder] = useState('root');
     const [path, setPath] = useState([{ id: 'root', name: 'My Drive' }]);
-    const [viewMode, setViewMode] = useState<'list' | 'grid'>('list');
+    const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
+    const { t } = useTranslation();
+    const [confirmModal, setConfirmModal] = useState<{
+        isOpen: boolean;
+        title: string;
+        message: string;
+        action: (() => void) | null;
+        requireType?: string;
+    }>({ isOpen: false, title: '', message: '', action: null });
     const [isUploading, setIsUploading] = useState(false);
 
     useEffect(() => {
@@ -166,15 +177,23 @@ const FilesPage: React.FC = () => {
         }
     };
 
-    const handleDelete = async (fileId: string) => {
-        if (!window.confirm('Are you sure you want to delete this file?')) return;
-        try {
-            await api.delete(`/google/drive/files/${fileId}`);
-            setFiles(prev => prev.filter(f => f.id !== fileId));
-        } catch (error) {
-            console.error('Delete failed', error);
-            alert('Failed to delete file');
-        }
+    const handleDelete = (fileId: string) => {
+        setConfirmModal({
+            isOpen: true,
+            title: t('files.deleteTitle', 'Delete File'),
+            message: t('files.deleteMessage', 'Are you sure you want to delete this file? This action cannot be undone.'),
+            requireType: 'ELIMINAR',
+            action: async () => {
+                try {
+                    await api.delete(`/google/drive/files/${fileId}`);
+                    setFiles(prev => prev.filter(f => f.id !== fileId));
+                    toast.success(t('files.deleteSuccess', 'File deleted successfully'));
+                } catch (error) {
+                    console.error('Delete failed', error);
+                    toast.error(t('files.deleteError', 'Failed to delete file'));
+                }
+            }
+        });
     };
 
     const handleUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -192,9 +211,10 @@ const FilesPage: React.FC = () => {
                 headers: { 'Content-Type': 'multipart/form-data' }
             });
             fetchFiles(currentFolder); // Refresh
+            toast.success(t('files.uploadSuccess', 'File uploaded successfully'));
         } catch (error) {
             console.error('Upload failed', error);
-            alert('Upload failed');
+            toast.error(t('files.uploadError', 'Upload failed'));
         } finally {
             setIsUploading(false);
         }
@@ -295,6 +315,18 @@ const FilesPage: React.FC = () => {
             <style>{`
                 @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
             `}</style>
+            
+            <DangerConfirmModal
+                isOpen={confirmModal.isOpen}
+                title={confirmModal.title}
+                message={confirmModal.message}
+                requireType={confirmModal.requireType}
+                onConfirm={() => {
+                    if (confirmModal.action) confirmModal.action();
+                    setConfirmModal({ ...confirmModal, isOpen: false });
+                }}
+                onCancel={() => setConfirmModal({ ...confirmModal, isOpen: false })}
+            />
         </div>
     );
 };

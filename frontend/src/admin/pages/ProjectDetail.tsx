@@ -1,7 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
+import { motion, AnimatePresence } from 'framer-motion';
 import ProjectTeam from '../components/ProjectTeam';
 import ProjectFinance from '../components/ProjectFinance';
+import { PremiumTabs } from '../components/ui/PremiumTabs';
+
 
 // Placeholder components for tabs (will be fleshed out later or imported)
 const ProjectOverview = ({ project }: { project: any }) => (
@@ -160,34 +163,33 @@ const ProjectDetail: React.FC = () => {
             </div>
 
             {/* Tabs */}
-            <div style={{ display: 'flex', gap: '2rem', borderBottom: '1px solid var(--admin-border-color)', marginBottom: '2rem' }}>
-                {tabs.map(tab => (
-                    <button
-                        key={tab.id}
-                        onClick={() => setActiveTab(tab.id)}
-                        style={{
-                            background: 'none',
-                            border: 'none',
-                            padding: '1rem 0',
-                            color: activeTab === tab.id ? '#a3ff00' : '#888',
-                            borderBottom: activeTab === tab.id ? '2px solid #a3ff00' : '2px solid transparent',
-                            cursor: 'pointer',
-                            transition: 'all 0.2s',
-                            fontWeight: activeTab === tab.id ? 600 : 400
-                        }}
-                    >
-                        {tab.label}
-                    </button>
-                ))}
+            <div className="mb-8 overflow-hidden rounded-xl bg-slate-900/50 p-1 border border-slate-800">
+                <PremiumTabs 
+                    tabs={tabs} 
+                    activeTab={activeTab} 
+                    onChange={setActiveTab} 
+                    className="w-full justify-start border-none bg-transparent"
+                />
             </div>
+
 
             {/* Content */}
             <div className="project-content">
-                {activeTab === 'overview' && <ProjectOverview project={project} />}
-                {activeTab === 'tasks' && <ProjectTasks tasks={project.tasks} />}
-                {activeTab === 'assets' && <ProjectAssets assets={project.assets} />}
-                {activeTab === 'finance' && <ProjectFinance budget={project.budget || 25000} spent={project.spent || 8500} invoices={[]} />}
-                {activeTab === 'team' && <ProjectTeam members={project.team || []} />}
+                <AnimatePresence mode="wait">
+                    <motion.div
+                        key={activeTab}
+                        initial={{ opacity: 0, y: 10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={{ opacity: 0, y: -10 }}
+                        transition={{ duration: 0.2 }}
+                    >
+                        {activeTab === 'overview' && <ProjectOverview project={project} />}
+                        {activeTab === 'tasks' && <ProjectTasks tasks={project.tasks} />}
+                        {activeTab === 'assets' && <ProjectAssets assets={project.assets} />}
+                        {activeTab === 'finance' && <ProjectFinance budget={project.budget || 25000} spent={project.spent || 8500} invoices={[]} />}
+                        {activeTab === 'team' && <ProjectTeam members={project.team || []} />}
+                    </motion.div>
+                </AnimatePresence>
             </div>
         </div>
     );

@@ -4,6 +4,8 @@ import { useTranslation } from 'react-i18next';
 import SEO from './SEO';
 import RoiCalculator from './RoiCalculator';
 import { getServiceSchema } from './JsonLd';
+import TrustMarkers from './TrustMarkers';
+import { usePricing } from '../hooks/usePricing';
 
 // Reusable 3D Tilt Wrapper
 const TiltWrapper: React.FC<{ children: React.ReactNode; className?: string; style?: React.CSSProperties }> = ({ children, className, style }) => {
@@ -120,7 +122,9 @@ const ProcessCard: React.FC<ProcessCardProps> = ({ item, index, progress, range,
 
 // Services Page Component
 const ServicesPage: React.FC = () => {
-    const { t } = useTranslation();
+    const { t, i18n } = useTranslation();
+    const { pricing, isLoading } = usePricing();
+    const isEnglish = i18n.language === 'en';
     const servicesContainer = useRef<HTMLDivElement>(null);
     const processContainer = useRef<HTMLDivElement>(null);
 
@@ -204,6 +208,8 @@ const ServicesPage: React.FC = () => {
                     {t('services.heroSubtitle')}
                 </motion.p>
             </section>
+
+            <TrustMarkers />
 
             {/* Services Cards */}
             <section ref={servicesContainer} style={{ marginBottom: '20vh' }}>
@@ -365,160 +371,105 @@ const ServicesPage: React.FC = () => {
                         gap: '2rem', 
                         alignItems: 'stretch' 
                     }}>
-                        {/* Plan Esencial */}
-                        <div style={{ 
-                            backgroundColor: 'rgba(15,15,15,0.7)', 
-                            border: '1px solid rgba(255,255,255,0.05)', 
-                            borderRadius: '25px', 
-                            padding: '3rem 2rem', 
-                            display: 'flex', 
-                            flexDirection: 'column', 
-                            justifyContent: 'space-between',
-                            backdropFilter: 'blur(10px)',
-                            transition: 'all 0.3s ease'
-                        }}>
-                            <div>
-                                <span style={{ color: '#aaa', fontSize: '0.9rem', textTransform: 'uppercase', letterSpacing: '0.1em' }}>{t('services.pricing.esencial.badge')}</span>
-                                <h3 style={{ color: '#fff', fontSize: '2rem', margin: '0.5rem 0' }}>{t('services.pricing.esencial.title')}</h3>
-                                <p style={{ color: '#777', fontSize: '0.95rem', marginBottom: '2rem', minHeight: '40px' }}>{t('services.pricing.esencial.description')}</p>
-                                
-                                <div style={{ marginBottom: '2rem' }}>
-                                    <span style={{ fontSize: '2.5rem', fontWeight: 900, color: '#fff' }}>{t('services.pricing.esencial.price')}</span>
-                                    <span style={{ color: '#555', fontSize: '0.9rem' }}>{t('services.pricing.paymentType')}</span>
-                                    <div style={{ color: '#777', fontSize: '0.8rem', marginTop: '4px' }}>{t('services.pricing.equivalent', { amount: '$800 USD' })}</div>
-                                </div>
-
-                                <ul style={{ listStyle: 'none', padding: 0, margin: '0 0 3rem 0', display: 'flex', flexDirection: 'column', gap: '1rem', color: '#aaa', fontSize: '0.95rem' }}>
-                                    {(t('services.pricing.esencial.features', { returnObjects: true }) as string[]).map((feat, idx) => (
-                                        <li key={idx} style={{ display: 'flex', gap: '10px' }}><span>✓</span> {feat}</li>
-                                    ))}
-                                </ul>
+                        {isLoading ? (
+                            <div style={{ color: '#aaa', textAlign: 'center', width: '100%', padding: '2rem' }}>
+                                Loading pricing...
                             </div>
-                            <a href="/contact?plan=esencial" style={{ 
-                                display: 'block', 
-                                width: '100%', 
-                                textAlign: 'center', 
-                                padding: '14px', 
-                                borderRadius: '30px', 
-                                backgroundColor: 'rgba(255,255,255,0.05)', 
-                                border: '1px solid rgba(255,255,255,0.1)', 
-                                color: '#fff', 
-                                fontWeight: 'bold', 
-                                textDecoration: 'none',
-                                transition: 'all 0.3s ease'
-                            }}>
-                                {t('services.pricing.selectPlan')}
-                            </a>
-                        </div>
+                        ) : (
+                            pricing.map((plan) => {
+                                const meta = plan.metadata || {};
+                                const localized = isEnglish && meta.i18n?.en ? meta.i18n.en : {
+                                    title: plan.title,
+                                    content: plan.content,
+                                    badge: meta.badge,
+                                    price: meta.price,
+                                    features: meta.features || []
+                                };
+                                const isPopular = meta.popular;
 
-                        {/* Plan Profesional (Destacado) */}
-                        <div style={{ 
-                            backgroundColor: 'rgba(25,25,25,0.8)', 
-                            border: '2px solid var(--color-accent)', 
-                            borderRadius: '25px', 
-                            padding: '3rem 2rem', 
-                            display: 'flex', 
-                            flexDirection: 'column', 
-                            justifyContent: 'space-between',
-                            backdropFilter: 'blur(10px)',
-                            transform: 'scale(1.02)',
-                            boxShadow: '0 20px 40px rgba(163,255,0,0.15)',
-                            position: 'relative'
-                        }}>
-                            <div style={{ 
-                                position: 'absolute', 
-                                top: '-15px', 
-                                left: '50%', 
-                                transform: 'translateX(-50%)', 
-                                backgroundColor: 'var(--color-accent)', 
-                                color: '#000', 
-                                padding: '6px 16px', 
-                                borderRadius: '20px', 
-                                fontSize: '0.8rem', 
-                                fontWeight: 'bold', 
-                                textTransform: 'uppercase',
-                                letterSpacing: '0.05em'
-                            }}>
-                                {t('services.pricing.mostPopular')}
-                            </div>
-                            <div>
-                                <span style={{ color: 'var(--color-accent)', fontSize: '0.9rem', textTransform: 'uppercase', letterSpacing: '0.1em', fontWeight: 'bold' }}>{t('services.pricing.profesional.badge')}</span>
-                                <h3 style={{ color: '#fff', fontSize: '2rem', margin: '0.5rem 0' }}>{t('services.pricing.profesional.title')}</h3>
-                                <p style={{ color: '#999', fontSize: '0.95rem', marginBottom: '2rem', minHeight: '40px' }}>{t('services.pricing.profesional.description')}</p>
-                                
-                                <div style={{ marginBottom: '2rem' }}>
-                                    <span style={{ fontSize: '2.5rem', fontWeight: 900, color: '#fff' }}>{t('services.pricing.profesional.price')}</span>
-                                    <span style={{ color: 'var(--color-accent)', fontSize: '0.9rem', fontWeight: 'bold' }}>{t('services.pricing.paymentType')}</span>
-                                    <div style={{ color: '#999', fontSize: '0.8rem', marginTop: '4px' }}>{t('services.pricing.equivalent', { amount: '$1,400 USD' })}</div>
-                                </div>
+                                // Base plan key from slug (e.g., 'plan-esencial' -> 'esencial')
+                                const planKey = plan.slug.replace('plan-', '');
 
-                                <ul style={{ listStyle: 'none', padding: 0, margin: '0 0 3rem 0', display: 'flex', flexDirection: 'column', gap: '1rem', color: '#ccc', fontSize: '0.95rem' }}>
-                                    {(t('services.pricing.profesional.features', { returnObjects: true }) as string[]).map((feat, idx) => (
-                                        <li key={idx} style={{ display: 'flex', gap: '10px' }}><span>✓</span> {feat}</li>
-                                    ))}
-                                </ul>
-                            </div>
-                            <a href="/contact?plan=profesional" style={{ 
-                                display: 'block', 
-                                width: '100%', 
-                                textAlign: 'center', 
-                                padding: '14px', 
-                                borderRadius: '30px', 
-                                backgroundColor: 'var(--color-accent)', 
-                                color: '#000', 
-                                fontWeight: 'bold', 
-                                textDecoration: 'none',
-                                transition: 'all 0.3s ease'
-                            }}>
-                                {t('services.pricing.startProject')}
-                            </a>
-                        </div>
+                                return (
+                                    <div key={plan.id || plan.slug} style={{ 
+                                        backgroundColor: isPopular ? 'rgba(25,25,25,0.8)' : 'rgba(15,15,15,0.7)', 
+                                        border: isPopular ? '2px solid var(--color-accent)' : '1px solid rgba(255,255,255,0.05)', 
+                                        borderRadius: '25px', 
+                                        padding: '3rem 2rem', 
+                                        display: 'flex', 
+                                        flexDirection: 'column', 
+                                        justifyContent: 'space-between',
+                                        backdropFilter: 'blur(10px)',
+                                        transition: 'all 0.3s ease',
+                                        transform: isPopular ? 'scale(1.02)' : 'scale(1)',
+                                        boxShadow: isPopular ? '0 20px 40px rgba(163,255,0,0.15)' : 'none',
+                                        position: 'relative'
+                                    }}>
+                                        {isPopular && (
+                                            <div style={{ 
+                                                position: 'absolute', 
+                                                top: '-15px', 
+                                                left: '50%', 
+                                                transform: 'translateX(-50%)', 
+                                                backgroundColor: 'var(--color-accent)', 
+                                                color: '#000', 
+                                                padding: '6px 16px', 
+                                                borderRadius: '20px', 
+                                                fontSize: '0.8rem', 
+                                                fontWeight: 'bold', 
+                                                textTransform: 'uppercase',
+                                                letterSpacing: '0.05em'
+                                            }}>
+                                                {t('services.pricing.mostPopular')}
+                                            </div>
+                                        )}
+                                        <div>
+                                            <span style={{ 
+                                                color: isPopular ? 'var(--color-accent)' : '#aaa', 
+                                                fontSize: '0.9rem', 
+                                                textTransform: 'uppercase', 
+                                                letterSpacing: '0.1em',
+                                                fontWeight: isPopular ? 'bold' : 'normal'
+                                            }}>
+                                                {localized.badge}
+                                            </span>
+                                            <h3 style={{ color: '#fff', fontSize: '2rem', margin: '0.5rem 0' }}>{localized.title}</h3>
+                                            <p style={{ color: isPopular ? '#999' : '#777', fontSize: '0.95rem', marginBottom: '2rem', minHeight: '40px' }}>
+                                                {localized.content}
+                                            </p>
+                                            
+                                            <div style={{ marginBottom: '2rem' }}>
+                                                <span style={{ fontSize: '2.5rem', fontWeight: 900, color: '#fff' }}>{localized.price}</span>
+                                                <span style={{ color: isPopular ? 'var(--color-accent)' : '#555', fontSize: '0.9rem', fontWeight: isPopular ? 'bold' : 'normal', marginLeft: '8px' }}>
+                                                    {t(isPopular ? 'services.pricing.paymentType' : planKey === 'corporativo' ? 'services.pricing.from' : 'services.pricing.paymentType')}
+                                                </span>
+                                            </div>
 
-                        {/* Plan Corporativo */}
-                        <div style={{ 
-                            backgroundColor: 'rgba(15,15,15,0.7)', 
-                            border: '1px solid rgba(255,255,255,0.05)', 
-                            borderRadius: '25px', 
-                            padding: '3rem 2rem', 
-                            display: 'flex', 
-                            flexDirection: 'column', 
-                            justifyContent: 'space-between',
-                            backdropFilter: 'blur(10px)',
-                            transition: 'all 0.3s ease'
-                        }}>
-                            <div>
-                                <span style={{ color: '#aaa', fontSize: '0.9rem', textTransform: 'uppercase', letterSpacing: '0.1em' }}>{t('services.pricing.corporativo.badge')}</span>
-                                <h3 style={{ color: '#fff', fontSize: '2rem', margin: '0.5rem 0' }}>{t('services.pricing.corporativo.title')}</h3>
-                                <p style={{ color: '#777', fontSize: '0.95rem', marginBottom: '2rem', minHeight: '40px' }}>{t('services.pricing.corporativo.description')}</p>
-                                
-                                <div style={{ marginBottom: '2rem' }}>
-                                    <span style={{ fontSize: '2.5rem', fontWeight: 900, color: '#fff' }}>{t('services.pricing.corporativo.price')}</span>
-                                    <span style={{ color: '#555', fontSize: '0.9rem' }}>{t('services.pricing.from')}</span>
-                                    <div style={{ color: '#777', fontSize: '0.8rem', marginTop: '4px' }}>{t('services.pricing.equivalent', { amount: '$2,200+ USD' })}</div>
-                                </div>
-
-                                <ul style={{ listStyle: 'none', padding: 0, margin: '0 0 3rem 0', display: 'flex', flexDirection: 'column', gap: '1rem', color: '#aaa', fontSize: '0.95rem' }}>
-                                    {(t('services.pricing.corporativo.features', { returnObjects: true }) as string[]).map((feat, idx) => (
-                                        <li key={idx} style={{ display: 'flex', gap: '10px' }}><span>✓</span> {feat}</li>
-                                    ))}
-                                </ul>
-                            </div>
-                            <a href="/contact?plan=corporativo" style={{ 
-                                display: 'block', 
-                                width: '100%', 
-                                textAlign: 'center', 
-                                padding: '14px', 
-                                borderRadius: '30px', 
-                                backgroundColor: 'rgba(255,255,255,0.05)', 
-                                border: '1px solid rgba(255,255,255,0.1)', 
-                                color: '#fff', 
-                                fontWeight: 'bold', 
-                                textDecoration: 'none',
-                                transition: 'all 0.3s ease'
-                            }}>
-                                {t('services.pricing.quoteSolution')}
-                            </a>
-                        </div>
+                                            <ul style={{ listStyle: 'none', padding: 0, margin: '0 0 3rem 0', display: 'flex', flexDirection: 'column', gap: '1rem', color: isPopular ? '#ccc' : '#aaa', fontSize: '0.95rem' }}>
+                                                {(localized.features as string[]).map((feat, idx) => (
+                                                    <li key={idx} style={{ display: 'flex', gap: '10px' }}><span>✓</span> {feat}</li>
+                                                ))}
+                                            </ul>
+                                        </div>
+                                        <a href={`/contact?plan=${planKey}`} style={{ 
+                                            display: 'block', 
+                                            width: '100%', 
+                                            textAlign: 'center', 
+                                            padding: '14px', 
+                                            borderRadius: '30px', 
+                                            backgroundColor: isPopular ? 'var(--color-accent)' : 'rgba(255,255,255,0.05)', 
+                                            border: isPopular ? 'none' : '1px solid rgba(255,255,255,0.1)', 
+                                            color: isPopular ? '#000' : '#fff', 
+                                            fontWeight: 'bold', 
+                                            textDecoration: 'none',
+                                            transition: 'all 0.3s ease'
+                                        }}>
+                                            {t(isPopular ? 'services.pricing.startProject' : planKey === 'corporativo' ? 'services.pricing.quoteSolution' : 'services.pricing.selectPlan')}
+                                        </a>
+                                    </div>
+                                );
+                            })
+                        )}
                     </div>
                 </div>
             </section>

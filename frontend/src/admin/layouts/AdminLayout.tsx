@@ -9,6 +9,8 @@ import IrisFloat from '../components/IrisFloat';
 import { TourProvider } from '../../context/TourContext';
 import NotificationToast from '../components/NotificationToast';
 import NotificationBell from '../components/NotificationBell';
+import { motion, AnimatePresence } from 'framer-motion';
+import { GlobalErrorBoundary } from '../components/GlobalErrorBoundary';
 
 // Icons (inline SVG components for no external deps)
 const icons = {
@@ -317,8 +319,21 @@ const AdminLayout: React.FC = () => {
                     </header>
 
                     {/* Page Content */}
-                    <div className="admin-content">
-                        <Outlet />
+                    <div className="admin-content overflow-hidden">
+                        <AnimatePresence mode="wait">
+                            <motion.div
+                                key={location.pathname}
+                                initial={{ opacity: 0, y: 15 }}
+                                animate={{ opacity: 1, y: 0 }}
+                                exit={{ opacity: 0, y: -15 }}
+                                transition={{ duration: 0.25, ease: 'easeOut' }}
+                                style={{ width: '100%', height: '100%' }}
+                            >
+                                <GlobalErrorBoundary>
+                                    <Outlet />
+                                </GlobalErrorBoundary>
+                            </motion.div>
+                        </AnimatePresence>
                     </div>
                 </main>
 

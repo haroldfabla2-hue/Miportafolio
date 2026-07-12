@@ -19,7 +19,10 @@
     "comingSoon": "Coming Soon",
     "role": "Role",
     "retry": "Retry",
-    "year": "Year"
+    "year": "Year",
+    "confirm": "Confirm",
+    "export": "Export CSV",
+    "exportSuccess": "Data exported to CSV"
   },
   "nav": {
     "home": "Home",
@@ -237,17 +240,17 @@
     "pricing": {
       "title": "Development & Automation Plans",
       "subtitle": "Choose the integration tier your business needs. No per-task fees and scalable AI infrastructure.",
-      "paymentType": " / once",
+      "paymentType": " / setup fee",
       "from": " / starting from",
       "mostPopular": "Most Popular",
       "selectPlan": "Select Plan",
       "startProject": "Start Project",
       "quoteSolution": "Quote Solution",
-      "equivalent": "Equivalent to {{amount}} (For global clients)",
+      "equivalent": "For international B2B entities",
       "esencial": {
         "badge": "Starter",
         "title": "Essential Plan",
-        "price": "S/ 2,800",
+        "price": "$1,500",
         "description": "Ideal for professionals and SMEs looking to establish a premium digital presence and capture leads.",
         "features": [
           "Premium landing page (up to 4 sections)",
@@ -260,7 +263,7 @@
       "profesional": {
         "badge": "Growth",
         "title": "Professional Plan",
-        "price": "S/ 4,800",
+        "price": "$4,000",
         "description": "Complete setup to automate sales, leads, and seamlessly sync with your CRM.",
         "features": [
           "Corporate Premium Website (up to 8 sections)",
@@ -274,7 +277,7 @@
       "corporativo": {
         "badge": "Custom",
         "title": "Corporate Plan",
-        "price": "S/ 7,500+",
+        "price": "$10,000+",
         "description": "For enterprises needing bespoke software and deep automation integrations.",
         "features": [
           "High-speed React / Next.js development",
@@ -349,6 +352,7 @@
     "messageSent": "Message Sent!",
     "responseMessage": "I'll get back to you as soon as possible.",
     "sendAnother": "Send Another Message",
+    "prefillMessage": "Hi Alberto, I would like to receive more information about the {{plan}} and discuss my business needs.",
     "placeholder": {
       "name": "What's your name?",
       "email": "Your email address",
@@ -455,5 +459,117 @@
     "description": "We will map out your current workflows, calculate potential automation savings, and design a custom AI/SaaS blueprint for you.",
     "cta": "Claim Free Audit Now",
     "noThanks": "No, thanks, I want to exit"
+  },
+  "error": {
+    "boundary": {
+      "title": "Something went wrong",
+      "message": "An unexpected error occurred in this component.",
+      "retry": "Try Again"
+    }
+  },
+  "danger": {
+    "modal": {
+      "typeConfirm": "Type",
+      "toConfirm": "to confirm:"
+    }
+  },
+  "pipeline": {
+    "title": "Sales Pipeline",
+    "subtitle": "Manage your leads and deals",
+    "newLead": "New Lead",
+    "deleteTitle": "Delete Lead",
+    "deleteMessage": "Are you sure you want to delete this lead? This action cannot be undone.",
+    "deleteSuccess": "Lead deleted successfully",
+    "deleteError": "Failed to delete lead",
+    "convertTitle": "Convert to Client",
+    "convertMessage": "Convert this lead to a client? This will create a new client and mark the lead as WON.",
+    "convertSuccess": "Lead converted successfully!",
+    "convertError": "Failed to convert lead",
+    "saveSuccess": "Lead saved successfully!",
+    "saveError": "Failed to save lead"
+  },
+  "roles": {
+    "saveSuccess": "Role saved successfully",
+    "saveError": "Error saving role",
+    "deleteTitle": "Delete Role",
+    "deleteMessage": "Are you sure you want to delete this role? This action cannot be undone.",
+    "deleteSuccess": "Role deleted successfully",
+    "deleteError": "Error deleting role"
+  },
+  "dashboard": {
+    "noActiveProjects": "No active projects found. Please create a project first.",
+    "createTaskTitle": "Create Task from Oracle",
+    "createTaskMessage": "Create a high-priority task based on this recommendation?",
+    "taskCreatedSuccess": "Task created successfully!",
+    "taskCreatedError": "Failed to create task"
+  },
+  "files": {
+    "deleteTitle": "Delete File",
+    "deleteMessage": "Are you sure you want to delete this file? This action cannot be undone.",
+    "deleteSuccess": "File deleted successfully",
+    "deleteError": "Failed to delete file",
+    "uploadSuccess": "File uploaded successfully",
+    "uploadError": "Upload failed"
+  },
+  "invoice": {
+    "selectClient": "Please select a client",
+    "savedDraft": "Invoice saved as draft successfully!",
+    "created": "Invoice created successfully!",
+    "createError": "Failed to create invoice"
+  },
+  "calendar": {
+    "saveSuccess": "Event saved successfully",
+    "saveError": "Failed to save event",
+    "deleteTitle": "Delete Event",
+    "deleteMessage": "Are you sure you want to delete this event?",
+    "deleteSuccess": "Event deleted successfully",
+    "deleteError": "Failed to delete event"
+  },
+  "reports": {
+    "generateSuccess": "Report generated successfully",
+    "generateError": "Generation failed. Please try again.",
+    "deleteTitle": "Delete Report",
+    "deleteMessage": "Are you sure you want to delete this report?",
+    "deleteSuccess": "Report deleted successfully",
+    "deleteError": "Failed to delete report",
+    "noDataExport": "No data to export"
+  },
+  "legal": {
+    "termsTitle": "Terms of Service",
+    "termsUpdated": "Last updated: July 5, 2026",
+    "terms1Title": "1. Acceptance of Terms",
+    "terms1Text": "By accessing this website and contracting our B2B software development, automation, or cloud architecture services, you are agreeing to be bound by these Terms and Conditions of Use, all applicable laws and regulations. If you do not agree with any of these terms, you are prohibited from using or accessing this site.",
+    "terms2Title": "2. Intellectual Property",
+    "terms2Text": "All source code, architecture, designs, and licensing material created during the course of development shall remain the intellectual property of Alberto Farah until the final contract payment has cleared. Upon completion, copyright transfer will be executed per the specific Service Level Agreement (SLA) signed with the client.",
+    "terms3Title": "3. Limitations of Liability",
+    "terms3Text": "In no event shall Alberto Farah or its suppliers be liable for any damages (including, without limitation, damages for loss of data or profit, or due to business interruption) arising out of the use or inability to use the delivered code and infrastructure, even if notified of the possibility of such damage.",
+    "terms4Title": "4. Infrastructure Services",
+    "terms4Text": "Infrastructure agreements, such as the use of VPS servers, integrations with third-party APIs (OpenAI, Stripe, Google Cloud) and maintenance, are subject to direct operational costs that will be borne by the client unless otherwise specified in the B2B Service Contract.",
+    "terms5Title": "5. Revisions and Errata",
+    "terms5Text": "The materials appearing on this website could include technical, typographical, or photographic errors. We do not warrant that any of the materials on its website are accurate, complete, or current.",
+    "privacyTitle": "Privacy Policy",
+    "privacyUpdated": "Last updated: July 5, 2026",
+    "privacy1Title": "1. Introduction",
+    "privacy1Text": "At Alberto Farah, we respect your privacy and are committed to protecting your personal data. This privacy policy will inform you as to how we look after your personal data when you visit our website and tell you about your privacy rights and how the law protects you (GDPR and CCPA compliant).",
+    "privacy2Title": "2. The data we collect about you",
+    "privacy2Text": "We may collect, use, store and transfer different kinds of personal data about you which we have grouped together follows:",
+    "privacy2List1": "Identity Data: includes first name, last name.",
+    "privacy2List2": "Contact Data: includes email address, telephone numbers, company name.",
+    "privacy2List3": "Technical Data: includes internet protocol (IP) address, browser type and version, time zone setting and location.",
+    "privacy2List4": "Usage Data: includes information about how you use our website, products and services.",
+    "privacy3Title": "3. How we use your personal data",
+    "privacy3Text": "We will only use your personal data when the law allows us to. Most commonly, we will use your personal data in the following circumstances:",
+    "privacy3List1": "Where we need to perform the contract we are about to enter into or have entered into with you.",
+    "privacy3List2": "Where it is necessary for our legitimate interests (or those of a third party).",
+    "privacy3List3": "Where we need to comply with a legal or regulatory obligation.",
+    "privacy4Title": "4. Data Security (Processing and Queues)",
+    "privacy4Text": "Our infrastructure uses encrypted relational database systems (PostgreSQL) and cached memory systems (Redis / BullMQ) for fast request and email processing. We have put in place appropriate security measures to prevent your personal data from being accidentally lost, used or accessed in an unauthorized way.",
+    "privacy5Title": "5. Your Legal Rights (ARCO Rights)",
+    "privacy5Text": "Under certain circumstances, you have rights under data protection laws in relation to your personal data. You have the right to:",
+    "privacy5List1": "Request access to your personal data.",
+    "privacy5List2": "Request correction of your personal data.",
+    "privacy5List3": "Request erasure of your personal data.",
+    "privacy5List4": "Object to processing of your personal data.",
+    "privacy5Contact": "If you wish to exercise any of the rights set out above, please contact us at dpo@albertofarah.com."
   }
 }

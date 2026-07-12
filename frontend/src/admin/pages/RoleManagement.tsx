@@ -1,6 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import api from '../../services/api';
 import { useAuth } from '../../context/AuthContext';
+import { useTranslation } from 'react-i18next';
+import { toast } from 'sonner';
+import { DangerConfirmModal } from '../components/ui/DangerConfirmModal';
 
 interface Permission {
     id: string;
@@ -22,6 +25,7 @@ interface WorkerRole {
 
 const RoleManagement: React.FC = () => {
     const { hasPermission } = useAuth();
+    const { t } = useTranslation();
     const [roles, setRoles] = useState<WorkerRole[]>([]);
     const [permissions, setPermissions] = useState<Record<string, Permission[]>>({});
     const [selectedRole, setSelectedRole] = useState<WorkerRole | null>(null);
@@ -29,6 +33,13 @@ const RoleManagement: React.FC = () => {
     const [isCreating, setIsCreating] = useState(false);
     const [loading, setLoading] = useState(true);
     const [saving, setSaving] = useState(false);
+    const [confirmModal, setConfirmModal] = useState<{
+        isOpen: boolean;
+        title: string;
+        message: string;
+        action: (() => void) | null;
+        requireType?: string;
+    }>({ isOpen: false, title: '', message: '', action: null });
 
     // Form state
     const [formName, setFormName] = useState('');
@@ -115,25 +126,33 @@ const RoleManagement: React.FC = () => {
             await fetchData();
             setIsEditing(false);
             setIsCreating(false);
+            toast.success(t('roles.saveSuccess', 'Role saved successfully'));
         } catch (error: any) {
-            alert(error.response?.data?.message || 'Error saving role');
+            toast.error(error.response?.data?.message || t('roles.saveError', 'Error saving role'));
         } finally {
             setSaving(false);
         }
     };
 
-    const handleDelete = async () => {
+    const handleDelete = () => {
         if (!selectedRole || selectedRole.isSystem) return;
 
-        if (!confirm(`Are you sure you want to delete "${selectedRole.name}"?`)) return;
-
-        try {
-            await api.delete(`/worker-roles/${selectedRole.id}`);
-            setSelectedRole(null);
-            await fetchData();
-        } catch (error: any) {
-            alert(error.response?.data?.message || 'Error deleting role');
-        }
+        setConfirmModal({
+            isOpen: true,
+            title: t('roles.deleteTitle', 'Delete Role'),
+            message: t('roles.deleteMessage', `Are you sure you want to delete "${selectedRole.name}"? This action cannot be undone.`),
+            requireType: 'ELIMINAR',
+            action: async () => {
+                try {
+                    await api.delete(`/worker-roles/${selectedRole.id}`);
+                    setSelectedRole(null);
+                    await fetchData();
+                    toast.success(t('roles.deleteSuccess', 'Role deleted successfully'));
+                } catch (error: any) {
+                    toast.error(error.response?.data?.message || t('roles.deleteError', 'Error deleting role'));
+                }
+            }
+        });
     };
 
     if (!hasPermission('roles:manage')) {
@@ -387,6 +406,17 @@ const RoleManagement: React.FC = () => {
                     )}
                 </div>
             </div>
+            <DangerConfirmModal
+                isOpen={confirmModal.isOpen}
+                title={confirmModal.title}
+                message={confirmModal.message}
+                requireType={confirmModal.requireType}
+                onConfirm={() => {
+                    if (confirmModal.action) confirmModal.action();
+                    setConfirmModal({ ...confirmModal, isOpen: false });
+                }}
+                onCancel={() => setConfirmModal({ ...confirmModal, isOpen: false })}
+            />
         </div>
     );
 };

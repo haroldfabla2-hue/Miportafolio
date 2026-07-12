@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { cmsAdminApi, authFetch } from '../../services/api';
+import { PremiumBlockEditor } from '../components/ui/PremiumBlockEditor';
 
 // Content type options
 const contentTypes = [
@@ -337,22 +338,9 @@ const ContentEditor: React.FC = () => {
                         <label style={{ display: 'block', fontSize: '0.75rem', fontWeight: 600, color: '#888', marginBottom: '0.5rem', textTransform: 'uppercase' }}>
                             Content
                         </label>
-                        <textarea
+                        <PremiumBlockEditor
                             value={formData.content}
-                            onChange={(e) => setFormData(prev => ({ ...prev, content: e.target.value }))}
-                            placeholder="Write your content here..."
-                            rows={12}
-                            style={{
-                                width: '100%',
-                                padding: '0.75rem',
-                                borderRadius: '8px',
-                                border: '1px solid var(--admin-border-color)',
-                                background: 'var(--admin-bg)',
-                                color: '#fff',
-                                resize: 'vertical',
-                                fontFamily: 'inherit',
-                                lineHeight: 1.6
-                            }}
+                            onChange={(val) => setFormData(prev => ({ ...prev, content: val }))}
                         />
                     </div>
 

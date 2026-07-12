@@ -31,6 +31,8 @@ import { PaymentsModule } from './payments/payments.module';
 
 import { ThrottlerModule, ThrottlerGuard } from '@nestjs/throttler';
 import { ScheduleModule } from '@nestjs/schedule';
+import { EmailModule } from './email/email.module';
+import { BullModule } from '@nestjs/bull';
 
 @Module({
     imports: [
@@ -51,6 +53,20 @@ import { ScheduleModule } from '@nestjs/schedule';
             ttl: 60000,
             limit: 150,
         }]),
+        BullModule.forRootAsync({
+            imports: [ConfigModule],
+            useFactory: async (configService: ConfigService) => ({
+                redis: {
+                    host: configService.get('REDIS_HOST') || 'localhost',
+                    port: configService.get('REDIS_PORT') || 6379,
+                    maxRetriesPerRequest: null,
+                    retryStrategy: (times) => {
+                        return Math.min(times * 1000, 20000); // Retry every 1s, max 20s between retries
+                    }
+                },
+            }),
+            inject: [ConfigService],
+        }),
         PrismaModule,
         AuthModule,
         UsersModule,
@@ -73,6 +89,7 @@ import { ScheduleModule } from '@nestjs/schedule';
         EventsModule,
         CronModule,
         PaymentsModule,
+        EmailModule,
     ],
     controllers: [],
     providers: [

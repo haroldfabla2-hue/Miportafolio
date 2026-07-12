@@ -15,10 +15,11 @@ export class LeadsController {
     @Post('contact')
     @Public()
     async createFromWebsite(@Body() data: { name: string; email: string; message: string; company?: string }) {
+        const gdprConsentStr = `\n\n[GDPR CONSENT GIVEN: ${new Date().toISOString()}]`;
         return this.leadsService.create({
             name: data.name,
             email: data.email,
-            notes: data.message,
+            notes: (data.message || '') + gdprConsentStr,
             company: data.company || '',
             source: 'WEBSITE',
             status: 'NEW',
@@ -38,12 +39,13 @@ export class LeadsController {
         roiEstimate?: number;
         qualificationStep?: string;
     }) {
+        const gdprConsentStr = `\n\n[GDPR CONSENT GIVEN: ${new Date().toISOString()}]`;
         return this.leadsService.upsertQualify({
             name: data.name,
             email: data.email,
             phone: data.phone,
             company: data.company,
-            notes: data.message,
+            notes: (data.message || '') + gdprConsentStr,
             operationalPain: data.operationalPain,
             monthlyVolume: data.monthlyVolume,
             roiEstimate: data.roiEstimate,

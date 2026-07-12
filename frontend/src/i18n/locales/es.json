@@ -19,7 +19,10 @@
     "comingSoon": "Próximamente",
     "role": "Rol",
     "retry": "Reintentar",
-    "year": "Año"
+    "year": "Año",
+    "confirm": "Confirmar",
+    "export": "Exportar CSV",
+    "exportSuccess": "Datos exportados a CSV"
   },
   "nav": {
     "home": "Inicio",
@@ -349,6 +352,7 @@
     "messageSent": "¡Mensaje Enviado!",
     "responseMessage": "Te responderé lo antes posible.",
     "sendAnother": "Enviar Otro Mensaje",
+    "prefillMessage": "Hola Alberto, me gustaría recibir más información sobre el {{plan}} y conversar sobre las necesidades de mi negocio.",
     "placeholder": {
       "name": "¿Cómo te llamas?",
       "email": "Tu dirección de email",
@@ -455,5 +459,117 @@
     "description": "Mapearemos tus flujos de trabajo actuales, calcularemos los ahorros potenciales de automatización y diseñaremos un blueprint de IA/SaaS a tu medida.",
     "cta": "Reclamar Auditoría Gratis Ahora",
     "noThanks": "No, gracias, prefiero salir"
+  },
+  "error": {
+    "boundary": {
+      "title": "Algo salió mal",
+      "message": "Un error inesperado ocurrió en este componente.",
+      "retry": "Intentar de Nuevo"
+    }
+  },
+  "danger": {
+    "modal": {
+      "typeConfirm": "Escribe",
+      "toConfirm": "para confirmar:"
+    }
+  },
+  "pipeline": {
+    "title": "Pipeline de Ventas",
+    "subtitle": "Gestiona tus leads y tratos",
+    "newLead": "Nuevo Lead",
+    "deleteTitle": "Eliminar Lead",
+    "deleteMessage": "¿Estás seguro de que quieres eliminar este lead? Esta acción no se puede deshacer.",
+    "deleteSuccess": "Lead eliminado con éxito",
+    "deleteError": "Error al eliminar el lead",
+    "convertTitle": "Convertir a Cliente",
+    "convertMessage": "¿Convertir este lead a cliente? Esto creará un nuevo cliente y marcará el lead como GANADO.",
+    "convertSuccess": "¡Lead convertido con éxito!",
+    "convertError": "Error al convertir el lead",
+    "saveSuccess": "¡Lead guardado con éxito!",
+    "saveError": "Error al guardar el lead"
+  },
+  "roles": {
+    "saveSuccess": "Rol guardado con éxito",
+    "saveError": "Error al guardar el rol",
+    "deleteTitle": "Eliminar Rol",
+    "deleteMessage": "¿Estás seguro de que quieres eliminar este rol? Esta acción no se puede deshacer.",
+    "deleteSuccess": "Rol eliminado con éxito",
+    "deleteError": "Error al eliminar el rol"
+  },
+  "dashboard": {
+    "noActiveProjects": "No se encontraron proyectos activos. Por favor crea un proyecto primero.",
+    "createTaskTitle": "Crear Tarea desde Oracle",
+    "createTaskMessage": "¿Crear una tarea de alta prioridad basada en esta recomendación?",
+    "taskCreatedSuccess": "¡Tarea creada con éxito!",
+    "taskCreatedError": "Error al crear la tarea"
+  },
+  "files": {
+    "deleteTitle": "Eliminar Archivo",
+    "deleteMessage": "¿Estás seguro de que quieres eliminar este archivo? Esta acción no se puede deshacer.",
+    "deleteSuccess": "Archivo eliminado con éxito",
+    "deleteError": "Error al eliminar el archivo",
+    "uploadSuccess": "Archivo subido con éxito",
+    "uploadError": "Error al subir el archivo"
+  },
+  "invoice": {
+    "selectClient": "Por favor selecciona un cliente",
+    "savedDraft": "¡Factura guardada como borrador con éxito!",
+    "created": "¡Factura creada con éxito!",
+    "createError": "Error al crear la factura"
+  },
+  "calendar": {
+    "saveSuccess": "Evento guardado con éxito",
+    "saveError": "Error al guardar el evento",
+    "deleteTitle": "Eliminar Evento",
+    "deleteMessage": "¿Estás seguro de que quieres eliminar este evento?",
+    "deleteSuccess": "Evento eliminado con éxito",
+    "deleteError": "Error al eliminar"
+  },
+  "reports": {
+    "generateSuccess": "Reporte generado con éxito",
+    "generateError": "La generación falló. Por favor intenta de nuevo.",
+    "deleteTitle": "Eliminar Reporte",
+    "deleteMessage": "¿Estás seguro de que quieres eliminar este reporte?",
+    "deleteSuccess": "Reporte eliminado con éxito",
+    "deleteError": "Error al eliminar el reporte",
+    "noDataExport": "No hay datos para exportar"
+  },
+  "legal": {
+    "termsTitle": "Términos de Servicio",
+    "termsUpdated": "Última actualización: 5 de Julio, 2026",
+    "terms1Title": "1. Aceptación de los Términos",
+    "terms1Text": "Al acceder a este sitio web y contratar nuestros servicios de desarrollo de software B2B, automatización o arquitectura en la nube, usted acepta estar sujeto a estos Términos y Condiciones, así como a todas las leyes y regulaciones aplicables. Si no está de acuerdo con alguno de estos términos, tiene prohibido usar o acceder a este sitio.",
+    "terms2Title": "2. Propiedad Intelectual",
+    "terms2Text": "Todo el código fuente, la arquitectura, los diseños y el material de licencias creados durante el transcurso del desarrollo seguirán siendo propiedad intelectual de Alberto Farah hasta que el pago final del contrato se haya efectuado. Una vez completado, la transferencia de derechos de autor se ejecutará según el Acuerdo de Nivel de Servicio (SLA) específico firmado con el cliente.",
+    "terms3Title": "3. Limitación de Responsabilidad",
+    "terms3Text": "En ningún caso Alberto Farah o sus proveedores serán responsables de ningún daño (incluyendo, sin limitación, daños por pérdida de datos o beneficios, o debido a la interrupción del negocio) que surjan del uso o la imposibilidad de usar el código y la infraestructura entregada, incluso si se ha notificado la posibilidad de dicho daño.",
+    "terms4Title": "4. Servicios de Infraestructura",
+    "terms4Text": "Los acuerdos de infraestructura, como el uso de servidores VPS, integraciones con APIs de terceros (OpenAI, Stripe, Google Cloud) y mantenimientos, están sujetos a costos operativos directos que serán asumidos por el cliente salvo que se especifique lo contrario en el Contrato de Servicios B2B.",
+    "terms5Title": "5. Revisiones y Erratas",
+    "terms5Text": "El material que aparece en este sitio web podría incluir errores técnicos, tipográficos o fotográficos. No garantizamos que ninguno de los materiales en su sitio web sea preciso, completo o actual.",
+    "privacyTitle": "Política de Privacidad",
+    "privacyUpdated": "Última actualización: 5 de Julio, 2026",
+    "privacy1Title": "1. Introducción",
+    "privacy1Text": "En Alberto Farah respetamos tu privacidad y estamos comprometidos a proteger tus datos personales. Esta política de privacidad te informa sobre cómo cuidamos tus datos personales cuando visitas nuestro sitio web y te informa sobre tus derechos de privacidad y cómo la ley te protege (GDPR y CCPA).",
+    "privacy2Title": "2. Los datos que recopilamos",
+    "privacy2Text": "Podemos recopilar, usar, almacenar y transferir diferentes tipos de datos personales sobre ti, que hemos agrupado de la siguiente manera:",
+    "privacy2List1": "Datos de Identidad: nombre, apellido.",
+    "privacy2List2": "Datos de Contacto: dirección de correo electrónico, números de teléfono, nombre de la empresa.",
+    "privacy2List3": "Datos Técnicos: dirección de protocolo de internet (IP), tipo y versión del navegador, configuración y ubicación de la zona horaria.",
+    "privacy2List4": "Datos de Uso: información sobre cómo usas nuestro sitio web y servicios.",
+    "privacy3Title": "3. Cómo usamos tus datos",
+    "privacy3Text": "Solo usaremos tus datos personales cuando la ley nos lo permita. Más comúnmente, usaremos tus datos personales en las siguientes circunstancias:",
+    "privacy3List1": "Donde necesitemos ejecutar el contrato que estamos a punto de celebrar o hemos celebrado contigo.",
+    "privacy3List2": "Donde sea necesario para nuestros intereses legítimos (y los tuyos).",
+    "privacy3List3": "Donde necesitemos cumplir con una obligación legal o regulatoria.",
+    "privacy4Title": "4. Seguridad de los Datos (Procesamiento y Colas)",
+    "privacy4Text": "Nuestra infraestructura utiliza sistemas de bases de datos relacionales encriptados (PostgreSQL) y sistemas de memoria en caché (Redis / BullMQ) para el procesamiento rápido de solicitudes y correos electrónicos. Hemos implementado medidas de seguridad apropiadas para evitar que tus datos personales se pierdan accidentalmente, se usen o se acceda a ellos de forma no autorizada.",
+    "privacy5Title": "5. Tus Derechos Legales (Derechos ARCO)",
+    "privacy5Text": "Bajo ciertas circunstancias, tienes derechos bajo las leyes de protección de datos en relación con tus datos personales. Tienes derecho a:",
+    "privacy5List1": "Solicitar acceso a tus datos personales.",
+    "privacy5List2": "Solicitar corrección de tus datos personales.",
+    "privacy5List3": "Solicitar la eliminación de tus datos personales.",
+    "privacy5List4": "Oponerte al procesamiento de tus datos personales.",
+    "privacy5Contact": "Si deseas ejercer cualquiera de los derechos establecidos anteriormente, por favor contáctanos en dpo@albertofarah.com."
   }
 }

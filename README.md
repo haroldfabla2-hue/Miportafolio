@@ -47,6 +47,9 @@ docker-compose -f docker-compose.prod.yml up -d
 
 # 5. Apply the latest Prisma database migrations safely
 docker exec -it miweb-backend-1 npx prisma migrate deploy
+
+# 6. Seed the database (updates dynamic pricing and default CMS data)
+docker exec -it miweb-backend-1 npx prisma db seed
 ```
 
 > **Security Warning**: Because this code contains business-critical simulations and financial configurations, ensure this GitHub repository is set to **Private**.

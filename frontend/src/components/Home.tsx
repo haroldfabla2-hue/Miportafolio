@@ -4,6 +4,7 @@ import { useTranslation } from 'react-i18next';
 import SEO from './SEO';
 import { getOrganizationSchema } from './JsonLd';
 import Hero from './Hero';
+import TrustMarkers from './TrustMarkers';
 import About from './About';
 import Projects from './Projects';
 import Process from './Process';
@@ -20,6 +21,7 @@ const Home = () => {
                 schemaMarkup={getOrganizationSchema()}
             />
             <Hero />
+            <TrustMarkers />
             <About />
             <Projects />
             <Process />
