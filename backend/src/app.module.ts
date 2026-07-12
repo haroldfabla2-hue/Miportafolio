@@ -4,7 +4,7 @@ import { JwtAuthGuard } from './auth/jwt-auth.guard';
 import { SecurityGuard } from './guards/security.guard';
 import { AuditInterceptor } from './common/interceptors/audit.interceptor';
 import { SentryInterceptor } from './common/interceptors/sentry.interceptor';
-import { ConfigModule } from '@nestjs/config';
+import { ConfigModule, ConfigService } from '@nestjs/config';
 import { PrismaModule } from './prisma/prisma.module';
 import { AuthModule } from './auth/auth.module';
 import { UsersModule } from './users/users.module';

@@ -113,7 +113,7 @@ const CookieConsent: React.FC = () => {
                         >
                             {i18n.language.startsWith('es') ? 'Solo esenciales' : 'Essential only'}
                         </button>
-                        <button
+                        <motion.button
                             onClick={handleAccept}
                             style={{
                                 flex: 1,
@@ -131,7 +131,7 @@ const CookieConsent: React.FC = () => {
                             whileTap={{ scale: 0.98 }}
                         >
                             {i18n.language.startsWith('es') ? 'Aceptar todas' : 'Accept all'}
-                        </button>
+                        </motion.button>
                     </div>
                 </motion.div>
             )}
